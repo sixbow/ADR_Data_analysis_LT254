@@ -161,39 +161,23 @@ The overall dependency flowchart is given in Fig. \ref{}
 \subsection*{Checking Popt.}
 First we want to check if Popt is ok! Because if it is not then we are in trouble because the relation between the phase and the incident radiation becomes nonlinear.
 This is shown in the following Fig. \ref{fig:Popt_KID1}\ref{fig:Popt_KID2}\ref{fig:Popt_KID3}
-
-
-
-\subsection*{Find S21 dips for all temperatures and Powers.}
-\textbf{Find the following expressions (In code):}
-\cite{janssenEquivalenceOpticalElectrical2014}
-\begin{equation}
-    \frac{F_{T}(T)-F_{0}}{F_{0}} \textrm{  Vs.  } T
-\end{equation}
-\begin{equation}
-    \frac{1}{Q_{i}(T))} \textrm{  Vs.  } T
-\end{equation}
-
-\subsection*{Convert T to $N_{qp}$}
-
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=\linewidth]{figures/ch5_measurement/N_qp_funcT.pdf}
-	\caption{Relation between the bath temperature and $N_{qp}$. Code based on getNqp\_Tbath.m function. Author: J.Baselmans}
-	\label{fig:}
-\end{figure}
-
-\subsection*{Determine $\tau_{qp} $with cross power spectral density - fitting}
-
-\subsection*{other parameters and fill in to obtain dark responsivity}
-
-\subsection*{Obtain PSD.}
-
-\subsection*{dark NEP plots}
-
-
-
-\section{Discussion on Exp.3 - dark NEP} 
+\begin{table}[ht]
+    \centering
+    \begin{tabular}[t]{lccc}
+    \hline
+    KID\# & $ P_{opt} (dBm) $ & $ \sim F_{0}$ (Graph) & Supected KID \\
+    \hline
+    1 & -94 & 4.9083 & C7G3\\
+   	2 & -90 & 5.0762 & C9G3 \\
+    3 & -94 & 5.5424 & C8G3 \\
+	4 & -87 & 5.8222 & C10G4 \\
+    5 & -92 & 5.9134 & C11G4 \\
+    6 & -87 & 6.0052 & C12G4 \\
+    \hline
+    \end{tabular}
+    \caption{Table with optimal readout powers. You can judge from the skewness of the $S_{21}$ dip and the Lowpass charateristic that you have overdriven the MKID into non-linear regime. The second is the suspected MKID number based on only the C9G3 MKID had a piece on Hybrid CPW which explains the higher readout freq.}
+    \label{tab:}
+\end{table}%
 
 
 \begin{figure}[h!!!!!]
@@ -236,4 +220,44 @@ asdfaf
 	\caption{asdffdsa}
 	\label{fig:Popt_KID6}
 \end{figure}
+
+
+\FloatBarrier
+
+\subsection*{Find S21 dips for all temperatures and Powers.}
+\textbf{Find the following expressions (In code):}
+\cite{janssenEquivalenceOpticalElectrical2014}
+\begin{equation}
+    \frac{F_{T}(T)-F_{0}}{F_{0}} \textrm{  Vs.  } T
+\end{equation}
+\begin{equation}
+    \frac{1}{Q_{i}(T))} \textrm{  Vs.  } T
+\end{equation}
+
+\subsection*{Convert T to $N_{qp}$}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\linewidth]{figures/ch5_measurement/N_qp_funcT.pdf}
+	\caption{Relation between the bath temperature and $N_{qp}$. Code based on getNqp\_Tbath.m function. Author: J.Baselmans}
+	\label{fig:}
+\end{figure}
+
+\subsection*{Determine $\tau_{qp} $with cross power spectral density - fitting}
+
+\subsection*{other parameters and fill in to obtain dark responsivity}
+
+\subsection*{Obtain PSD.}
+
+The 2D PSD files are contained In
+"C:\\Users\\siets\\Dropbox\\Universiteit\\Natuurkunde\\MEP\\Simulations\\Matlab\\ADR\_Data\_analysis\_LT254\\Data\_Analysis\_scripts\_ADR\\Data\_LT254\_Sietse\\LT254\_Sietse\_Chip11\\Noise\_vs\_T\\FFT\\2D\\Noise\_2D.mat"
+
+\subsection*{dark NEP plots}
+
+
+
+\section{Discussion on Exp.3 - dark NEP} 
+
+
+
 \end{document}

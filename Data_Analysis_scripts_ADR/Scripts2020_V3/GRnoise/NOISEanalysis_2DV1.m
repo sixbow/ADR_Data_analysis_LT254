@@ -11,8 +11,9 @@ global FITF0
 %==========================================================================
 ChipInfo.path = ['../..' filesep]; %root path where data is, one higher than the scripts
 %FFTsubdir = ['Noise 120mK' filesep 'FFT' filesep 'Power'];  120mK    %
-FFTsubdir = ['Noise vs Power vs Temp' filesep 'FFT' filesep '2D'];     %
+FFTsubdir = ['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D'];     %
 
+%\\FFT\2D
 ChipInfo.IndexPref = 1;     %Index of the power that is used as reference for Popt finding. (should not matter here)
 numlowPremoved = 0;         %for noise plots(P) - removes lowest power for less clutter
 SaveStuff = 1;              %0 to not save files (faster) 1 to save
@@ -39,6 +40,7 @@ close all;              %close all open plots to remove clutter.
 % read Poptfile.
 %==========================================================================
 Noisepath = [ChipInfo.path,FFTsubdir,filesep]; %Path containing the raw noise data
+disp(['Searchpath is: ' Noisepath])
 if ReadPoptfile==1
     PoptFile = [Noisepath,'Popt.csv'];
     fid = fopen(PoptFile);

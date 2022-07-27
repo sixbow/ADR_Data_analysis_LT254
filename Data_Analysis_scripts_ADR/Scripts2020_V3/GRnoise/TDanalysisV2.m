@@ -11,7 +11,7 @@ tic
 % Input
 %================================================================================
 ChipInfo_path = ['..' filesep '..' ]; %root path where data is, one higher than the scripts
-PT2Ddep = 1;           %=0 for Tdep analysis, =1 for Pdep analysis, =2 for 2D analysis, error otheriwse
+PT2Ddep = 2;           %=0 for Tdep analysis, =1 for Pdep analysis, =2 for 2D analysis, error otheriwse
 if PT2Ddep == 0
     %Tdep
     FFTsubsubdir=[ 'FFT' filesep 'Temp'];                   %FFTsubdir = [filesep 'Noise_Powers_165mK' filesep 'FFT' filesep 'Power'];     %
@@ -20,8 +20,8 @@ elseif PT2Ddep == 1%Pdep
     FFTsubsubdir=['Noise 120mK' filesep 'FFT' filesep 'Power'];                   %FFTsubdir = [filesep 'Noise_Powers_165mK' filesep 'FFT' filesep 'Power'];     %
     TDsubsubdir=['Noise 120mK'  filesep 'TD_Power'];
 elseif PT2Ddep == 2
-    FFTsubsubdir=[ 'Noise vs Power vs Temp' filesep 'FFT' filesep '2D'];                   %FFTsubdir = [filesep 'Noise_Powers_165mK' filesep 'FFT' filesep 'Power'];     %
-    TDsubsubdir=['Noise vs Power vs Temp' filesep 'TD_2D'];
+    FFTsubsubdir=['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D'];                   %FFTsubdir = [filesep 'Noise_Powers_165mK' filesep 'FFT' filesep 'Power'];     %
+    TDsubsubdir=['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'TD_2D'];
 else
     error('PT2Ddep not defined')
 end
@@ -29,7 +29,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %WARNING: Set to 1 only if sure you have no data from previous analysis runs!!!%
 killpreviousrunsforsure = 1;          % disables checking if files are already there (i.e. CrossPSDNOISE killed)
-maakdeplots             = 0;            %1 makes plots, 0 disables plotting (2x faster almost)
+maakdeplots             = 1;            %1 makes plots, 0 disables plotting (2x faster almost)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 timemed = 64;       % duration of td data @ 50 ksample/sec; is varied so check the files, 40 is old default = 31MB. 128"= 100 mB.
 TDoption.nrsigma = 5;                 % 8 peaks>TDoption.nrsigma*sigma are rejected (based on filtered TD-stream) %6 seems to be really minimum, 8 good value also for smaller peaks
