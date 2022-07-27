@@ -109,12 +109,11 @@ for kidn=1:length(KIDnumbers) % LOOP OVER ALL UNIQUE KIDS,
     %for p=1:length(IndexP_sub_opt{kidn})% over Power
         for nT=1:length(NOISE(kidn).Temperature) % over T
             % construct filename
-            %Sietse Insert to find popt.
+            %Sietse
             % KiD: [1 2 3 4 5 6]
             P_Opt_order = [-94 -90 -94 -87 -92 -87];
-            p = 1;
-            while ~(NOISE(IndexP_sub_opt{kidn}(p)).ReadPower == P_Opt_order(kidn))
-               p = p + 1; %What this does is it finds the right p for optimal power from the P_Opt_order list.
+            while ~(NOISE(IndexP_sub_opt{kidn}(p)).ReadPower == P_Opt_order(kidn)
+                
             end
             % Question how can i find index p such that
             % NOISE(IndexP_sub_opt{kidn}(p)).ReadPower is at P_opt
