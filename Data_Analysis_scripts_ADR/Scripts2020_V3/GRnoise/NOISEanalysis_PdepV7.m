@@ -10,8 +10,11 @@ global FITF0
 % Inputs
 %==========================================================================
 ChipInfo.path = ['../..' filesep]; %root path where data is, one higher than the scripts
+%ChipInfo.path = [cd filesep '..']; %root path where data is, one higher than the scripts
+%ChipInfo.path = [ '..' filesep '..' ];%without filesep at end
+
 %FFTsubdir = ['Noise 120mK' filesep 'FFT' filesep 'Power'];  120mK    %
-FFTsubdir = ['FFT_60mK' filesep 'Power'];     %
+FFTsubdir = ['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D'];     %
 
 ChipInfo.IndexPref = 3;     %Index of the power that is used as reference for Popt finding.
 ReadPoptfile = 1;             %default=0. If set to 1 optimum power takemn from Popt file, that is created by this script. Usefull to be abel to rerun the sript for the correct Pot.
@@ -41,12 +44,16 @@ if ReadPoptfile==1
     fid = fopen(PoptFile);
     if fid == -1 %no Popt file
         disp([Noisepath,'Popt.csv not found and ignored'])
+        Popt_str = '(Found)';
         ReadPoptfile = 0;
     else %There is a Popt file. Read it and use it.
         fclose(fid);
         fprintf('Found Popt.csv, this will be used to indicate Popt.\n')
+        Popt_str = '(File Read)';
         [~,PoptData] = ReadSRONcsvV2(PoptFile,'',0);    %PoptData will be Nx3, the cols are [T,KIDid,|Popt [dBm]|]
     end
+else
+Popt_str = '(Found)';
 end
 clear PoptFile FFTsubdir
 %==========================================================================
@@ -249,7 +256,7 @@ for p=1:length(RawFFTfiles) %LOOP OVER ALL FILES (aka KID-P-combinations)
     
 end %END OF LOOP OVER ALL FILES (aka KID-Pread-combinations)
 clear Power R S21min_a Data Frange RawFFTfiles FITF0
-
+%%
 %==========================================================================
 % Now that all files have been read we determine Popt.
 %==========================================================================
@@ -393,7 +400,8 @@ for kidn=1:length(KIDnumbers) % LOOP OVER ALL UNIQUE KIDS,
     for nP=1:length(IndexPsort{kidn}) %Second Loop to get the legend correct.
         plot(NOISE(IndexPsort{kidn}(nP)).TDIQ{1}(:,2),NOISE(IndexPsort{kidn}(nP)).TDIQ{1}(:,3),'.','color',Pcolors(nP,:),'MarkerSize',6)
     end
-    legend(PowerLegend(2:end,1))
+    legend(PowerLegend(2:end,1));
+    PowerLegend_SietseCustom3 = PowerLegend(2:end,1);
     xlabel('Re');ylabel('Im')
     title(['KID ',num2str(KIDnumbers(kidn),'%.0f'),' @T=',num2str(NOISE(IndexPref).Temperature,'%.3g'),' K'])
     box on;grid on;
@@ -450,7 +458,7 @@ for kidn=1:length(KIDnumbers) % LOOP OVER ALL UNIQUE KIDS,
             '-','color',Pcolors(nP,:),'LineWidth',1)
     end
     xlabel('F [Hz]');ylabel('S_F/F^2 [dBc/Hz]')
-    legend(PowerLegend(:,2))
+    legend(PowerLegend(:,2));
     title(['KID ',num2str(KIDnumbers(kidn),'%.0f'),' P^{int}_{opt}=',num2str(NOISE(IndexPopt(kidn)).InternalPower,'%.1f'),' dBm'])
     xlim([0.5,1e4]);grid on;ylim([-220,-140])
     hold off
@@ -603,6 +611,71 @@ for kidn=1:length(KIDnumbers) % LOOP OVER ALL UNIQUE KIDS,
     ylabel('|S21|')
     title('Resonance @Popt')
     hold off
+    %==================================================================
+    %==================================================================
+    % Figure three(SietseCustom3): Only 
+    %==================================================================
+    %==================================================================
+    figure(1000*KIDnumbers(kidn)+3)
+    clf
+    
+    %==============================================================
+    %Resonance Dip as a function of power, Incl reference lines around reference power%
+    %==============================================================
+    subplot(1,3,1)
+    hold on
+    for nP=1:length(IndexPsort{kidn})
+        plot(NOISE(IndexPsort{kidn}(nP)).S21_MPplane{1}(:,1),20*log10(NOISE(IndexPsort{kidn}(nP)).S21_MPplane{1}(:,2)),'-','color',Pcolors(nP,:),'LineWidth',1)
+    end
+    Flow = NOISE(IndexPopt(kidn)).Fres-BWrange*NOISE(IndexPopt(kidn)).Bandwidth;
+    plot([Flow,Flow],[0,-20],'r-','LineWidth',2)
+    Fhigh = NOISE(IndexPopt(kidn)).Fres+BWrange*NOISE(IndexPopt(kidn)).Bandwidth;
+    plot([Fhigh,Fhigh],[0,-20],'r-','LineWidth',2)
+    xlabel('F [GHz]');ylabel('|S21| [dB]');
+    SietseCustom3LCl = legend(PowerLegend_SietseCustom3,'Location','northeastoutside');
+    SietseCustom3LCl.FontSize = 6;
+    
+    title(['KID ',num2str(KIDnumbers(kidn),'%.0f'),' P_{opt}=',num2str(NOISE(IndexPopt(kidn)).ReadPower),' dBm',Popt_str])
+    axis tight;
+    xlim([NOISE(IndexPopt(kidn)).Fres - 2*BWrange*NOISE(IndexPopt(kidn)).Bandwidth...
+        NOISE(IndexPopt(kidn)).Fres   + 2*BWrange*NOISE(IndexPopt(kidn)).Bandwidth])
+    box on;grid on;
+    hold off
+    
+    %==============================================================
+    %Phase Noise (and Amp Noise)
+    %==============================================================
+    subplot(1,3,[2,3])
+    semilogx(NOISE(IndexPopt(kidn)).FFTnoise{1}(:,1),NOISE(IndexPopt(kidn)).FFTnoise{1}(:,3),...
+        '-','color','k','LineWidth',3)
+    hold on
+    semilogx(NOISE(IndexPopt(kidn)).FFTnoise{1}(:,1),NOISE(IndexPopt(kidn)).FFTnoise{1}(:,2),...
+        '-','color','k','LineWidth',4)
+    maxnp=zeros(length(IndexPsort{kidn})-numlowPremoved,1);minnp=maxnp;
+    for nP=numlowPremoved+1:length(IndexPsort{kidn})
+        % finding range
+        maxnp(nP-numlowPremoved) = max(NOISE(IndexPsort{kidn}(nP)).FFTnoise{1}(NOISE(IndexPsort{kidn}(nP)).FFTnoise{1}(:,1) > 10,2));
+        minnp(nP-numlowPremoved) = mean(NOISE(IndexPsort{kidn}(nP)).FFTnoise{1}(20:end-5,3));
+        semilogx(NOISE(IndexPsort{kidn}(nP)).FFTnoise{1}(:,1),NOISE(IndexPsort{kidn}(nP)).FFTnoise{1}(:,3),...
+            '-','color',Pcolors(nP,:),'LineWidth',1)
+        semilogx(NOISE(IndexPsort{kidn}(nP)).FFTnoise{1}(:,1),NOISE(IndexPsort{kidn}(nP)).FFTnoise{1}(:,2),...
+            '-','color',Pcolors(nP,:),'LineWidth',2)
+    end
+    grid on;
+    xlabel('F [Hz]');ylabel('S_x [dBc/Hz]')
+    legend('S_A','S_{\theta}')
+    xlim([10,0.3e6]);ylim([10*round(min(0.1*minnp))-5,10*round(max(0.1*maxnp))+5]);
+    hold off
+    x0=10;
+    y0=10;
+    width=1200;
+    height=200;
+    set(gcf,'position',[x0,y0,width,height])
+    %print(['Popt KID# ' string(kidn)],'-dpdf' )
+    SC3_Popt_image_path = ['../',ChipInfo.path ,'Export_Figures'];
+    
+    exportgraphics(gcf,append(SC3_Popt_image_path, '\Popt_images\' ,'Popt_KID', string(kidn), '.pdf'))
+    clear x0 y0 width height
     %==============================================================
     %SAVE the figure
     %==============================================================

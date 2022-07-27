@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021/W32TeX) (preloaded format=pdflatex 2021.12.1)  27 JUL 2022 13:04
+This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021/W32TeX) (preloaded format=pdflatex 2021.12.1)  27 JUL 2022 17:30
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**"c:/Users/siets/Dropbox/Universiteit/Natuurkunde/MEP/Milestone 4 ### Charaterization/Mesurement draft/Drafting.tex"
-(c:/Users/siets/Dropbox/Universiteit/Natuurkunde/MEP/Milestone 4 ### Charaterization/Mesurement draft/Drafting.tex
+**c:/Users/siets/Dropbox/Universiteit/Natuurkunde/MEP/Simulations/Matlab/ADR_Data_analysis_LT254/measurement_draft/Drafting.tex
+(c:/Users/siets/Dropbox/Universiteit/Natuurkunde/MEP/Simulations/Matlab/ADR_Data_analysis_LT254/measurement_draft/Drafting.tex
 LaTeX2e <2021-11-15>
 L3 programming layer <2021-11-22> (c:/texlive/2021/texmf-dist/tex/latex/base/report.cls
 Document Class: report 2021/10/04 v1.4n Standard LaTeX document class
@@ -181,7 +181,7 @@ Package: soul 2003/11/17 v2.4 letterspacing/underlining (mf)
 File: l3backend-pdftex.def 2021-10-18 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count274
 \l__pdf_internal_box=\box52
-) (./Drafting.aux (./Measurement_Sketch.aux))
+) (./Drafting.aux (./Measure.aux))
 \openout1 = `Drafting.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 15.
@@ -252,9 +252,9 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 48
  (c:/texlive/2021/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 ))
-\openout2 = `Measurement_Sketch.aux'.
+\openout2 = `Measure.aux'.
 
- (./Measurement_Sketch.tex
+ (./Measure.tex
 Chapter 1.
 <figures/ch5_measurement/ADR_OverviewV1.jpg, id=1, 426.8748pt x 240.1773pt>
 File: figures/ch5_measurement/ADR_OverviewV1.jpg Graphic file (type jpg)
@@ -330,14 +330,45 @@ Package pdftex.def Info: figures/ch5_measurement/KID1_127mK_P-86KID1_297mK_P-86K
 (pdftex.def)             Requested size: 487.46pt x 292.47905pt.
 [4 <./figures/ch5_measurement/KID1_127mK_P-86KID1_297mK_P-86KID1_314mK_P-86.pdf>]
 
-LaTeX Warning: Citation `janssenEquivalenceOpticalElectrical2014' on page 5 undefined on input line 156.
+LaTeX Warning: Citation `janssenEquivalenceOpticalElectrical2014' on page 5 undefined on input line 160.
 
 <figures/ch5_measurement/N_qp_funcT.pdf, id=96, 376.40625pt x 309.155pt>
 File: figures/ch5_measurement/N_qp_funcT.pdf Graphic file (type pdf)
 <use figures/ch5_measurement/N_qp_funcT.pdf>
-Package pdftex.def Info: figures/ch5_measurement/N_qp_funcT.pdf  used on input line 168.
+Package pdftex.def Info: figures/ch5_measurement/N_qp_funcT.pdf  used on input line 172.
 (pdftex.def)             Requested size: 410.49551pt x 337.17982pt.
-[5 <./figures/ch5_measurement/N_qp_funcT.pdf>] [6] (./Drafting.aux (./Measurement_Sketch.aux))
+<figures/chA_Appendix/Popt_KID1.pdf, id=97, 731.73375pt x 146.5475pt>
+File: figures/chA_Appendix/Popt_KID1.pdf Graphic file (type pdf)
+<use figures/chA_Appendix/Popt_KID1.pdf>
+Package pdftex.def Info: figures/chA_Appendix/Popt_KID1.pdf  used on input line 192.
+(pdftex.def)             Requested size: 410.49551pt x 82.21136pt.
+[5 <./figures/ch5_measurement/N_qp_funcT.pdf>]
+<figures/chA_Appendix/Popt_KID2.pdf, id=199, 730.73pt x 146.5475pt>
+File: figures/chA_Appendix/Popt_KID2.pdf Graphic file (type pdf)
+<use figures/chA_Appendix/Popt_KID2.pdf>
+Package pdftex.def Info: figures/chA_Appendix/Popt_KID2.pdf  used on input line 199.
+(pdftex.def)             Requested size: 410.49551pt x 82.32541pt.
+<figures/chA_Appendix/Popt_KID3.pdf, id=200, 731.73375pt x 146.5475pt>
+File: figures/chA_Appendix/Popt_KID3.pdf Graphic file (type pdf)
+<use figures/chA_Appendix/Popt_KID3.pdf>
+Package pdftex.def Info: figures/chA_Appendix/Popt_KID3.pdf  used on input line 206.
+(pdftex.def)             Requested size: 410.49551pt x 82.21136pt.
+<figures/chA_Appendix/Popt_KID4.pdf, id=201, 731.73375pt x 147.55125pt>
+File: figures/chA_Appendix/Popt_KID4.pdf Graphic file (type pdf)
+<use figures/chA_Appendix/Popt_KID4.pdf>
+Package pdftex.def Info: figures/chA_Appendix/Popt_KID4.pdf  used on input line 213.
+(pdftex.def)             Requested size: 410.49551pt x 82.77446pt.
+<figures/chA_Appendix/Popt_KID5.pdf, id=202, 731.73375pt x 146.5475pt>
+File: figures/chA_Appendix/Popt_KID5.pdf Graphic file (type pdf)
+<use figures/chA_Appendix/Popt_KID5.pdf>
+Package pdftex.def Info: figures/chA_Appendix/Popt_KID5.pdf  used on input line 220.
+(pdftex.def)             Requested size: 410.49551pt x 82.21136pt.
+<figures/chA_Appendix/Popt_KID6.pdf, id=203, 731.73375pt x 147.55125pt>
+File: figures/chA_Appendix/Popt_KID6.pdf Graphic file (type pdf)
+<use figures/chA_Appendix/Popt_KID6.pdf>
+Package pdftex.def Info: figures/chA_Appendix/Popt_KID6.pdf  used on input line 226.
+(pdftex.def)             Requested size: 410.49551pt x 82.77446pt.
+ [6 <./figures/chA_Appendix/Popt_KID1.pdf> <./figures/chA_Appendix/Popt_KID2.pdf>] [7 <./figures/chA_Appendix/Popt_KID3.pdf> <./figures/chA_Appendix/Popt_KID4.pdf> <./figures/chA_Appendix/Popt_KID5.pdf> <./figures/chA_Appendix/Popt_KID6.pdf>] (./Drafting.aux (./Measure.aux))
 
 LaTeX Warning: There were undefined references.
 
@@ -346,18 +377,18 @@ LaTeX Warning: There were undefined references.
 (\end occurred when \ifx on line 16 was incomplete)
 (\end occurred when \ifnum on line 16 was incomplete) 
 Here is how much of TeX's memory you used:
- 4710 strings out of 478353
- 71032 string characters out of 5852101
- 384242 words of memory out of 5000000
- 22770 multiletter control sequences out of 15000+600000
+ 4759 strings out of 478353
+ 72622 string characters out of 5852101
+ 384304 words of memory out of 5000000
+ 22812 multiletter control sequences out of 15000+600000
  412220 words of font info for 61 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 55i,7n,62p,897b,313s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 55i,7n,62p,923b,313s stack positions out of 5000i,500n,10000p,200000b,80000s
 <c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb>
-Output written on Drafting.pdf (6 pages, 744183 bytes).
+Output written on Drafting.pdf (7 pages, 1087101 bytes).
 PDF statistics:
- 255 PDF objects out of 1000 (max. 8388607)
- 155 compressed objects within 2 object streams
+ 663 PDF objects out of 1000 (max. 8388607)
+ 534 compressed objects within 6 object streams
  0 named destinations out of 1000 (max. 500000)
- 26 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 56 words of extra memory for PDF output out of 10000 (max. 10000000)
 
