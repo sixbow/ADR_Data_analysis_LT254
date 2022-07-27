@@ -1,3 +1,8 @@
+PWD c:/Users/siets/Dropbox/Universiteit/Natuurkunde/MEP/Simulations/Matlab/ADR_Data_analysis_LT254/measurement_draft
+INPUT c:/texlive/2021/texmf.cnf
+INPUT c:/texlive/2021/texmf-dist/web2c/texmf.cnf
+INPUT c:/texlive/2021/texmf-var/web2c/pdftex/pdflatex.fmt
+INPUT c:/Users/siets/Dropbox/Universiteit/Natuurkunde/MEP/Simulations/Matlab/ADR_Data_analysis_LT254/measurement_draft/Drafting.tex
 OUTPUT Drafting.log
 INPUT c:/texlive/2021/texmf-dist/tex/latex/base/report.cls
 INPUT c:/texlive/2021/texmf-dist/tex/latex/base/report.cls
@@ -177,6 +182,7 @@ INPUT c:/texlive/2021/texmf-dist/tex/latex/placeins/placeins.sty
 INPUT c:/texlive/2021/texmf-dist/tex/latex/placeins/placeins.sty
 INPUT c:/texlive/2021/texmf-dist/tex/latex/placeins/placeins.sty
 INPUT c:/texlive/2021/texmf-dist/tex/latex/placeins/placeins.sty
+INPUT c:/texlive/2021/texmf-dist/tex/latex/graphics/graphicx.sty
 INPUT c:/texlive/2021/texmf-dist/tex/latex/amsmath/amsmath.sty
 INPUT c:/texlive/2021/texmf-dist/tex/latex/amsmath/amsmath.sty
 INPUT c:/texlive/2021/texmf-dist/tex/latex/amsmath/amsmath.sty
@@ -312,9 +318,6 @@ INPUT c:/texlive/2021/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 INPUT ./Drafting.aux
 INPUT Drafting.aux
 INPUT Drafting.aux
-INPUT ./Measure.aux
-INPUT Measure.aux
-INPUT Measure.aux
 OUTPUT Drafting.aux
 INPUT c:/texlive/2021/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 INPUT c:/texlive/2021/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
@@ -335,11 +338,6 @@ INPUT c:/texlive/2021/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 INPUT c:/texlive/2021/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 INPUT c:/texlive/2021/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 INPUT c:/texlive/2021/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
-INPUT ./Measure.tex
-OUTPUT Measure.aux
-INPUT ./Measure.tex
-INPUT ./Measure.tex
-INPUT ./Measure.tex
 INPUT ./Measure.tex
 INPUT Measure.tex
 INPUT ./Measure.tex
@@ -390,6 +388,11 @@ INPUT ./figures/ch5_measurement/KID1_127mK_P-86KID1_297mK_P-86KID1_314mK_P-86.pd
 INPUT figures/ch5_measurement/KID1_127mK_P-86KID1_297mK_P-86KID1_314mK_P-86.pdf
 INPUT ./figures/ch5_measurement/KID1_127mK_P-86KID1_297mK_P-86KID1_314mK_P-86.pdf
 INPUT ./figures/ch5_measurement/KID1_127mK_P-86KID1_297mK_P-86KID1_314mK_P-86.pdf
+INPUT ./figures/ch5_measurement/Overview_Process.jpg
+INPUT ./figures/ch5_measurement/Overview_Process.jpg
+INPUT figures/ch5_measurement/Overview_Process.jpg
+INPUT ./figures/ch5_measurement/Overview_Process.jpg
+INPUT ./figures/ch5_measurement/Overview_Process.jpg
 INPUT c:/texlive/2021/texmf-dist/fonts/tfm/public/cm/cmr8.tfm
 INPUT c:/texlive/2021/texmf-dist/fonts/tfm/public/cm/cmr6.tfm
 INPUT c:/texlive/2021/texmf-dist/fonts/tfm/public/cm/cmmi12.tfm
@@ -443,9 +446,6 @@ INPUT figures/chA_Appendix/Popt_KID6.pdf
 INPUT ./figures/chA_Appendix/Popt_KID6.pdf
 INPUT ./figures/chA_Appendix/Popt_KID6.pdf
 INPUT Drafting.aux
-INPUT ./Measure.aux
-INPUT Measure.aux
-INPUT Measure.aux
 INPUT c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
 INPUT c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb
 INPUT c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb

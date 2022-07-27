@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021/W32TeX) (preloaded format=pdflatex 2021.12.1)  27 JUL 2022 17:30
+This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021/W32TeX) (preloaded format=pdflatex 2021.12.1)  27 JUL 2022 21:16
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -181,7 +181,7 @@ Package: soul 2003/11/17 v2.4 letterspacing/underlining (mf)
 File: l3backend-pdftex.def 2021-10-18 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count274
 \l__pdf_internal_box=\box52
-) (./Drafting.aux (./Measure.aux))
+) (./Drafting.aux)
 \openout1 = `Drafting.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 15.
@@ -251,10 +251,7 @@ Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
  (c:/texlive/2021/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
-))
-\openout2 = `Measure.aux'.
-
- (./Measure.tex
+)) (./Measure.tex
 Chapter 1.
 <figures/ch5_measurement/ADR_OverviewV1.jpg, id=1, 426.8748pt x 240.1773pt>
 File: figures/ch5_measurement/ADR_OverviewV1.jpg Graphic file (type jpg)
@@ -276,7 +273,6 @@ LaTeX Warning: Citation `devisserVisser2014Quasiparticle2014' on page 1 undefine
 LaTeX Warning: Citation `devisserVisser2014Quasiparticle2014' on page 1 undefined on input line 27.
 
 [1
-
 
 
 {c:/texlive/2021/texmf-var/fonts/map/pdftex/updmap/pdftex.map} <./figures/ch5_measurement/ADR_OverviewV1.jpg>]
@@ -330,65 +326,87 @@ Package pdftex.def Info: figures/ch5_measurement/KID1_127mK_P-86KID1_297mK_P-86K
 (pdftex.def)             Requested size: 487.46pt x 292.47905pt.
 [4 <./figures/ch5_measurement/KID1_127mK_P-86KID1_297mK_P-86KID1_314mK_P-86.pdf>]
 
-LaTeX Warning: Citation `janssenEquivalenceOpticalElectrical2014' on page 5 undefined on input line 160.
+LaTeX Warning: Reference `' on page 5 undefined on input line 151.
 
-<figures/ch5_measurement/N_qp_funcT.pdf, id=96, 376.40625pt x 309.155pt>
+<figures/ch5_measurement/Overview_Process.jpg, id=96, 3840.3475pt x 1870.99pt>
+File: figures/ch5_measurement/Overview_Process.jpg Graphic file (type jpg)
+<use figures/ch5_measurement/Overview_Process.jpg>
+Package pdftex.def Info: figures/ch5_measurement/Overview_Process.jpg  used on input line 154.
+(pdftex.def)             Requested size: 410.49551pt x 199.98555pt.
+
+LaTeX Warning: Citation `janssenEquivalenceOpticalElectrical2014' on page 5 undefined on input line 169.
+
+<figures/ch5_measurement/N_qp_funcT.pdf, id=97, 376.40625pt x 309.155pt>
 File: figures/ch5_measurement/N_qp_funcT.pdf Graphic file (type pdf)
 <use figures/ch5_measurement/N_qp_funcT.pdf>
-Package pdftex.def Info: figures/ch5_measurement/N_qp_funcT.pdf  used on input line 172.
-(pdftex.def)             Requested size: 410.49551pt x 337.17982pt.
-<figures/chA_Appendix/Popt_KID1.pdf, id=97, 731.73375pt x 146.5475pt>
+Package pdftex.def Info: figures/ch5_measurement/N_qp_funcT.pdf  used on input line 181.
+(pdftex.def)             Requested size: 513.11745pt x 421.4736pt.
+<figures/chA_Appendix/Popt_KID1.pdf, id=98, 731.73375pt x 146.5475pt>
 File: figures/chA_Appendix/Popt_KID1.pdf Graphic file (type pdf)
 <use figures/chA_Appendix/Popt_KID1.pdf>
-Package pdftex.def Info: figures/chA_Appendix/Popt_KID1.pdf  used on input line 192.
-(pdftex.def)             Requested size: 410.49551pt x 82.21136pt.
-[5 <./figures/ch5_measurement/N_qp_funcT.pdf>]
-<figures/chA_Appendix/Popt_KID2.pdf, id=199, 730.73pt x 146.5475pt>
+Package pdftex.def Info: figures/chA_Appendix/Popt_KID1.pdf  used on input line 201.
+(pdftex.def)             Requested size: 513.11745pt x 102.77037pt.
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<figures/chA_Appendix/Popt_KID2.pdf, id=99, 730.73pt x 146.5475pt>
 File: figures/chA_Appendix/Popt_KID2.pdf Graphic file (type pdf)
 <use figures/chA_Appendix/Popt_KID2.pdf>
-Package pdftex.def Info: figures/chA_Appendix/Popt_KID2.pdf  used on input line 199.
-(pdftex.def)             Requested size: 410.49551pt x 82.32541pt.
-<figures/chA_Appendix/Popt_KID3.pdf, id=200, 731.73375pt x 146.5475pt>
+Package pdftex.def Info: figures/chA_Appendix/Popt_KID2.pdf  used on input line 208.
+(pdftex.def)             Requested size: 513.11745pt x 102.909pt.
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<figures/chA_Appendix/Popt_KID3.pdf, id=100, 731.73375pt x 146.5475pt>
 File: figures/chA_Appendix/Popt_KID3.pdf Graphic file (type pdf)
 <use figures/chA_Appendix/Popt_KID3.pdf>
-Package pdftex.def Info: figures/chA_Appendix/Popt_KID3.pdf  used on input line 206.
-(pdftex.def)             Requested size: 410.49551pt x 82.21136pt.
-<figures/chA_Appendix/Popt_KID4.pdf, id=201, 731.73375pt x 147.55125pt>
+Package pdftex.def Info: figures/chA_Appendix/Popt_KID3.pdf  used on input line 215.
+(pdftex.def)             Requested size: 513.11745pt x 102.77037pt.
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<figures/chA_Appendix/Popt_KID4.pdf, id=101, 731.73375pt x 147.55125pt>
 File: figures/chA_Appendix/Popt_KID4.pdf Graphic file (type pdf)
 <use figures/chA_Appendix/Popt_KID4.pdf>
-Package pdftex.def Info: figures/chA_Appendix/Popt_KID4.pdf  used on input line 213.
-(pdftex.def)             Requested size: 410.49551pt x 82.77446pt.
-<figures/chA_Appendix/Popt_KID5.pdf, id=202, 731.73375pt x 146.5475pt>
+Package pdftex.def Info: figures/chA_Appendix/Popt_KID4.pdf  used on input line 222.
+(pdftex.def)             Requested size: 513.11745pt x 103.47427pt.
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<figures/chA_Appendix/Popt_KID5.pdf, id=102, 731.73375pt x 146.5475pt>
 File: figures/chA_Appendix/Popt_KID5.pdf Graphic file (type pdf)
 <use figures/chA_Appendix/Popt_KID5.pdf>
-Package pdftex.def Info: figures/chA_Appendix/Popt_KID5.pdf  used on input line 220.
-(pdftex.def)             Requested size: 410.49551pt x 82.21136pt.
-<figures/chA_Appendix/Popt_KID6.pdf, id=203, 731.73375pt x 147.55125pt>
+Package pdftex.def Info: figures/chA_Appendix/Popt_KID5.pdf  used on input line 229.
+(pdftex.def)             Requested size: 513.11745pt x 102.77037pt.
+<figures/chA_Appendix/Popt_KID6.pdf, id=103, 731.73375pt x 147.55125pt>
 File: figures/chA_Appendix/Popt_KID6.pdf Graphic file (type pdf)
 <use figures/chA_Appendix/Popt_KID6.pdf>
-Package pdftex.def Info: figures/chA_Appendix/Popt_KID6.pdf  used on input line 226.
-(pdftex.def)             Requested size: 410.49551pt x 82.77446pt.
- [6 <./figures/chA_Appendix/Popt_KID1.pdf> <./figures/chA_Appendix/Popt_KID2.pdf>] [7 <./figures/chA_Appendix/Popt_KID3.pdf> <./figures/chA_Appendix/Popt_KID4.pdf> <./figures/chA_Appendix/Popt_KID5.pdf> <./figures/chA_Appendix/Popt_KID6.pdf>] (./Drafting.aux (./Measure.aux))
+Package pdftex.def Info: figures/chA_Appendix/Popt_KID6.pdf  used on input line 235.
+(pdftex.def)             Requested size: 513.11745pt x 103.47427pt.
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[5 <./figures/ch5_measurement/Overview_Process.jpg>] [6 <./figures/ch5_measurement/N_qp_funcT.pdf> <./figures/chA_Appendix/Popt_KID1.pdf>] [7 <./figures/chA_Appendix/Popt_KID2.pdf> <./figures/chA_Appendix/Popt_KID3.pdf> <./figures/chA_Appendix/Popt_KID4.pdf> <./figures/chA_Appendix/Popt_KID5.pdf> <./figures/chA_Appendix/Popt_KID6.pdf>] (./Drafting.aux)
 
 LaTeX Warning: There were undefined references.
 
- ) )
-(\end occurred when \iftrue on line 16 was incomplete)
-(\end occurred when \ifx on line 16 was incomplete)
-(\end occurred when \ifnum on line 16 was incomplete) 
+ ) ) 
 Here is how much of TeX's memory you used:
- 4759 strings out of 478353
- 72622 string characters out of 5852101
- 384304 words of memory out of 5000000
- 22812 multiletter control sequences out of 15000+600000
+ 4755 strings out of 478353
+ 72675 string characters out of 5852101
+ 384315 words of memory out of 5000000
+ 22811 multiletter control sequences out of 15000+600000
  412220 words of font info for 61 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 55i,7n,62p,923b,313s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 55i,7n,62p,900b,313s stack positions out of 5000i,500n,10000p,200000b,80000s
 <c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb>
-Output written on Drafting.pdf (7 pages, 1087101 bytes).
+Output written on Drafting.pdf (7 pages, 1738784 bytes).
 PDF statistics:
- 663 PDF objects out of 1000 (max. 8388607)
+ 664 PDF objects out of 1000 (max. 8388607)
  534 compressed objects within 6 object streams
  0 named destinations out of 1000 (max. 500000)
- 56 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 61 words of extra memory for PDF output out of 10000 (max. 10000000)
 
