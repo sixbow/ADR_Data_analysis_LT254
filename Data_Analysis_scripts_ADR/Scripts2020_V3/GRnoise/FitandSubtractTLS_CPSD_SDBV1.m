@@ -34,7 +34,8 @@ for kidn = 1:6 %Number of KIDS
         p = 1; % need to loop over all powers. 1:5
         %Data
         Current_freq = CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,1);
-        Current_S_CPSD = abs(real(CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,2)));
+        Current_S_CPSD = abs(CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,2));
+        %Current_S_CPSD_Im = abs(imag(CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,2)));
         f1 = figure;
         ax1 = axes('XScale','log','YScale','log');
         hold(ax1,'on')
@@ -104,17 +105,16 @@ for kidn = 1:6 %Number of KIDS
         hold(ax4,'off')
         set(f4, 'Visible', 'off');
         
+        CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,2) = (CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,2).*abs(TLS_corrected_S_CPSD))./abs(CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,2));
         
-        Export.freq{kidn,nT} = Current_freq;
-        Export.corr_CPSD{kidn,nT} = TLS_corrected_S_CPSD;
     end
 end
-
+%%
 
 
 %% Closing
 
-save([Outputfolderdir,filesep,matfile],'NOISE','IndexP_sub_opt','KIDnumbers');
+%save([Outputfolderdir,filesep,matfile],'NOISE','IndexP_sub_opt','KIDnumbers');
 save([Outputfolderdir,filesep,matfile2],'CrossPSDNOISE');
 disp('Jobs done!');
 % disp('Press any key to quit and clean up!')

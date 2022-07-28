@@ -255,9 +255,9 @@ Workflow is as follows:
 	\item (Done)Find $P_{opt}$ with Noiseanalysis\_PdepV7.m
 	\item (Done)Find all PSD curves with Noiseanalysis\_2DV1.m
 	\item (Done)Use TDanalysisV2.m to find CrossPSD
-	\item (Working)Find offset of TLS-noise spectrum.
-	\item Remove TLS noise spectrum by subtracting in normal domain
-	\item Use CrossPSDJBV2.m to fit $\tau_{qp}$
+	\item (Done)Find offset of TLS-noise spectrum.
+	\item (Done)Remove TLS noise spectrum by subtracting in normal domain
+	\item (Done)Use CrossPSDJBV2.m to fit $\tau_{qp}$. But works poorly!!
 \end{enumerate}
 \textbf{How to remove offset}
 First we want to know the offset from lets say 1Hz
@@ -266,11 +266,68 @@ That is then the value for $C_{TLS,Cross-PSD,dB}$. I don't know yet if this will
 Once $C_{TLS,Cross-PSD}$ is found we can put it in the formula:
 $$S_{TLS} = 10^{C_{TLS,Cross-PSD,dB}/10}f^{-0.5}$$
 Then we obtain the following in the limit that Readout noise is \textbf{Low!}
-$$S_{GR,lin} = 10^{\frac{S_{CrossPSD}}{10}} - 10^{C_{TLS,Cross-PSD,dB}/10}f^{-0.5}$$
+$$S_{GR,lin} = 10^{\frac{S_{CrossPSD}}{10}} - 10^{C_{TLS,Cross-PSD,dB}/10}f^{-0.5ChipInfo_path}$$
 
 
+The offset was obtained by doing some dirty fitting on the TLS part of the spectrum
+Then this is transferred to linear scale and it is subtracted
+In this process it was nessesary to take the absolute value because otherwise you have trouble displaying it on log-log scale.
 
+The resulting fits are the following:
+I don't think this is really ok. I guess an optical led pulse would have been better but this is for now.
 
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\linewidth]{../Export_Figures_noGit/FiTSubKID1T0.113.png}
+	\caption{}
+	\label{fig:}
+\end{figure}
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\linewidth]{../Export_Figures_noGit/FiTSubKID1T0.315.png}
+	\caption{}
+	\label{fig:}
+\end{figure}
+\FloatBarrier
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\linewidth]{../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID1P_94_crossPSD_Tdep.png}
+	\caption{}
+	\label{fig:}
+\end{figure}
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\linewidth]{../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID2P_90_crossPSD_Tdep.png}
+	\caption{}
+	\label{fig:}
+\end{figure}
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\linewidth]{../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID3P_94_crossPSD_Tdep.png}
+	\caption{}
+	\label{fig:}
+\end{figure}
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\linewidth]{../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID4P_87_crossPSD_Tdep.png}
+	\caption{}
+	\label{fig:}
+\end{figure}
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\linewidth]{../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID5P_92_crossPSD_Tdep.png}
+	\caption{}
+	\label{fig:}
+\end{figure}
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\linewidth]{../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID6P_87_crossPSD_Tdep.png}
+	\caption{}
+	\label{fig:}
+\end{figure}
+
+\FloatBarrier
 
 \subsection*{other parameters and fill in to obtain dark responsivity}
 
@@ -280,6 +337,12 @@ The 2D PSD files are contained In
 %\directory{C:/Users\siets\Dropbox\Universiteit\Natuurkunde\MEP\Simulations\Matlab\ADR\Data\analysis\LT254\Data\Analysis\scripts\ADR\Data\LT254\Sietse\LT254\Sietse\Chip11\Noise\vs\T\FFT\\2D\Noise\_2D.mat}
 %\directory{C:/Users/siets/Dropbox/Universiteit/Natuurkunde/MEP/Simulations/Matlab/ADR/Data/analysis/LT254/Data/Analysis/scripts/ADR/Data/LT254/Sietse/LT254/Sietse/Chip11/Noise/vs/T/FFT//2D/Noise/_2D.mat}
 \directory[bslash]{X:\DIR\SUBDIR}
+
+
+
+
+
+
 
 \subsection*{dark NEP plots}
 

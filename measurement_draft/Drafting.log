@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021/W32TeX) (preloaded format=pdflatex 2022.1.3)  28 JUL 2022 21:37
+This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021/W32TeX) (preloaded format=pdflatex 2022.1.3)  29 JUL 2022 01:57
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -430,7 +430,32 @@ Package: relsize 2013/03/29 ver 4.1
 )
 \l__twmk_indris_int=\count301
 \c@tw@hyphen@char@num=\count302
-) (./Drafting.aux)
+) (./Drafting.aux
+
+LaTeX Warning: Label `fig:' multiply defined.
+
+
+LaTeX Warning: Label `fig:' multiply defined.
+
+
+LaTeX Warning: Label `fig:' multiply defined.
+
+
+LaTeX Warning: Label `fig:' multiply defined.
+
+
+LaTeX Warning: Label `fig:' multiply defined.
+
+
+LaTeX Warning: Label `fig:' multiply defined.
+
+
+LaTeX Warning: Label `fig:' multiply defined.
+
+
+LaTeX Warning: Label `fig:' multiply defined.
+
+)
 \openout1 = `Drafting.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 17.
@@ -646,24 +671,72 @@ Overfull \hbox (2.93716pt too wide) in paragraph at lines 262--265
 \OT1/cmr/bx/n/10 How to re-move off-set \OT1/cmr/m/n/10 First we want to know the off-set from lets say 1Hz That is then the value for $\OML/cmm/m/it/10 C[]$\OT1/cmr/m/n/10 .
  []
 
-[9] (./Drafting.aux)
+<../Export_Figures_noGit/FiTSubKID1T0.113.png, id=639, 362.7954pt x 294.3798pt>
+File: ../Export_Figures_noGit/FiTSubKID1T0.113.png Graphic file (type png)
+<use ../Export_Figures_noGit/FiTSubKID1T0.113.png>
+Package pdftex.def Info: ../Export_Figures_noGit/FiTSubKID1T0.113.png  used on input line 281.
+(pdftex.def)             Requested size: 513.11745pt x 416.40515pt.
+<../Export_Figures_noGit/FiTSubKID1T0.315.png, id=640, 362.7954pt x 294.3798pt>
+File: ../Export_Figures_noGit/FiTSubKID1T0.315.png Graphic file (type png)
+<use ../Export_Figures_noGit/FiTSubKID1T0.315.png>
+Package pdftex.def Info: ../Export_Figures_noGit/FiTSubKID1T0.315.png  used on input line 287.
+(pdftex.def)             Requested size: 513.11745pt x 416.40515pt.
+[9] [10 <../Export_Figures_noGit/FiTSubKID1T0.113.png (PNG copy)>] [11 <../Export_Figures_noGit/FiTSubKID1T0.315.png (PNG copy)>]
+<../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID1P_94_crossPSD_Tdep.png, id=651, 1084.05pt x 361.35pt>
+File: ../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID1P_94_crossPSD_Tdep.png Graphic file (type png)
+<use ../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID1P_94_crossPSD_Tdep.png>
+Package pdftex.def Info: ../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID1P_94_crossPSD_Tdep.png  used on input line 295.
+(pdftex.def)             Requested size: 513.11745pt x 171.04204pt.
+<../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID2P_90_crossPSD_Tdep.png, id=652, 1084.05pt x 361.35pt>
+File: ../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID2P_90_crossPSD_Tdep.png Graphic file (type png)
+<use ../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID2P_90_crossPSD_Tdep.png>
+Package pdftex.def Info: ../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID2P_90_crossPSD_Tdep.png  used on input line 301.
+(pdftex.def)             Requested size: 513.11745pt x 171.04204pt.
+<../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID3P_94_crossPSD_Tdep.png, id=653, 1084.05pt x 361.35pt>
+File: ../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID3P_94_crossPSD_Tdep.png Graphic file (type png)
+<use ../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID3P_94_crossPSD_Tdep.png>
+Package pdftex.def Info: ../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID3P_94_crossPSD_Tdep.png  used on input line 307.
+(pdftex.def)             Requested size: 513.11745pt x 171.04204pt.
+<../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID4P_87_crossPSD_Tdep.png, id=654, 1084.05pt x 361.35pt>
+File: ../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID4P_87_crossPSD_Tdep.png Graphic file (type png)
+<use ../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID4P_87_crossPSD_Tdep.png>
+Package pdftex.def Info: ../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID4P_87_crossPSD_Tdep.png  used on input line 313.
+(pdftex.def)             Requested size: 513.11745pt x 171.04204pt.
+<../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID5P_92_crossPSD_Tdep.png, id=655, 1084.05pt x 361.35pt>
+File: ../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID5P_92_crossPSD_Tdep.png Graphic file (type png)
+<use ../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID5P_92_crossPSD_Tdep.png>
+Package pdftex.def Info: ../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID5P_92_crossPSD_Tdep.png  used on input line 319.
+(pdftex.def)             Requested size: 513.11745pt x 171.04204pt.
+<../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID6P_87_crossPSD_Tdep.png, id=656, 1084.05pt x 361.35pt>
+File: ../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID6P_87_crossPSD_Tdep.png Graphic file (type png)
+<use ../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID6P_87_crossPSD_Tdep.png>
+Package pdftex.def Info: ../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID6P_87_crossPSD_Tdep.png  used on input line 325.
+(pdftex.def)             Requested size: 513.11745pt x 171.04204pt.
+ [12
+
+ <../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID1P_94_crossPSD_Tdep.png (PNG copy)> <../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID2P_90_crossPSD_Tdep.png (PNG copy)>] [13 <../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID3P_94_crossPSD_Tdep.png (PNG copy)> <../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID4P_87_crossPSD_Tdep.png (PNG copy)> <../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID5P_92_crossPSD_Tdep.png (PNG copy)>] [14 <../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID6P_87_crossPSD_Tdep.png (PNG copy)>] [15
+
+] (./Drafting.aux)
 
 LaTeX Warning: There were undefined references.
 
+
+LaTeX Warning: There were multiply-defined labels.
+
  ) ) 
 Here is how much of TeX's memory you used:
- 17239 strings out of 478353
- 342819 string characters out of 5852102
- 636638 words of memory out of 5000000
- 35013 multiletter control sequences out of 15000+600000
+ 17298 strings out of 478353
+ 347014 string characters out of 5852102
+ 636679 words of memory out of 5000000
+ 35061 multiletter control sequences out of 15000+600000
  412388 words of font info for 62 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  99i,11n,97p,900b,458s stack positions out of 5000i,500n,10000p,200000b,80000s
 <c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on Drafting.pdf (9 pages, 1769236 bytes).
+Output written on Drafting.pdf (15 pages, 5467732 bytes).
 PDF statistics:
- 707 PDF objects out of 1000 (max. 8388607)
- 555 compressed objects within 6 object streams
+ 734 PDF objects out of 1000 (max. 8388607)
+ 568 compressed objects within 6 object streams
  0 named destinations out of 1000 (max. 500000)
- 169 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 209 words of extra memory for PDF output out of 10000 (max. 10000000)
 
