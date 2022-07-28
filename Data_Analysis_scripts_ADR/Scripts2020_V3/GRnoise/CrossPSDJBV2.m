@@ -335,7 +335,7 @@ for kidn= 1:length(KIDnumbers) % LOOP OVER ALL UNIQUE KIDS,
         kleur2 = colormapJetJB(length(IndexP_sub_opt{kidn}));
         for p=1:length(IndexP_sub_opt{kidn})% over Power
             for nT=1:length(NOISE(kidn).Temperature) % over T
-                
+                disp(['--> nT = ',string(nT)]);
                 %quick variables
                 CPSD = abs(real(CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,2)));
                 if length(CPSD) > 10%only do this if possible
@@ -627,6 +627,7 @@ for kidn= 1:length(KIDnumbers) % LOOP OVER ALL UNIQUE KIDS,
                     subplot(1,3,2)%noise + fit log
                     loglog(CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,1),abs(real(CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,2))),'-',...
                         'LineWidth',1,'color',kleur(nT,:));hold on;
+                    %disp(['--> nT = ',string(nT)]);
                     if ~isnan(CrossPSDFit(IndexP_sub_opt{kidn}(p)).tau(nT))
                         loglog(CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,1),CrossPSDFit(IndexP_sub_opt{kidn}(p)).Fit{nT},'-k');
                     else

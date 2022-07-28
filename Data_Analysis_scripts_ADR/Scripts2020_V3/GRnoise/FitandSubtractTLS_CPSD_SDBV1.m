@@ -22,11 +22,18 @@ CPSDfolder = [ChipInfo_path, filesep, 'CrossPSD2D'] ;
 if ~exist(Outputfolderdir, 'dir')
        mkdir(Outputfolderdir)
 end % This makes a subfolder called CPSDMinusTLS which will be were the files for this script will be created
+% will be making for loop, But for now 
+kidn = 1;
+nT = 1;%Likely loop between 1:14  ~length()
+p = 1; % need to loop over all powers. 
+loglog(CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,1),abs(real(CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,2))))
 
-
-
-
-
+% \will be making for Power_loop, But for now <--- Place end here!
+% \will be making for Temp_loop, But for now <--- Place end here!
+% \will be making for KID_loop, But for now <--- Place end here!
 save([Outputfolderdir,filesep,matfile],'NOISE','IndexP_sub_opt','KIDnumbers');
 save([Outputfolderdir,filesep,matfile2],'CrossPSDNOISE');
 disp('Jobs done!');
+% disp('Press any key to quit and clean up!')
+% pause
+% clear all
