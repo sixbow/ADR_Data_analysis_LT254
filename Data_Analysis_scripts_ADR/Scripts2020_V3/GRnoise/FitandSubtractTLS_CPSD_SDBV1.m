@@ -26,40 +26,93 @@ if ~exist(Outputfolderdir, 'dir')
        mkdir(Outputfolderdir)
 end % This makes a subfolder called CPSDMinusTLS which will be were the files for this script will be created
 % will be making for loop, But for now 
-%%
-%f1 = figure();
-%hold on
+
+%% Analysis
+close all
 kidn = 1;
-nT = 1;%Likely loop between 1:14  ~length()
-p = 1; % need to loop over all powers.
+nT = 3;%Likely loop between 1:14  ~length()
+
+
+p = 5; % need to loop over all powers. 1:5
 %Data
 Current_freq = CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,1);
 Current_S_CPSD = abs(real(CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,2)));
-%ax1 = axes('XScale', 'log', 'YScale', 'log');
-loglog(Current_freq,Current_S_CPSD);
-% x(1) = C_{TLS}
-% x(2) = \alpha ~0.5
-% model S_{TLS} = C_{TLS}*(f)^{\alpha}
-%begin_data_point = 1; 
-%end_data_point = 30; % We only want to fit the first part of the TLS noise since there it is dominant
+f1 = figure;
+ax1 = axes('XScale','log','YScale','log');
+hold(ax1,'on')
+plot(Current_freq,Current_S_CPSD);
+begin_data_point = 3; 
+end_data_point = 18; % We only want to fit the first part of the TLS noise since there it is dominant
 % we have about 50 points so first 5 points seems fine
-%x0 = [(10^-7) 0.5];
-%Model_TLS = @(x,fdata)x(1)*(fdata).^(x(2));
+x0 = [(10^-7) 1.4];
+Model_TLS = @(x,fdata)x(1)*power(fdata,-x(2)); %Model we use to fit
+% Non-linear fit is done in next line!
+[x,resnorm,~,exitflag,output] = lsqcurvefit(Model_TLS,x0,Current_freq(begin_data_point:end_data_point),Current_S_CPSD(begin_data_point:end_data_point))
+% Plotting non-linear least squares approach..
+plot(Current_freq,Model_TLS(x,Current_freq));
+xline(Current_freq(begin_data_point),'--')
+xline(Current_freq(end_data_point),'--')
+grid on
+% Trying how the Linear goes with fitting in log-log
+Xlog_fitr = log10(Current_freq(begin_data_point:end_data_point)); % f = e^x
+Ylog_fitr = log10(Current_S_CPSD(begin_data_point:end_data_point));
+log_fit = polyfit(Xlog_fitr,Ylog_fitr,1);
+LinearModel = @(coof,f)power(10,coof(2)).*power(f,coof(1));
+LogSpaceModel = @(coof,x) coof(1).*x + coof(2);
+%Plotting the cheatmodel
+plot(Current_freq,LinearModel(log_fit,Current_freq));
+TLS_corrected_S_CPSD = abs(Current_S_CPSD - LinearModel(log_fit,Current_freq)); %+ ones(1,length(Current_freq))*min(Current_S_CPSD)  ;
+plot(Current_freq,TLS_corrected_S_CPSD);
 
-%[x,resnorm,~,exitflag,output] = lsqcurvefit(Model_TLS,x0,Current_freq(begin_data_point:end_data_point),Current_S_CPSD(begin_data_point:end_data_point))
-%loglog(Current_freq,Model_TLS(x,Current_freq));
-% xline(Current_freq(begin_data_point),'--')
-% xline(Current_freq(end_data_point),'--')
-% f2 = figure;
-% plot(Current_freq,Current_S_CPSD)
-% plot(Current_freq,Model_TLS(x,Current_freq));
-% xline(Current_freq(begin_data_point),'--')
-% xline(Current_freq(end_data_point),'--')
+legend('Cross-PSD','Non-linear model','Begin fit','End fit','Lin in loglogspace')
+title("\textbf{Warning} Added absolute value to avoid NaN!! Problem is you dont know S_{TLS}")
+hold(ax1,'off')
 
-% \will be making for Power_loop, But for now <--- Place end here!
-% \will be making for Temp_loop, But for now <--- Place end here!
-%hold off
-% \will be making for KID_loop, But for now <--- Place end here!
+f2a = figure;
+ax2a = axes('XScale','linear','YScale','linear');
+hold(ax2a,'on')
+plot(Xlog_fitr,Ylog_fitr);
+plot(Xlog_fitr,LogSpaceModel(log_fit,Xlog_fitr))
+%plot(Current_freq(begin_data_point:end_data_point),LinearModel(log_fit,Current_freq(begin_data_point:end_data_point)));
+
+hold(ax2a,'off')
+set(f2a, 'Visible', 'on');
+grid on
+
+f2 = figure;
+ax2 = axes('XScale','linear','YScale','linear');
+hold(ax2,'on')
+plot(log10(Current_freq),10.*log10(Current_S_CPSD));
+hold(ax2,'off')
+set(f2, 'Visible', 'off');
+
+f3 = figure;
+ax3 = axes('XScale','linear','YScale','linear');
+hold(ax3,'on')
+plot(Current_freq(begin_data_point:end_data_point),Current_S_CPSD(begin_data_point:end_data_point));
+plot(Current_freq(begin_data_point:end_data_point),Model_TLS(x,Current_freq(begin_data_point:end_data_point)));
+title('What is happening in linear space in the fitting window')
+hold(ax3,'off')
+set(f3, 'Visible', 'off');
+%plot(Current_freq,Model_TLS(Current_freq));
+
+
+f4 = figure;
+ax4 = axes('XScale','linear','YScale','linear');
+hold(ax4,'on')
+hold(ax4,'off')
+set(f4, 'Visible', 'off');
+
+
+
+
+
+
+
+
+
+
+%% Closing
 
 save([Outputfolderdir,filesep,matfile],'NOISE','IndexP_sub_opt','KIDnumbers');
 save([Outputfolderdir,filesep,matfile2],'CrossPSDNOISE');

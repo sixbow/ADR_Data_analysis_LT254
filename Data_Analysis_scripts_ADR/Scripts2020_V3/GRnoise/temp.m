@@ -30,7 +30,9 @@ end % This makes a subfolder called CPSDMinusTLS which will be were the files fo
 %% Analysis
 close all
 kidn = 1;
-nT = 12;%Likely loop between 1:14  ~length()
+nT = 3;%Likely loop between 1:14  ~length()
+
+
 p = 5; % need to loop over all powers. 1:5
 %Data
 Current_freq = CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,1);
