@@ -30,8 +30,8 @@ end % This makes a subfolder called CPSDMinusTLS which will be were the files fo
 %% Analysis
 close all
 kidn = 1;
-nT = 1;%Likely loop between 1:14  ~length()
-p = 5; % need to loop over all powers.
+nT = 12;%Likely loop between 1:14  ~length()
+p = 5; % need to loop over all powers. 1:5
 %Data
 Current_freq = CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,1);
 Current_S_CPSD = abs(real(CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,2)));
@@ -42,7 +42,7 @@ plot(Current_freq,Current_S_CPSD);
 begin_data_point = 3; 
 end_data_point = 18; % We only want to fit the first part of the TLS noise since there it is dominant
 % we have about 50 points so first 5 points seems fine
-x0 = [(10^-7) 0.1];
+x0 = [(10^-7) 1.4];
 Model_TLS = @(x,fdata)x(1)*power(fdata,-x(2)); %Model we use to fit
 % Non-linear fit is done in next line!
 [x,resnorm,~,exitflag,output] = lsqcurvefit(Model_TLS,x0,Current_freq(begin_data_point:end_data_point),Current_S_CPSD(begin_data_point:end_data_point))
@@ -59,12 +59,11 @@ LinearModel = @(coof,f)power(10,coof(2)).*power(f,coof(1));
 LogSpaceModel = @(coof,x) coof(1).*x + coof(2);
 %Plotting the cheatmodel
 plot(Current_freq,LinearModel(log_fit,Current_freq));
-%Outpou= Current_S_CPSD
+TLS_corrected_S_CPSD = abs(Current_S_CPSD - LinearModel(log_fit,Current_freq)); %+ ones(1,length(Current_freq))*min(Current_S_CPSD)  ;
+plot(Current_freq,TLS_corrected_S_CPSD);
 
-
-
-
-legend('Cross-PSD','Non-linear model','Lin in loglogspace')
+legend('Cross-PSD','Non-linear model','Begin fit','End fit','Lin in loglogspace')
+title("\textbf{Warning} Added absolute value to avoid NaN!! Problem is you dont know S_{TLS}")
 hold(ax1,'off')
 
 f2a = figure;
