@@ -39,7 +39,7 @@ f1 = figure;
 ax1 = axes('XScale','log','YScale','log');
 hold(ax1,'on')
 plot(Current_freq,Current_S_CPSD);
-begin_data_point = 6; 
+begin_data_point = 3; 
 end_data_point = 18; % We only want to fit the first part of the TLS noise since there it is dominant
 % we have about 50 points so first 5 points seems fine
 x0 = [(10^-7) 0.1];
@@ -55,10 +55,15 @@ grid on
 Xlog_fitr = log10(Current_freq(begin_data_point:end_data_point)); % f = e^x
 Ylog_fitr = log10(Current_S_CPSD(begin_data_point:end_data_point));
 log_fit = polyfit(Xlog_fitr,Ylog_fitr,1);
-LinearModel = @(coof,f)power(10,coof(1)).*power(f,coof(2));
+LinearModel = @(coof,f)power(10,coof(2)).*power(f,coof(1));
 LogSpaceModel = @(coof,x) coof(1).*x + coof(2);
 %Plotting the cheatmodel
-plot(Current_freq,LinearModel([-6.12 -1.2],Current_freq));
+plot(Current_freq,LinearModel(log_fit,Current_freq));
+%Outpou= Current_S_CPSD
+
+
+
+
 legend('Cross-PSD','Non-linear model','Lin in loglogspace')
 hold(ax1,'off')
 
@@ -91,7 +96,11 @@ set(f3, 'Visible', 'off');
 %plot(Current_freq,Model_TLS(Current_freq));
 
 
-
+f4 = figure;
+ax4 = axes('XScale','linear','YScale','linear');
+hold(ax4,'on')
+hold(ax4,'off')
+set(f4, 'Visible', 'off');
 
 
 

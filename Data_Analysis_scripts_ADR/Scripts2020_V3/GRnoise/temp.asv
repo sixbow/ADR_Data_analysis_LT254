@@ -47,7 +47,7 @@ Model_TLS = @(x,fdata)x(1)*power(fdata,-x(2)); %Model we use to fit
 % Non-linear fit is done in next line!
 [x,resnorm,~,exitflag,output] = lsqcurvefit(Model_TLS,x0,Current_freq(begin_data_point:end_data_point),Current_S_CPSD(begin_data_point:end_data_point))
 % Plotting non-linear least squares approach..
-plot(Current_freq,Model_TLS([1E-7 3],Current_freq));
+plot(Current_freq,Model_TLS(x,Current_freq));
 xline(Current_freq(begin_data_point),'--')
 xline(Current_freq(end_data_point),'--')
 grid on
@@ -55,10 +55,16 @@ grid on
 Xlog_fitr = log10(Current_freq(begin_data_point:end_data_point)); % f = e^x
 Ylog_fitr = log10(Current_S_CPSD(begin_data_point:end_data_point));
 log_fit = polyfit(Xlog_fitr,Ylog_fitr,1);
-LinearModel = @(coof,f)power(10,coof(1)).*power(f,coof(2));
+LinearModel = @(coof,f)power(10,coof(2)).*power(f,coof(1));
 LogSpaceModel = @(coof,x) coof(1).*x + coof(2);
 %Plotting the cheatmodel
-plot(Current_freq,LinearModel([-6.12 -1.2],Current_freq));
+plot(Current_freq,LinearModel(,Current_freq));
+%Outpou= Current_S_CPSD
+
+
+
+
+legend('Cross-PSD','Non-linear model','Lin in loglogspace')
 hold(ax1,'off')
 
 f2a = figure;
@@ -67,11 +73,10 @@ hold(ax2a,'on')
 plot(Xlog_fitr,Ylog_fitr);
 plot(Xlog_fitr,LogSpaceModel(log_fit,Xlog_fitr))
 %plot(Current_freq(begin_data_point:end_data_point),LinearModel(log_fit,Current_freq(begin_data_point:end_data_point)));
-legend('Cross-PSD','')
+
 hold(ax2a,'off')
 set(f2a, 'Visible', 'on');
 grid on
-
 
 f2 = figure;
 ax2 = axes('XScale','linear','YScale','linear');
@@ -88,8 +93,22 @@ plot(Current_freq(begin_data_point:end_data_point),Model_TLS(x,Current_freq(begi
 title('What is happening in linear space in the fitting window')
 hold(ax3,'off')
 set(f3, 'Visible', 'off');
-
 %plot(Current_freq,Model_TLS(Current_freq));
+
+
+f4 = figure;
+ax4 = axes('XScale','linear','YScale','linear');
+hold(ax4,'on')
+hold(ax4,'off')
+set(f4, 'Visible', 'off');
+
+
+
+
+
+
+
+
 
 
 %% Closing
