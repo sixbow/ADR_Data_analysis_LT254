@@ -41,8 +41,7 @@ for kidn = 1:6 %Number of KIDS
         plot(Current_freq,Current_S_CPSD);
         begin_data_point = 3; 
         end_data_point = 18; % We only want to fit the first part of the TLS noise since there it is dominant
-        add_gr_data_point = 30;
-        %plot(Current_freq(add_gr_data_point),Current_S_CPSD(add_gr_data_point),'o', 'MarkerFaceColor', 'b','LineWidth',3);
+        
         % we have about 50 points so first 5 points seems fine
         x0 = [(10^-7) 1.4];
         Model_TLS = @(x,fdata)x(1)*power(fdata,-x(2)); %Model we use to fit

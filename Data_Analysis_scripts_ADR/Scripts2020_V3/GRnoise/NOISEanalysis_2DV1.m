@@ -11,7 +11,7 @@ global FITF0
 %==========================================================================
 ChipInfo.path = ['../..' filesep]; %root path where data is, one higher than the scripts
 %FFTsubdir = ['Noise 120mK' filesep 'FFT' filesep 'Power'];  120mK    %
-FFTsubdir = ['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D'];     %
+FFTsubdir = ['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D_Popt'];     %
 
 %\\FFT\2D
 ChipInfo.IndexPref = 1;     %Index of the power that is used as reference for Popt finding. (should not matter here)

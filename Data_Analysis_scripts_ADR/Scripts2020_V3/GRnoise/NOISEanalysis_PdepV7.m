@@ -14,7 +14,8 @@ ChipInfo.path = ['../..' filesep]; %root path where data is, one higher than the
 %ChipInfo.path = [ '..' filesep '..' ];%without filesep at end
 
 %FFTsubdir = ['Noise 120mK' filesep 'FFT' filesep 'Power'];  120mK    %
-FFTsubdir = ['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D'];     %
+%FFTsubdir = ['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D'];     %
+FFTsubdir = ['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D_Popt'];     %
 
 ChipInfo.IndexPref = 3;     %Index of the power that is used as reference for Popt finding.
 ReadPoptfile = 1;             %default=0. If set to 1 optimum power takemn from Popt file, that is created by this script. Usefull to be abel to rerun the sript for the correct Pot.

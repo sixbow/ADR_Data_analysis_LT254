@@ -53,6 +53,7 @@ if ischar(fn)
         saveas(gcf,[fn '.fig'])
     end
     set(gcf,'PaperPositionMode','auto');
-    print([fn '.png'],'-dpng','-r300')
+    disp(['Path fn: ',fn])
+    print([fn,'.png'],'-dpng','-r300')
 end
 end
