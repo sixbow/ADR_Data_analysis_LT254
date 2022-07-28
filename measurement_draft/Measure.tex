@@ -234,6 +234,12 @@ asdfaf
     \frac{1}{Q_{i}(T))} \textrm{  Vs.  } T
 \end{equation}
 
+
+\begin{enumerate}
+	\item Find all dips in S21 data for all temperatures and T
+\end{enumerate}
+
+
 \subsection*{Convert T to $N_{qp}$}
 
 \begin{figure}[ht]
@@ -244,6 +250,27 @@ asdfaf
 \end{figure}
 
 \subsection*{Determine $\tau_{qp} $with cross power spectral density - fitting}
+Workflow is as follows:
+\begin{enumerate}
+	\item (Done)Find $P_{opt}$ with Noiseanalysis\_PdepV7.m
+	\item (Done)Find all PSD curves with Noiseanalysis\_2DV1.m
+	\item (Done)Use TDanalysisV2.m to find CrossPSD
+	\item (Working)Find offset of TLS-noise spectrum.
+	\item Remove TLS noise spectrum by subtracting in normal domain
+	\item Use CrossPSDJBV2.m to fit $\tau_{qp}$
+\end{enumerate}
+\textbf{How to remove offset}
+First we want to know the offset from lets say 1Hz
+That is then the value for $C_{TLS,Cross-PSD,dB}$. I don't know yet if this will be the same as $C_{TLS}$. I don't think so. 
+
+Once $C_{TLS,Cross-PSD}$ is found we can put it in the formula:
+$$S_{TLS} = 10^{C_{TLS,Cross-PSD,dB}/10}f^{-0.5}$$
+Then we obtain the following in the limit that Readout noise is \textbf{Low!}
+$$S_{GR,lin} = 10^{\frac{S_{CrossPSD}}{10}} - 10^{C_{TLS,Cross-PSD,dB}/10}f^{-0.5}$$
+
+
+
+
 
 \subsection*{other parameters and fill in to obtain dark responsivity}
 
