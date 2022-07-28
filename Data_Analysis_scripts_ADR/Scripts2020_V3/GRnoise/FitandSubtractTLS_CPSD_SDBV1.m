@@ -106,12 +106,6 @@ set(f4, 'Visible', 'off');
 
 
 
-
-
-
-
-
-
 %% Closing
 
 save([Outputfolderdir,filesep,matfile],'NOISE','IndexP_sub_opt','KIDnumbers');
