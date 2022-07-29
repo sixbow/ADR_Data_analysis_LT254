@@ -26,46 +26,57 @@ if ~exist(Outputfolderdir, 'dir')
        mkdir(Outputfolderdir)
 end % This makes a subfolder called CPSDMinusTLS which will be were the files for this script will be created
 % will be making for loop, But for now 
-
+options = optimoptions('lsqcurvefit','Algorithm','levenberg-marquardt');
+options.OptimalityTolerance =  10^(-80);
+options.StepTolerance =  10^(-80);
+options.FunctionTolerance =  10^(-80);
 %% Analysis
 close all
-for kidn = 1:6 %Number of KIDS
-    for nT =1:14%Number of Temperatures. Likely loop between 1:14  ~length()
+for kidn = 1:1%6 %Number of KIDS
+    for nT =1:1%4%Number of Temperatures. Likely loop between 1:14  ~length()
         p = 1; % need to loop over all powers. 1:5
         %Data
         Current_freq = CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,1);
-        Current_S_CPSD = abs(CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,2));
-        %Current_S_CPSD_Im = abs(imag(CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,2)));
+        Current_S_CPSD_Re = real(CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,2));
+        Current_S_CPSD_Im = imag(CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,2));
         f1 = figure;
         ax1 = axes('XScale','log','YScale','log');
         hold(ax1,'on')
-        plot(Current_freq,Current_S_CPSD);
-        begin_data_point = 3; 
-        end_data_point = 18; % We only want to fit the first part of the TLS noise since there it is dominant
-        add_gr_data_point = 30;
+        plot(Current_freq,Current_S_CPSD_Re,Current_freq,Current_S_CPSD_Im);
+        begin_data_point = 1; 
+        end_data_point = 40; % We only want to fit the first part of the TLS noise since there it is dominant
+        %add_gr_data_point = 30;
         %plot(Current_freq(add_gr_data_point),Current_S_CPSD(add_gr_data_point),'o', 'MarkerFaceColor', 'b','LineWidth',3);
         % we have about 50 points so first 5 points seems fine
-        x0 = [(10^-7) 1.4];
+        x0 = [(10^-8) 1];
         Model_TLS = @(x,fdata)x(1)*power(fdata,-x(2)); %Model we use to fit
         % Non-linear fit is done in next line!
-        [x,resnorm,~,exitflag,output] = lsqcurvefit(Model_TLS,x0,Current_freq(begin_data_point:end_data_point),Current_S_CPSD(begin_data_point:end_data_point));
+        %options = optimoptions('lsqcurvefit','Algorithm','levenberg-marquardt');
+        %[x,resnorm,~,exitflag,output] = lsqcurvefit(Model_TLS,x0,Current_freq(begin_data_point:end_data_point),Current_S_CPSD_Re(begin_data_point:end_data_point),[],[],options);
         % Plotting non-linear least squares approach..
-        plot(Current_freq,Model_TLS(x,Current_freq));
+        %plot(Current_freq,Model_TLS(x,Current_freq));
         xline(Current_freq(begin_data_point),'--')
         xline(Current_freq(end_data_point),'--')
         grid on
-        % Trying how the Linear goes with fitting in log-log
-        Xlog_fitr = log10(Current_freq(begin_data_point:end_data_point)); % f = e^x
-        Ylog_fitr = log10(Current_S_CPSD(begin_data_point:end_data_point));
-        log_fit = polyfit(Xlog_fitr,Ylog_fitr,1);
+        % Trying how the Linear goes with fitting in log-log! 
+        % Real part
+        Xlog_fitr_Re = log10(Current_freq(begin_data_point:end_data_point)); % f = e^x
+        Ylog_fitr_Re = log10(Current_S_CPSD_Re(begin_data_point:end_data_point));
+        log_fit_Re = polyfit(Xlog_fitr_Re,Ylog_fitr_Re,1);
+        % Imag Part
+        Xlog_fitr_Im = log10(Current_freq(begin_data_point:end_data_point)); % f = e^x
+        Ylog_fitr_Im = log10(Current_S_CPSD_Im(begin_data_point:end_data_point));
+        log_fit_Re = polyfit(Xlog_fitr_Im,Ylog_fitr_Im,1);
         LinearModel = @(coof,f)power(10,coof(2)).*power(f,coof(1));
         LogSpaceModel = @(coof,x) coof(1).*x + coof(2);
-        %Plotting the cheatmodel
-        plot(Current_freq,LinearModel(log_fit,Current_freq));
-        TLS_corrected_S_CPSD = abs(Current_S_CPSD - LinearModel(log_fit,Current_freq)); %+ ones(1,length(Current_freq))*min(Current_S_CPSD)  ;
-        plot(Current_freq,TLS_corrected_S_CPSD);
+        %Plotting the Linear in LogLog
+        plot(Current_freq,LinearModel(log_fit_Re,Current_freq));
+        plot(Current_freq,LinearModel(log_fit_Im,Current_freq));
+        TLS_corrected_S_CPSD_Re = abs(Current_S_CPSD - LinearModel(log_fit_Re,Current_freq)); %+ ones(1,length(Current_freq))*min(Current_S_CPSD)  ;
+        TLS_corrected_S_CPSD_Im = abs(Current_S_CPSD - LinearModel(log_fit_Im,Current_freq)); %+ ones(1,length(Current_freq))*min(Current_S_CPSD)  ;
+        plot(Current_freq,TLS_corrected_S_CPSD_Re);
 
-        legend('Cross-PSD','Non-linear model','Begin fit','End fit','Lin in loglogspace')
+        legend('Cross-PSD','Begin fit','End fit','Lin in loglogspace')
         title(sprintf('KID# %d T= %1.3f K P_{read} %d dBm ',kidn,NOISE(p).Temperature(nT),NOISE(kidn).ReadPower))
         hold(ax1,'off')
         set(f1, 'Visible', 'off');
@@ -75,8 +86,8 @@ for kidn = 1:6 %Number of KIDS
         f2a = figure;
         ax2a = axes('XScale','linear','YScale','linear');
         hold(ax2a,'on')
-        plot(Xlog_fitr,Ylog_fitr);
-        plot(Xlog_fitr,LogSpaceModel(log_fit,Xlog_fitr))
+        plot(Xlog_fitr_Re,Ylog_fitr_Re);
+        plot(Xlog_fitr_Re,LogSpaceModel(log_fit,Xlog_fitr_Re))
         %plot(Current_freq(begin_data_point:end_data_point),LinearModel(log_fit,Current_freq(begin_data_point:end_data_point)));
 
         hold(ax2a,'off')
@@ -98,6 +109,7 @@ for kidn = 1:6 %Number of KIDS
         title('What is happening in linear space in the fitting window')
         hold(ax3,'off')
         set(f3, 'Visible', 'off');
+        
         %plot(Current_freq,Model_TLS(Current_freq));
         f4 = figure;
         ax4 = axes('XScale','linear','YScale','linear');
@@ -105,7 +117,7 @@ for kidn = 1:6 %Number of KIDS
         hold(ax4,'off')
         set(f4, 'Visible', 'off');
         
-        CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,1) = CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,1)*abs(TLS_corrected_S_CPSD)
+        CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,2) = (CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,2).*abs(TLS_corrected_S_CPSD_Re))./abs(CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,2));
         
     end
 end
@@ -114,7 +126,7 @@ end
 
 %% Closing
 
-save([Outputfolderdir,filesep,matfile],'NOISE','IndexP_sub_opt','KIDnumbers');
+%save([Outputfolderdir,filesep,matfile],'NOISE','IndexP_sub_opt','KIDnumbers');
 save([Outputfolderdir,filesep,matfile2],'CrossPSDNOISE');
 disp('Jobs done!');
 % disp('Press any key to quit and clean up!')
