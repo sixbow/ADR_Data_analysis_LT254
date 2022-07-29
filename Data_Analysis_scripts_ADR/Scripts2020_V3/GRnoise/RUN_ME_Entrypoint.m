@@ -15,16 +15,17 @@ run('NOISEanalysis_2DV1.m')
 %pause; % If you want to save some figures uncomment this line.
 clear all 
 close all
-%% (Done) Does PSD analysis for all temperatures. 
-% Known issue. Could not open file ? Makegoodfigure...
+%% (Done) Does CPSD analysis for all temperatures. 
+% Fixed:Known issue. Could not open file ? Makegoodfigure...
 run('TDanalysisV2.m')
+% Where are figures saved?
 %pause; % If you want to save some figures uncomment this line.
 clear all 
 close all
-%% Remove TLS component - Attempt at removing the TLS by fitting and subtracting.
+%% (Done)Remove TLS component - Attempt at removing the TLS by fitting and subtracting.
 run('FitandSubtractTLS_CPSD_SDBV1.m')
 
-%% Fitting using Jochem script
+%% (Done)Fitting using Jochem script
 run('CrossPSDJBV2.m')
 clear all 
 close all

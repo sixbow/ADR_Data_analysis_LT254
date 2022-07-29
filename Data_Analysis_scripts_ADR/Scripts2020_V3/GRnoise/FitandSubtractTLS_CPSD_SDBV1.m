@@ -45,7 +45,7 @@ for kidn = 1:6 %Number of KIDS
         add_gr_data_point = 30;
         %plot(Current_freq(add_gr_data_point),Current_S_CPSD(add_gr_data_point),'o', 'MarkerFaceColor', 'b','LineWidth',3);
         % we have about 50 points so first 5 points seems fine
-        x0 = [(10^-7) 1.4];
+        x0 = [(10^-7) 0.5];
         Model_TLS = @(x,fdata)x(1)*power(fdata,-x(2)); %Model we use to fit
         % Non-linear fit is done in next line!
         [x,resnorm,~,exitflag,output] = lsqcurvefit(Model_TLS,x0,Current_freq(begin_data_point:end_data_point),Current_S_CPSD(begin_data_point:end_data_point));
@@ -97,7 +97,7 @@ for kidn = 1:6 %Number of KIDS
         plot(Current_freq(begin_data_point:end_data_point),Model_TLS(x,Current_freq(begin_data_point:end_data_point)));
         title('What is happening in linear space in the fitting window')
         hold(ax3,'off')
-        set(f3, 'Visible', 'off');
+        set(f3, 'Visible', 'on');
         %plot(Current_freq,Model_TLS(Current_freq));
         f4 = figure;
         ax4 = axes('XScale','linear','YScale','linear');
