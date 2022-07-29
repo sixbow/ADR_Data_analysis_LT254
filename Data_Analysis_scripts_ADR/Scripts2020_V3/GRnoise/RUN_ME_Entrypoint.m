@@ -8,13 +8,14 @@ close all
 run('NOISEanalysis_PdepV7.m')
 clear all 
 close all
-%%(Done) Does PSD analysis for all temperatures. 
+%% (Done) Does PSD analysis for all temperatures based on the time domain data that is present
+% Also calculates the crossPSD.
 % Known issue. Could not open file ? Makegoodfigure...
 run('NOISEanalysis_2DV1.m')
 %pause; % If you want to save some figures uncomment this line.
 clear all 
 close all
-%%(Done) Does PSD analysis for all temperatures. 
+%% (Done) Does PSD analysis for all temperatures. 
 % Known issue. Could not open file ? Makegoodfigure...
 run('TDanalysisV2.m')
 %pause; % If you want to save some figures uncomment this line.
@@ -29,6 +30,10 @@ clear all
 close all
 
 %% S21 analysis (F0(T),Qi(T))
+% Added S21input.txt to timedomain folder , tab seperated KID#  F0[GHz] Q
+% L_alu[um]
+run('S21analysis_GRV5.m')
+
 
 
 %% Main analysis script

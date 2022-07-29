@@ -13,7 +13,7 @@ clc
 close all
 
 %sub-dir inside ChipPath where the S21 T dependence is located. Starts with \ ends without \.
-S21subdir = [ 'Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'S21' filesep '2D_Popt']; 
+S21subdir = [ 'LT254_Sietse_Chip11' filesep 'S21' filesep '2D']; 
 stopoffset = 1;    %42 chip 4 Removes the highest temperatures from the data analysis.
                   %Used to stop before the measurement has lost any KID due to dipjumping, extremely shallow dips, or similar.
 TCfrac=1/4.5;      %4.2 seems niceFraction of Tc from where the responsivity fit starts. Default: 1/8
