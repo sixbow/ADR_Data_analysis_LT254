@@ -11,8 +11,8 @@ clear variables;close all;clc
 % Input
 ChipInfo_path = ['..' filesep '..' ]; %root path where data is, one higher than the scripts
 PT2Ddep = 2;        %=0 for Tdep analysis, =1 for Pdep analysis, =2 for 2D analysis,=3 Only Popt(Sietse), error otheriwse
-lowFupper = 300%200%70;    	%upper bound of low F range (level determined by quasiparticles) in Hz
-lowFlower = 100%80%20;     %upper bound of low F range (level determined by quasiparticles)
+lowFupper = 70;    	%upper bound of low F range (level determined by quasiparticles) in Hz
+lowFlower = 20;     %upper bound of low F range (level determined by quasiparticles)
 nsigfitc = 1.2;   	%1.2 # sigma in the lowF noise that is condsidered enough to start a fit
 plotall = 0;        %if =1 a plot of each fit is made and stored as png
 closefigs = 0; % if 1 closes the P,T dep figures, leaves only the main ones (only 2D analysis)
@@ -727,5 +727,5 @@ for kidn= 1:length(KIDnumbers) % LOOP OVER ALL UNIQUE KIDS,
     
     
 end
-disp(['Figures are in: ' Figfile])
+disp(['Fig'])
 rmpath([pwd,filesep,'..',filesep,'subroutines']);

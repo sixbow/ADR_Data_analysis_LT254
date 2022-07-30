@@ -29,6 +29,9 @@ end % This makes a subfolder called CPSDMinusTLS which will be were the files fo
 options = optimoptions('lsqcurvefit', 'TolFun', 1e-80, 'TolX', 1e-80, 'Display',   'iter', 'DiffMinChange', .01);
 options.MaxFunctionEvaluations = 1000;
 options.MaxIterations = 1000;
+%figshow =[{'on'} {'on'} {'on'}] %determines which figures to show!
+figshow =[{'off'} {'off'} {'off'}] %determines which figures to show!
+%figshow =[{'off'} {'off'} {'off'}] %determines which figures to show!
 %% Analysis
 close all
 for kidn = 1:6 %Number of KIDS(1:6)
@@ -39,9 +42,9 @@ for kidn = 1:6 %Number of KIDS(1:6)
         C_S_CPSD_Re = real(CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,2));
         C_S_CPSD_Im = imag(CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,2));
         
-        f0 = figure;
-        ax0 = axes('XScale','log','YScale','log');
-        hold(ax0,'on')
+        f1 = figure;
+        ax1 = axes('XScale','log','YScale','log');
+        hold(ax1,'on')
         plot(C_freq,C_S_CPSD_Re,'-o','MarkerFaceColor','r','Color','r');
         plot(C_freq,-C_S_CPSD_Re,'-o','MarkerFaceColor','g','Color','g');
         plot(C_freq,C_S_CPSD_Im,'-o','MarkerFaceColor', 'b','Color','b');
@@ -49,12 +52,40 @@ for kidn = 1:6 %Number of KIDS(1:6)
         legend('Re{CPSD}','-Re{CPSD}','Im{CPSD}','-Im{CPSD}')
         begin_data_point = 1; 
         end_data_point = 100; % We only want to fit the first part of the TLS noise since there it is dominant
-        hold(ax0,'off')
+        hold(ax1,'off')
         grid on
-        set(f0, 'Visible', 'on');
+        set(f1, 'Visible', figshow{1});
         title(append('KID',string(kidn),'T',sprintf('%1.3f',NOISE(p).Temperature(nT))))
         export_path_graph = append('../../../Export_Figures_noGit/TLS_surpression/f0FiTSubKID',string(kidn),'T',sprintf('%1.3f',NOISE(p).Temperature(nT)),'.png');
-        exportgraphics(ax0,export_path_graph)
+        exportgraphics(ax1,export_path_graph)
+        
+        
+        f2 = figure;
+        ax2 = axes('XScale','log','YScale','log');
+        hold(ax2,'on')
+        yb = 1E-10;
+        dfg = 125000; % [Hz]
+        fring = 5.5E9/(pi*20000); %Is really dependent on T, But lets put it like this for now!
+        plot(C_freq,C_S_CPSD_Re,'-o','MarkerFaceColor','r','Color','r');
+        plot(C_freq,-C_S_CPSD_Re,'-o','MarkerFaceColor','g','Color','g');
+        plot(C_freq,ring_mix_noise(yb,dfg,C_freq,fring),'--');
+        C_S_CPSD_Re_corr= C_S_CPSD_Re-ring_mix_noise(yb,dfg,C_freq,fring);
+        plot(C_freq,C_S_CPSD_Re_corr,'-x','Color','r','LineWidth',4);
+        plot(C_freq,-C_S_CPSD_Re_corr,'-x','Color','g','LineWidth',4);
+        hold(ax2,'off')
+        grid on
+        set(f2, 'Visible',figshow{2});
+        
+        
+        f3 = figure;
+        ax3 = axes('XScale','log','YScale','log');
+        hold(ax3,'on')
+        %Insert plots
+        hold(ax3,'off')
+        grid on
+        set(f3, 'Visible',figshow{3});
+        
+        
         
         
 %         f1 = figure
@@ -137,7 +168,7 @@ for kidn = 1:6 %Number of KIDS(1:6)
 %         hold(ax4,'off')
 %         set(f4, 'Visible', 'off');
 %         
-%         CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,2) = TLS_corrected_S_CPSD_Re + 1i.*TLS_corrected_S_CPSD_Im;
+          CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,2) = C_S_CPSD_Re_corr + 1i.*C_S_CPSD_Im;
         
     end
 end

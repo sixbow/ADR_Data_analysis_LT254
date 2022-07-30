@@ -28,6 +28,7 @@ run('FitandSubtractTLS_CPSD_SDBV1.m')
 % This saves in seperate outputfolder:/CPSDMinusTLS
 %% (Failing! Because previous script is broken)Fitting using Jochem script
 % use the outputfolder of previous script as input.:/CPSDMinusTLS
+% Outputs Figures are in: ..\..\CrossPSD2D\KID6P_87_crossPSD_Tdep
 run('CrossPSDJBV2.m')
 clear all 
 close all
