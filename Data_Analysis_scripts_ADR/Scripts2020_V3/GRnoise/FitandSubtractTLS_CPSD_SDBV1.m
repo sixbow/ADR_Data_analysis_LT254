@@ -33,17 +33,18 @@ end % This makes a subfolder called CPSDMinusTLS which will be were the files fo
 %++++Switches to choose what to compensate. 
 SW1_subtract_oneoverf = 1;
 SW2_ring_mix_noise = 1; % Choose 1 for subtraction and 0 -> do nothing.
+SW = [SW1_subtract_oneoverf SW2_ring_mix_noise];
 %---/Switches
 begin_data_point = 1;
 end_data_point = 30; % We only want to fit the first part of the TLS noise since there it is dominant
 %figshow =[{'on'} {'on'} {'on'}] %determines which figures to show!
-figshow =[{'off'} {'off'} {'on'}] %determines which figures to show!
+figshow =[{'off'} {'off'} {'off'} {'on'}] %determines which figures to show!
 %figshow =[{'off'} {'off'} {'off'}] %determines which figures to show!
 %---\INPUTS----------
 %% Analysis
 close all
 for kidn = 1:6 %Number of KIDS(1:6)
-    for nT =3%Number of Temperatures. Likely loop between 1:14  ~length():
+    for nT =1:14%Number of Temperatures. Likely loop between 1:14  ~length():
         p = 1; % Popt only has 1 power so for now we do just one. 
         %Data
         C_freq = CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,1);
@@ -94,9 +95,10 @@ for kidn = 1:6 %Number of KIDS(1:6)
         Model_oneoverf = @(x,fdata)x(1)*power(fdata,-x(2)); %Model we use to fit
         xcoof_Re = nonlinfitSdB(C_freq(begin_data_point:end_data_point),C_S_CPSD_Re(begin_data_point:end_data_point),Model_oneoverf,x0);
         S_model_oneoverf = Model_oneoverf(xcoof_Re,C_freq);
-        C_S_CPSD_Re_corr_oneoverf = C_S_CPSD_Re-S_mod_oneoverf;
+        C_S_CPSD_Re_corr_oneoverf = C_S_CPSD_Re-S_model_oneoverf;
         
-        %Fig. 3: 
+        %Fig. 3: Shows how the power law fits in the data, Shows the
+        %effect of compensation.
         f3 = figure;
         ax3 = axes('XScale','log','YScale','log');
         hold(ax3,'on')
@@ -104,8 +106,8 @@ for kidn = 1:6 %Number of KIDS(1:6)
         plot(C_freq,-C_S_CPSD_Re,'-o','MarkerFaceColor','g','Color','g');
         plot(C_freq,Model_oneoverf(xcoof_Re,C_freq),'Color','r','LineStyle','--');
         plot(C_freq,-Model_oneoverf(xcoof_Re,C_freq),'Color','r','LineStyle','--');
-        
-        % -- \Not used currently
+        plot(C_freq,C_S_CPSD_Re_corr_oneoverf,'Color','magenta','LineStyle','--','Marker','x');
+        plot(C_freq,-C_S_CPSD_Re_corr_oneoverf,'Color','cyan','LineStyle','--','Marker','x');
         xline(C_freq(begin_data_point),'--')
         xline(C_freq(end_data_point),'--')
         grid on
@@ -114,92 +116,38 @@ for kidn = 1:6 %Number of KIDS(1:6)
         set(f3, 'Visible',figshow{3});
         title(append('KID',string(kidn),'T',sprintf('%1.3f',NOISE(p).Temperature(nT))))
         export_path_graph = append('../../../Export_Figures_noGit/TLS_surpression/f3FiTSubKID',string(kidn),'T',sprintf('%1.3f',NOISE(p).Temperature(nT)),'.png');
-        exportgraphics(ax1,export_path_graph)
+        exportgraphics(ax3,export_path_graph)
+           
+        % Resulting compensated function
+        C_PSD_Re_corr = C_S_CPSD_Re-SW(1).*S_model_oneoverf -SW(2).*S_model_ring;
+        CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,2) = C_PSD_Re_corr + 1i.*C_S_CPSD_Im;
+        
+        
+        %Fig. 3: Shows how the power law fits in the data, Shows the
+        %effect of compensation.
+        f4 = figure;
+        ax4 = axes('XScale','log','YScale','log');
+        hold(ax4,'on')
+        plot(C_freq,C_S_CPSD_Re,'-o','MarkerFaceColor','r','Color','r');
+        plot(C_freq,-C_S_CPSD_Re,'-o','MarkerFaceColor','g','Color','g');
+        plot(C_freq,SW(1).*S_model_oneoverf +SW(2).*S_model_ring,'Color','r','LineStyle','--');
+        plot(C_freq,-SW(1).*S_model_oneoverf -SW(2).*S_model_ring,'Color','g','LineStyle','--');
+        %plot(C_freq,S_model_oneoverf,'Color','r','LineStyle','--');
+        %plot(C_freq,-S_model_oneoverf,'Color','g','LineStyle','--');
+        plot(C_freq,C_PSD_Re_corr,'Color','magenta','LineStyle','--','Marker','x');
+        plot(C_freq,-C_PSD_Re_corr,'Color','cyan','LineStyle','--','Marker','x');
+        xline(C_freq(begin_data_point),'--')
+        xline(C_freq(end_data_point),'--')
+        grid on
+        hold(ax4,'off')
+        grid on
+        set(f4, 'Visible',figshow{4});
+        title(append('KID',string(kidn),'T',sprintf('%1.3f',NOISE(p).Temperature(nT))))
+        export_path_graph = append('../../../Export_Figures_noGit/TLS_surpression/f4FiTSubKID',string(kidn),'T',sprintf('%1.3f',NOISE(p).Temperature(nT)),'.png');
+        exportgraphics(ax4,export_path_graph)
         
         
         
-        
-%         f1 = figure
-%         % -- Not used currently
-%         %x0 = [(10^-8) 1];
-%         %Model_TLS = @(x,fdata)x(1)*power(fdata,-x(2)); %Model we use to fit
-%         % Non-linear fit is done in next line!
-%         %options = optimoptions('lsqcurvefit','Algorithm','levenberg-marquardt');
-%         %[x,resnorm,~,exitflag,output] = lsqcurvefit(Model_TLS,x0,C_freq(begin_data_point:end_data_point),C_S_CPSD_Re(begin_data_point:end_data_point),[],[],options);
-%         % Plotting non-linear least squares approach..
-%         %plot(C_freq,Model_TLS(x,C_freq));
-%         % -- \Not used currently
-%         xline(C_freq(begin_data_point),'--')
-%         xline(C_freq(end_data_point),'--')
-%         grid on
-%         % Trying how the Linear goes with fitting in log-log! 
-%         % Real part
-%         Xlog_fitr = log10(C_freq(begin_data_point:end_data_point)); % f = e^x
-%         Ylog_fitr_Re = log10(C_S_CPSD_Re(begin_data_point:end_data_point));
-%         log_fit_Re = polyfit(Xlog_fitr,Ylog_fitr_Re,1);
-%         % Imag Part
-%         Xlog_fitr = log10(C_freq(begin_data_point:end_data_point)); % f = e^x
-%         Ylog_fitr_Im = log10(C_S_CPSD_Im(begin_data_point:end_data_point));
-%         log_fit_Im = polyfit(Xlog_fitr,Ylog_fitr_Im,1);
-%         LinearModel = @(coof,f)power(10,coof(2)).*power(f,coof(1));
-%         LogSpaceModel = @(coof,x) coof(1).*x + coof(2);
-%         %Plotting the Linear in LogLog
-%         plot(C_freq,LinearModel(log_fit_Re,C_freq));
-%         plot(C_freq,LinearModel(log_fit_Im,C_freq));
-%         TLS_corrected_S_CPSD_Re = C_S_CPSD_Re - LinearModel(log_fit_Re,C_freq); %+ ones(1,length(Current_freq))*min(Current_S_CPSD)  ;
-%         TLS_corrected_S_CPSD_Im = C_S_CPSD_Im; %+ ones(1,length(Current_freq))*min(Current_S_CPSD)  ;
-%         plot(C_freq,TLS_corrected_S_CPSD_Re);
-%         plot(C_freq,TLS_corrected_S_CPSD_Im);
-%         legend('Cross-PSD','Begin fit','End fit','Lin in loglogspace')
-%         title(sprintf('KID# %d T= %1.3f K P_{read} %d dBm ',kidn,NOISE(p).Temperature(nT),NOISE(kidn).ReadPower))
-%         hold(ax1,'off')
-%         set(f1, 'Visible', 'off');
-%         export_path_graph = append('../../../Export_Figures_noGit/FiTSubKID',string(kidn),'T',sprintf('%1.3f',NOISE(p).Temperature(nT)),'.png');
-%         exportgraphics(ax1,export_path_graph)
-%         
-% %         f2a = figure;
-% %         ax2a = axes('XScale','linear','YScale','linear');
-% %         hold(ax2a,'on')
-% %         plot(Xlog_fitr_Re,Ylog_fitr_Re);
-% %         plot(Xlog_fitr_Re,LogSpaceModel(log_fit,Xlog_fitr_Re))
-% %         %plot(Current_freq(begin_data_point:end_data_point),LinearModel(log_fit,Current_freq(begin_data_point:end_data_point)));
-% %         hold(ax2a,'off')
-% %         set(f2a, 'Visible', 'off');
-% %         grid on
-% 
-%         f2b = figure;
-%         ax2b = axes('XScale','linear','YScale','linear');
-%         hold(ax2b,'on')
-%         plot(C_freq(begin_data_point:end_data_point),C_S_CPSD_Re(begin_data_point:end_data_point));
-%         title('Linear fitting range Real part CPSD')
-%         hold(ax2b,'off')
-%         set(f2b, 'Visible', 'off');
-%         
-%         f2 = figure;
-%         ax2 = axes('XScale','linear','YScale','linear');
-%         hold(ax2,'on')
-%         plot(C_freq,C_S_CPSD_Im);
-%         title('Linear Im part CPSD')
-%         hold(ax2,'off')
-%         set(f2, 'Visible', 'on');
-% 
-%         f3 = figure;
-%         ax3 = axes('XScale','linear','YScale','linear');
-%         hold(ax3,'on')
-%         plot(C_freq(begin_data_point:end_data_point),Current_S_CPSD(begin_data_point:end_data_point));
-%         plot(C_freq(begin_data_point:end_data_point),Model_TLS(x,C_freq(begin_data_point:end_data_point)));
-%         title('What is happening in linear space in the fitting window')
-%         hold(ax3,'off')
-%         set(f3, 'Visible', 'off');
-%         
-%         %plot(Current_freq,Model_TLS(Current_freq));
-%         f4 = figure;
-%         ax4 = axes('XScale','linear','YScale','linear');
-%         hold(ax4,'on')
-%         hold(ax4,'off')
-%         set(f4, 'Visible', 'off');
-%         
-          CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,2) = C_S_CPSD_Re_corr_ring + 1i.*C_S_CPSD_Im;
         
     end
 end
