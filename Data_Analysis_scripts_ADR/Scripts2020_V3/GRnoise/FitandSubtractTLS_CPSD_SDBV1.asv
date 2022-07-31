@@ -30,10 +30,9 @@ end % This makes a subfolder called CPSDMinusTLS which will be were the files fo
 % options = optimoptions('lsqcurvefit', 'TolFun', 1e-80, 'TolX', 1e-80, 'Display',   'iter', 'DiffMinChange', .01);
 % options.MaxFunctionEvaluations = 1000;
 % options.MaxIterations = 1000;
-%++++Switches to choose what to compensate. 
+%---Switches to choose what to compensate
 SW1_subtract_oneoverf = 1;
-SW2_ring_mix_noise = 1; % Choose 1 for subtraction and 0 -> do nothing.
-%---/Switches
+SW2_ring_mix_noise 
 begin_data_point = 1;
 end_data_point = 30; % We only want to fit the first part of the TLS noise since there it is dominant
 %figshow =[{'on'} {'on'} {'on'}] %determines which figures to show!
