@@ -41,7 +41,9 @@ run('S21analysis_GRV5.m')
 
 
 %% Main analysis script
-
+clear all 
+close all 
+run('Final_DarkNEP_LT254_CKID.m')
 
 
 disp('Finished CKID analysis!')

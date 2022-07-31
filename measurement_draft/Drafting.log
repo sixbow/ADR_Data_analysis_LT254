@@ -1,11 +1,11 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021/W32TeX) (preloaded format=pdflatex 2021.12.1)  30 JUL 2022 17:23
+This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021/W32TeX) (preloaded format=pdflatex 2022.1.3)  31 JUL 2022 01:23
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
 **c:/Users/siets/Dropbox/Universiteit/Natuurkunde/MEP/Simulations/Matlab/ADR_Data_analysis_LT254/measurement_draft/Drafting.tex
 (c:/Users/siets/Dropbox/Universiteit/Natuurkunde/MEP/Simulations/Matlab/ADR_Data_analysis_LT254/measurement_draft/Drafting.tex
-LaTeX2e <2021-11-15>
+LaTeX2e <2021-11-15> patch level 1
 L3 programming layer <2021-11-22> (c:/texlive/2021/texmf-dist/tex/latex/base/report.cls
 Document Class: report 2021/10/04 v1.4n Standard LaTeX document class
 (c:/texlive/2021/texmf-dist/tex/latex/base/size10.clo
@@ -182,7 +182,7 @@ Package: menukeys 2020/12/19 v1.6.1 -- A package to format menus, paths and shor
  (c:/texlive/2021/texmf-dist/tex/latex/l3packages/xparse/xparse.sty (c:/texlive/2021/texmf-dist/tex/latex/l3kernel/expl3.sty
 Package: expl3 2021-11-22 L3 programming layer (loader) 
  (c:/texlive/2021/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
-File: l3backend-pdftex.def 2021-10-18 L3 backend support: PDF output (pdfTeX)
+File: l3backend-pdftex.def 2021-12-14 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count274
 \l__pdf_internal_box=\box52
 ))
@@ -735,14 +735,14 @@ LaTeX Warning: There were multiply-defined labels.
  ) ) 
 Here is how much of TeX's memory you used:
  17306 strings out of 478353
- 348048 string characters out of 5852101
- 636687 words of memory out of 5000000
+ 348048 string characters out of 5852102
+ 636679 words of memory out of 5000000
  35067 multiletter control sequences out of 15000+600000
  412388 words of font info for 62 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  99i,11n,97p,900b,458s stack positions out of 5000i,500n,10000p,200000b,80000s
 <c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on Drafting.pdf (15 pages, 5643478 bytes).
+Output written on Drafting.pdf (15 pages, 5644874 bytes).
 PDF statistics:
  737 PDF objects out of 1000 (max. 8388607)
  569 compressed objects within 6 object streams

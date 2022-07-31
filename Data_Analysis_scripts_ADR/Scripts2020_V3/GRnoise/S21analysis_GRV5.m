@@ -36,9 +36,9 @@ ChipInfo.ResonatorInfoFile = ...
     
 ChipInfo.FilmTc = 1.35;                                    %Transition temperature measured for the film [K].
 ChipInfo.material = 'AlBCS';                                %Material of which the resonator active area is made.
-ChipInfo.Thickness = 0.025 ;                                 %Thickness of the resonator active area [um].
+ChipInfo.Thickness = 0.033 ;                                 %Thickness of the resonator active area [um].
 
-Linewidthinmicron = 0.5; %  
+Linewidthinmicron = 2; %  
 
 
 
