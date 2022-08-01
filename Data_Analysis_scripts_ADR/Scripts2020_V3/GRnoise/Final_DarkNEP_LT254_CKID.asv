@@ -5,6 +5,7 @@ close all
 clearvars
 load('../../Data_LT254_Sietse/LT254_Sietse_Chip11/Noise_vs_T/FFT/2D_Popt/CPSDMinusTLS/CrossPSDFit_2D.mat')
 load('../../Data_LT254_Sietse/LT254_Sietse_Chip11/Noise_vs_T/FFT/2D_Popt/CrossPSDNoise_2D.mat')
+load('../../Data_LT254_Sietse/LT254_Sietse_Chip11/Noise_vs_T/FFT/2D_Popt/NOISE_2D.mat','NOISE');
 % Load spectra...
 S21_path = '../../Data_LT254_Sietse/LT254_Sietse_Chip11/S21/2D_Popt/all_Tdep.csv';
 S21_results = table2array(readtable(S21_path , "NumHeaderLines",1));
@@ -15,8 +16,8 @@ F0 = S21_results(:,3); % for all kids
 eta_pb = 0.4;
 Tc_al = 1.182;
 %tau_qp() = We do this in the code
-kidn_iter = 2;
-nT_iter = 2;
+kidn_iter = 1:6;
+nT_iter = 1:14;
 %</Input>
 freq_vec = real(CrossPSDNOISE(1).CrossPSD{1,1}(:,1));
 NEP_Matrix = zeros(length(kidn_iter),length(nT_iter),length(freq_vec));
@@ -28,15 +29,26 @@ for kidn = kidn_iter % Loop over KIDS
     end
 end
 % Fig 1. 
-f1 = figure
+f1 = figure('units','normalized','outerposition',[0 0 0.75 0.75]);
 for kidn=kidn_iter
-    subplot(2,3,kidn)
-    ax(kidn) = axes('XScale','log','YScale','log');
-    hold(ax(kidn), 'on');
-        for nT = nT_iter
-            plot(freq_vec,NEP_Matrix(kidn,1,:));
+    if kidn==6
+        for nT=nT_iter 
+            legendTvalues{nT} = append(sprintf('%1.3f',NOISE(kidn).Temperature(nT)),'[K]');
         end
+        hTl = legend(legendTvalues,'location','east');
+        title(hTl,'T_{bath}')
+        set(hTl,'Position',[0.92746527725127 0.387071485244311 0.0486458338598409 0.271007531183619]);
+    end
+    ax(kidn) = subplot(2,3,kidn,'XScale','log','YScale','log');
+    hold(ax(kidn), 'on');
+    color = colormapJetJB(length());
+    for nT = nT_iter
+        plot(freq_vec,-squeeze(NEP_Matrix(kidn,nT,:)));
+    end
     hold(ax(kidn), 'off');
+    title(append('CKID #',string(kidn)));
+    ylabel('NEP_{dark}');
+    xlabel('f [Hz]');
     grid on
 end
 

@@ -4,6 +4,6 @@ function delta = deltaBCS(Tc)
 % Tc [K]
 % delta [J]
 kB = 1.380E-23; %[J/K] verified!
-delta = 1.76*kB*Tc
+delta = 1.76*kB*Tc; % [J] verified!
 end
 
