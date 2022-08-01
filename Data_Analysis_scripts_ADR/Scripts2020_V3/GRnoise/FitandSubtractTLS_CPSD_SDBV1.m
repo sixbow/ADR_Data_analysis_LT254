@@ -32,10 +32,13 @@ end % This makes a subfolder called CPSDMinusTLS which will be were the files fo
 % options.MaxIterations = 1000;
 %++++Switches to choose what to compensate. 
 SW1_subtract_oneoverf = 1;
-SW2_ring_mix_noise = 1; % Choose 1 for subtraction and 0 -> do nothing.
+SW2_ring_mix_noise = 1; % Choose 1 for subtraction and 0 -> do nothing. Choose -1 for addition(Why would you want that ?? U mad?)
 SW = [SW1_subtract_oneoverf SW2_ring_mix_noise];
 %---/Switches
-begin_data_point = 1;
+
+dfg = 125000; % [Hz]
+fring = 5.5E9/(pi*18000); %Is really dependent on T, But lets put it like this for now!
+begin_data_point = 3;
 end_data_point = 30; % We only want to fit the first part of the TLS noise since there it is dominant
 %figshow =[{'on'} {'on'} {'on'}] %determines which figures to show!
 figshow =[{'off'} {'off'} {'off'} {'on'}] %determines which figures to show!
@@ -43,14 +46,14 @@ figshow =[{'off'} {'off'} {'off'} {'on'}] %determines which figures to show!
 %---\INPUTS----------
 %% Analysis
 close all
-for kidn = 1:6 %Number of KIDS(1:6)
-    for nT =1:14%Number of Temperatures. Likely loop between 1:14  ~length():
+for kidn = 1 %Number of KIDS(1:6)
+    for nT =1:2:14%Number of Temperatures. Likely loop between 1:14  ~length():
         p = 1; % Popt only has 1 power so for now we do just one. 
         %Data
         C_freq = CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,1);
         C_S_CPSD_Re = real(CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,2));
         C_S_CPSD_Im = imag(CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,2));
-        
+        yb = mean(C_S_CPSD_Re(121:131));
         %Fig. 1: Shows the complete CPSD with all components. Saves them
         %also!
         f1 = figure;
@@ -74,9 +77,6 @@ for kidn = 1:6 %Number of KIDS(1:6)
         f2 = figure;
         ax2 = axes('XScale','log','YScale','log');
         hold(ax2,'on')
-        yb = 1E-10;
-        dfg = 125000; % [Hz]
-        fring = 5.5E9/(pi*20000); %Is really dependent on T, But lets put it like this for now!
         plot(C_freq,C_S_CPSD_Re,'-o','MarkerFaceColor','r','Color','r');
         plot(C_freq,-C_S_CPSD_Re,'-o','MarkerFaceColor','g','Color','g');
         plot(C_freq,ring_mix_noise(yb,dfg,C_freq,fring),'--');
@@ -91,8 +91,8 @@ for kidn = 1:6 %Number of KIDS(1:6)
         %Fitting the slope using a nonlinear fit S(f)= C_{TLS}\frac{1}{f^{a}}
         %Status: Showing that it works!
         mean_interval = mean(C_S_CPSD_Re(begin_data_point:end_data_point))
-        x0 = [mean_interval 0.8];
-        Model_oneoverf = @(x,fdata)x(1)*power(fdata,-x(2)); %Model we use to fit
+        x0 = [mean_interval];
+        Model_oneoverf = @(x,fdata)x(1)*power(fdata,-1); %Model we use to fit
         xcoof_Re = nonlinfitSdB(C_freq(begin_data_point:end_data_point),C_S_CPSD_Re(begin_data_point:end_data_point),Model_oneoverf,x0);
         S_model_oneoverf = Model_oneoverf(xcoof_Re,C_freq);
         C_S_CPSD_Re_corr_oneoverf = C_S_CPSD_Re-S_model_oneoverf;
@@ -118,10 +118,10 @@ for kidn = 1:6 %Number of KIDS(1:6)
         export_path_graph = append('../../../Export_Figures_noGit/TLS_surpression/f3FiTSubKID',string(kidn),'T',sprintf('%1.3f',NOISE(p).Temperature(nT)),'.png');
         exportgraphics(ax3,export_path_graph)
            
-        % Resulting compensated function
+        %<----RESULT----> Resulting compensated function
         C_PSD_Re_corr = C_S_CPSD_Re-SW(1).*S_model_oneoverf -SW(2).*S_model_ring;
         CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,2) = C_PSD_Re_corr + 1i.*C_S_CPSD_Im;
-        
+        %</----RESULT----> Resulting compensated function
         
         %Fig. 3: Shows how the power law fits in the data, Shows the
         %effect of compensation.
@@ -144,18 +144,11 @@ for kidn = 1:6 %Number of KIDS(1:6)
         set(f4, 'Visible',figshow{4});
         title(append('KID',string(kidn),'T',sprintf('%1.3f',NOISE(p).Temperature(nT))))
         export_path_graph = append('../../../Export_Figures_noGit/TLS_surpression/f4FiTSubKID',string(kidn),'T',sprintf('%1.3f',NOISE(p).Temperature(nT)),'.png');
-        exportgraphics(ax4,export_path_graph)
-        
-        
-        
-        
+        exportgraphics(ax4,export_path_graph)   
     end
 end
-%%
-
 
 %% Closing
-
 save([Outputfolderdir,filesep,matfile],'NOISE','IndexP_sub_opt','KIDnumbers');
 save([Outputfolderdir,filesep,matfile2],'CrossPSDNOISE');
 disp('FitandSubtract: Jobs done!');

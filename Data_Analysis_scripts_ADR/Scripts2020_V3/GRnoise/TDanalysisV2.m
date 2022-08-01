@@ -29,7 +29,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %WARNING: Set to 1 only if sure you have no data from previous analysis runs!!!%
 killpreviousrunsforsure = 1;          % disables checking if files are already there (i.e. CrossPSDNOISE killed)
-maakdeplots             = 1;            %1 makes plots, 0 disables plotting (2x faster almost)
+maakdeplots             = 0;            %1 makes plots, 0 disables plotting (2x faster almost)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 timemed = 64;       % duration of td data @ 50 ksample/sec; is varied so check the files, 40 is old default = 31MB. 128"= 100 mB.
 TDoption.nrsigma = 5;                 % 8 peaks>TDoption.nrsigma*sigma are rejected (based on filtered TD-stream) %6 seems to be really minimum, 8 good value also for smaller peaks

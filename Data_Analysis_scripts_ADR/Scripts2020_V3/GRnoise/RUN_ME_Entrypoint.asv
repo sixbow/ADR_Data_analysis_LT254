@@ -12,7 +12,6 @@ close all
 % Also calculates the crossPSD.
 % Known issue. Could not open file ? Makegoodfigure...
 run('NOISEanalysis_2DV1.m')
-%%
 %pause; % If you want to save some figures uncomment this line.
 clear all 
 close all
@@ -22,7 +21,7 @@ close all
 run('TDanalysisV2.m')
 % Where are figures saved?
 %pause; % If you want to save some figures uncomment this line.
-%%
+
 clear all 
 close all
 %% (Done) Remove TLS component - Attempt at removing the TLS by fitting and subtracting.

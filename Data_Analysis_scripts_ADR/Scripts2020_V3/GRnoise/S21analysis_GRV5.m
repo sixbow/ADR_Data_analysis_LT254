@@ -34,7 +34,7 @@ ChipInfo.ResonatorInfoFile = ...
                                                   	%text: KID_ID F[GHz] Q L_Alu[um]%
    
     
-ChipInfo.FilmTc = 1.35;                                    %Transition temperature measured for the film [K].
+ChipInfo.FilmTc = 1.182;                                    %Transition temperature measured for the film [K].
 ChipInfo.material = 'AlBCS';                                %Material of which the resonator active area is made.
 ChipInfo.Thickness = 0.033 ;                                 %Thickness of the resonator active area [um].
 
@@ -800,6 +800,7 @@ ParamIndexes = [1,2,6,23,... %KIDID, T0, Fres, Fdesign
 KIDParameters = AllKIDlowToverview(:,ParamIndexes);
 
 overviewfile = [MeasurementPath,filesep,'Summary_S21_Tdep.csv'];
+disp(['Summary saved in:' overviewfile]);
 WriteSRONcsv(overviewfile,KIDParameters,SummaryHeader,'%.12e');
 
 %==========================================================================

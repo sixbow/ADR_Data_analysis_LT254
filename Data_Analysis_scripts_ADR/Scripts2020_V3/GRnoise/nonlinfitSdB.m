@@ -3,8 +3,8 @@ function coof = nonlinfitSdB(XDATA,YDATA,func,coof0)
 % This version normalizes the YDATA to make it stable.
 n_num = mean(YDATA);
 YDATA_N = YDATA./n_num;
-coof0_N = [(coof0(1)./n_num) coof0(2)];
-[x,~,~,~,~] = lsqcurvefit(func,coof0_N,XDATA,YDATA_N);%[],[],options);
-coof = [x(1).*n_num x(2)];
+coof0(1) = (coof0(1)./n_num);
+[x,~,~,~,~] = lsqcurvefit(func,coof0,XDATA,YDATA_N);%[],[],options);
+coof(1) = x(1).*n_num ;
 end
 
