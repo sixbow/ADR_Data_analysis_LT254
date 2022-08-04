@@ -32,7 +32,7 @@ end % This makes a subfolder called CPSDMinusTLS which will be were the files fo
 % options.MaxIterations = 1000;
 %++++Switches to choose what to compensate. 
 SW1_subtract_oneoverf = 1;
-SW2_ring_mix_noise = 1; % Choose 1 for subtraction and 0 -> do nothing. Choose -1 for addition(Why would you want that ?? U mad?)
+SW2_ring_mix_noise = 0; % Choose 1 for subtraction and 0 -> do nothing. Choose -1 for addition(Why would you want that ?? U mad?)
 SW = [SW1_subtract_oneoverf SW2_ring_mix_noise];
 %---/Switches
 
@@ -41,18 +41,19 @@ fring = 5.5E9/(pi*18000); %Is really dependent on T, But lets put it like this f
 begin_data_point = 3;
 end_data_point = 30; % We only want to fit the first part of the TLS noise since there it is dominant
 %figshow =[{'on'} {'on'} {'on'}] %determines which figures to show!
-figshow =[{'off'} {'off'} {'off'} {'on'}] %determines which figures to show!
+figshow =[{'off'} {'off'} {'off'} {'off'}] %determines which figures to show!
 %figshow =[{'off'} {'off'} {'off'}] %determines which figures to show!
 %---\INPUTS----------
 %% Analysis
 close all
-for kidn = 1 %Number of KIDS(1:6)
-    for nT =1:2:14%Number of Temperatures. Likely loop between 1:14  ~length():
+for kidn = 1:6 %Number of KIDS(1:6)
+    for nT =1:14%Number of Temperatures. Likely loop between 1:14  ~length():
         p = 1; % Popt only has 1 power so for now we do just one. 
         %Data
         C_freq = CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,1);
         C_S_CPSD_Re = real(CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,2));
         C_S_CPSD_Im = imag(CrossPSDNOISE(IndexP_sub_opt{kidn}(p)).CrossPSD{nT}(:,2));
+        %C_S_ReS = Create3D_S_Gau(CrossPSDNOISE,kidn,nT,p)
         yb = mean(C_S_CPSD_Re(121:131));
         %Fig. 1: Shows the complete CPSD with all components. Saves them
         %also!
