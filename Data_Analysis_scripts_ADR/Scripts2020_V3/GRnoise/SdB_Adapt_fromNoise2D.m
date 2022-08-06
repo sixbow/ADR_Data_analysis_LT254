@@ -1,7 +1,7 @@
-% Data_analysis LT254
+%Data_analysis LT254
 %
 %DATE: October 24, 2012 - Aug 20 2019
-%Adapted by: Sietse de Boer
+%Adapted by: Sietse de Boer (S:)
 %AUTHOR of source NOISEanalysis_2DV1: Reinier Janssen, Jochem Baselmans
 %
 %==========================================================================
@@ -9,11 +9,15 @@ close all
 clear all
 global FITF0
 %==========================================================================
+% User Inputs
+%==========================================================================
+
+%==========================================================================
 % Inputs
 %==========================================================================
 ChipInfo.path = ['../..' filesep]; %root path where data is, one higher than the scripts
 %FFTsubdir = ['Noise 120mK' filesep 'FFT' filesep 'Power'];  120mK    %
-FFTsubdir = ['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D'];     %
+FFTsubdir = ['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D_Popt'];     %
 
 %\\FFT\2D
 ChipInfo.IndexPref = 1;     %Index of the power that is used as reference for Popt finding. (should not matter here)
@@ -37,6 +41,8 @@ ReadPoptfile = 1;             % Popt must be obtained by doing NOISEanalysis_Pde
 format('long','g');     %Set display format of numbers to 7 digits
 addpath([pwd,filesep,'..',filesep,'subroutines']);
 close all;              %close all open plots to remove clutter.
+
+
 
 %==========================================================================
 % read Poptfile.
@@ -306,6 +312,8 @@ IndexPsort = cell(length(KIDnumbers),1);
 
 NOISEParams = cell(length(KIDnumbers),1);IndexP_sub_opt = NOISEParams;IndexP_super_opt = NOISEParams;
 IndexPopt = zeros(length(KIDnumbers),1);
+
+%% Loop for plotting 
 for kidn=1:length(KIDnumbers) % LOOP OVER ALL UNIQUE KIDS,
     %======================================================================
     % create IndexPsort{kidn}: indices with Pread sorted,, valid for all T
@@ -371,7 +379,15 @@ for kidn=1:length(KIDnumbers) % LOOP OVER ALL UNIQUE KIDS,
     Tcolors = colormapJetJB(MaxnT);
     
     for Prr = 1:length(IndexP_sub_opt{kidn})
+        % S: here I will fit my lines for fitting of the TLS noise
         
+        
+        % S: Here I will do the GR plus TLS noise fits.
+        
+        
+        
+        
+        % SdB: This is where the plotting begins.
         Pr = IndexP_sub_opt{kidn}(Prr);
         figure(1000*NOISE(Pr).KIDnumber+Prr)
         clf
@@ -380,43 +396,10 @@ for kidn=1:length(KIDnumbers) % LOOP OVER ALL UNIQUE KIDS,
         TempLegend = cell(length(NOISE(Pr).Temperature)+1,1);
         TempLegend{1} = 'P_{opt}';
         
-        %Resonance circle as a function of T (incl noise blobs)
-        subplot(2,3,1)
-        hold on
-        for nT=1:length(NOISE(Pr).Temperature)
-            plot(NOISE(Pr).S21_IQplane{nT}(:,2) , NOISE(Pr).S21_IQplane{nT}(:,3),'-','color',Tcolors(nT,:),'LineWidth',1)
-            TempLegend{nT+1} = num2str(NOISE(Pr).Temperature(nT),'%.3f');
-        end
-        for nT=1:length(NOISE(Pr).Temperature) %Second Loop to get the legend correct.
-            plot(NOISE(Pr).TDIQ{nT}(:,2),NOISE(Pr).TDIQ{nT}(:,3),'.','color',Tcolors(nT,:),'MarkerSize',6)
-        end
-        legend(TempLegend(2:end))
-        xlabel('Re');ylabel('Im')
-        title(['KID ',num2str(NOISE(Pr).KIDnumber(1),'%.0f'),' @P_{read}=',num2str(NOISE(Pr).ReadPower,'%.0f'),' dBm'])
-        box on;grid on;
-        hold off
         
-        %Resonance Dip as a function of T, Incl reference lines around reference power%
-        subplot(2,3,2)
-        hold on
-        for nT=1:length(NOISE(Pr).Temperature)
-            plot(NOISE(Pr).S21_MPplane{nT}(:,1),20*log10(NOISE(Pr).S21_MPplane{nT}(:,2)),'-','color',Tcolors(nT,:),'LineWidth',1)
-        end
-        xlabel('F [GHz]');ylabel('|S21| [dB]')
-        title(['KID ',num2str(NOISE(Pr).KIDnumber(1),'%.0f'),' P_{opt}=',num2str(NOISE(Pr).ReadPower),' dBm'])
-        axis tight;
-        box on;grid on;
-        hold off
-        
-        %Time Domain Trace as a function of time
-        subplot(2,3,3)
-        semilogy(NOISE(Pr).Temperature,NOISE(Pr).Qi,'ro','MarkerSize',6,'MarkerFaceColor','r');%At Popt
-        xlabel('T  (K)');ylabel('Q_{i} (dBm)')
-        box on;grid on;
-        hold off
         
         %Frequency Noise
-        subplot(2,3,4)
+%         subplot(2,1,1)
         warning('off', 'MATLAB:plot:IgnoreImaginaryXYPart');
         toplot = NOISE(Pr).FFTnoise{1}(:,4) > 0;
         semilogx(NOISE(Pr).FFTnoise{1}(toplot,1),10*log10(NOISE(Pr).FFTnoise{1}(toplot,4)),...
@@ -432,31 +415,32 @@ for kidn=1:length(KIDnumbers) % LOOP OVER ALL UNIQUE KIDS,
         hold off
         
         %Phase Noise (and Amp Noise)
-        subplot(2,3,[5,6])
-        semilogx(NOISE(Pr).FFTnoise{1}(:,1),NOISE(Pr).FFTnoise{1}(:,3),...
-            '-','color','k','LineWidth',3)
-        hold on
-        semilogx(NOISE(Pr).FFTnoise{1}(:,1),NOISE(Pr).FFTnoise{1}(:,2),...
-            '-','color','k','LineWidth',4)
-        minnp = zeros(length(NOISE(Pr).Temperature),1);maxnp = minnp;
-        for nT=1:length(NOISE(Pr).Temperature)
-            % finding range
-            maxnp(nT) = max(NOISE(Pr).FFTnoise{nT}(NOISE(Pr).FFTnoise{nT}(:,1) > 10,2));
-            minnp(nT) = mean(NOISE(Pr).FFTnoise{nT}(20:end-5,3));
-            semilogx(NOISE(Pr).FFTnoise{nT}(:,1),NOISE(Pr).FFTnoise{nT}(:,3),...
-                '-','color',Tcolors(nT,:),'LineWidth',1)
-            semilogx(NOISE(Pr).FFTnoise{nT}(:,1),NOISE(Pr).FFTnoise{nT}(:,2),...
-                '-','color',Tcolors(nT,:),'LineWidth',2)
-        end
-        grid on;
-        xlabel('F [Hz]');ylabel('S_x [dBc/Hz]')
-        legend('S_A','S_{\theta}')
-        xlim([3,0.3e6]);ylim([10*floor(min(0.1*minnp))-5,10*ceil(max(0.1*maxnp))+5]);
-        hold off
+%         subplot(2,1,2)
+%         semilogx(NOISE(Pr).FFTnoise{1}(:,1),NOISE(Pr).FFTnoise{1}(:,3),...
+%             '-','color','k','LineWidth',3)
+%         hold on
+%         semilogx(NOISE(Pr).FFTnoise{1}(:,1),NOISE(Pr).FFTnoise{1}(:,2),...
+%             '-','color','k','LineWidth',4)
+%         minnp = zeros(length(NOISE(Pr).Temperature),1);maxnp = minnp;
+%         for nT=1:length(NOISE(Pr).Temperature)
+%             % finding range
+%             maxnp(nT) = max(NOISE(Pr).FFTnoise{nT}(NOISE(Pr).FFTnoise{nT}(:,1) > 10,2));
+%             minnp(nT) = mean(NOISE(Pr).FFTnoise{nT}(20:end-5,3));
+%             semilogx(NOISE(Pr).FFTnoise{nT}(:,1),NOISE(Pr).FFTnoise{nT}(:,3),...
+%                 '-','color',Tcolors(nT,:),'LineWidth',1)
+%             semilogx(NOISE(Pr).FFTnoise{nT}(:,1),NOISE(Pr).FFTnoise{nT}(:,2),...
+%                 '-','color',Tcolors(nT,:),'LineWidth',2)
+%         end
+%         grid on;
+%         xlabel('F [Hz]');ylabel('S_x [dBc/Hz]')
+%         legend('S_A','S_{\theta}')
+%         xlim([3,0.3e6]);ylim([10*floor(min(0.1*minnp))-5,10*ceil(max(0.1*maxnp))+5]);
+%         hold off
         
         %SAVE the figure
         Figfile=[Noisepath,'KID',num2str(NOISE(Pr).KIDnumber,'%.0f'),'_Pr_',...
-            num2str(-1*NOISE(Pr).ReadPower,'%.3g'),'dBm_NOISE_vsT'];
+            num2str(-1*NOISE(Pr).ReadPower,'%.3g'),'dBm_NOISE_vsTSdB']; % S:where the figure are saved
+
         if SaveStuff == 1
             MakeGoodFigure(15,15,14,Figfile)
         else
@@ -466,8 +450,10 @@ for kidn=1:length(KIDnumbers) % LOOP OVER ALL UNIQUE KIDS,
     close all;
 end %END OF LOOP OVER ALL UNIQUE KIDS
 
+%  % Sietse: Right now I have no intent of changing the Noise_2D.mat file
+%  % So it is safer to just comment the saving out!
+% rmpath([pwd,filesep,'..',filesep,'subroutines']);
+% if SaveStuff == 1
+%     save([Noisepath,'Noise_2D.mat'], '-v7.3')
+% end
 
-rmpath([pwd,filesep,'..',filesep,'subroutines']);
-if SaveStuff == 1
-    save([Noisepath,'Noise_2D.mat'], '-v7.3')
-end
