@@ -4,8 +4,9 @@ clear all
 
 %sub-dir inside ChipPath where the Noise Data [FFT(T),S21(T),ft(T)] is located. Starts with \ ends without \.
 % ChipInfo.path = [cd filesep '/..']; %root path where data is, one higher than the scripts
-ChipInfo.path = [cd filesep '..' filesep '..']; %root path where data is, one higher than the scripts
-FFTsubdir = [filesep 'FFT' filesep 'Temp'];     %
+ChipInfo.path = [cd filesep '..' filesep '..' filesep]; %root path where data is, one higher than the scripts
+%FFTsubdir = [filesep 'FFT' filesep 'Temp'];     %
+FFTsubdir = ['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D_temp_test_copy'];     %
 %Note: pwd is current matlab directory. Usually directory where this m-file
 %is located.
 %==========================================================================
