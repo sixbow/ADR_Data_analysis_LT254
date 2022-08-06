@@ -3,12 +3,19 @@
 % the TLS-noise and the GR-noise when we vary the temperature
 % Author: Sietse de Boer
 clc 
-clear vars;
+clear all;
 close all;
+%% User variables
+
+p_iter = 1; %[Index] Number of P_read values. For now I look at 1 power. 
+Tbath_iter = 1:14; %[Index] Number of Temperatures T_bath. Likely loop between 1:14;
+% Variable (Change at your own risk!)
+Tcolors = colormapJetJB(length(Tbath_iter));
+
 
 %% Importing Data
 %
-ChipInfo_path = ['..' filesep '..' ]; %root path where data is, one higher than the scripts
+ChipInfo_path = ['..' filesep '..' filesep ]; %root path where data is, one higher than the scripts
 FFTsubsubdir=['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D'];% This is where the
 load([ChipInfo_path FFTsubsubdir filesep 'NOISE_2D.mat'])
 %% Fit TLS ~2 - 20Hz
@@ -23,6 +30,30 @@ load([ChipInfo_path FFTsubsubdir filesep 'NOISE_2D.mat'])
 
 
 %% Plotting + save figure!
+for p = p_iter 
+for nT = Tbath_iter 
+    %Fig. 1: Plotting the fractional frequency plot 
+    f1 = figure;
+    ax1 = axes('XScale','log','YScale','log');
+    hold(ax1,'on')
+    toplot = NOISE(Pr).FFTnoise{1}(:,4) > 0;
+    semilogx(NOISE(Pr).FFTnoise{1}(toplot,1),10*log10(NOISE(Pr).FFTnoise{1}(toplot,4)),...
+        '-','color','k','LineWidth',2)
+    toplot = NOISE(Pr).FFTnoise{nT}(:,4) > 0;
+    semilogx(NOISE(Pr).FFTnoise{nT}(toplot,1),10*log10(NOISE(Pr).FFTnoise{nT}(toplot,4)),...
+            '-','color',Tcolors(nT,:),'LineWidth',1)
+    xlabel('F [Hz]');ylabel('S_F/F^2 [dBc/Hz]')
+    xlim([0.5,1e5]);grid on;ylim([-220,-140])    
+    hold(ax1,'off')
+    export_path_graph = append('../../../Export_Figures_noGit/LT254_DA_figures/Part_1_GR/f1KID',string(kidn),'T',sprintf('%1.3f',NOISE(p).Temperature(nT)),'.png');
+    exportgraphics(ax1,export_path_graph)   
+end
+end
+
+
+
+
+
 
 
 
