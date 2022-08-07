@@ -5,12 +5,14 @@
 clc 
 clear all;
 close all;
-%% User variables
 
-p_iter = `4; %[Index] Number of P_read values. For now I look at 1 power. 
+%% User variables
+kidn_iter = 1:2; %[Index] Select KID.
+% IndexPopt' Here you can select which powers you want 
+    
 Tbath_iter = 1:14; %[Index] Number of Temperatures T_bath. Likely loop between 1:14;
+
 % Variable (Change at your own risk!)
-Tcolors = colormapJetJB(length(Tbath_iter));
 
 
 %% Importing Data
@@ -27,31 +29,42 @@ load([ChipInfo_path FFTsubsubdir filesep 'NOISE_2D.mat'])
 % C_GR, tau_qp, Residual_GR_Tau
 % P_read, Q_i, T_bath, Q_c , KID#
 % Measure for flatnes (Derivative!!)
-
+% Or you could say that a 2 db Diffence between GR-noise and measured data.
+tot_combi = length(concat_v(kidn_iter,IndexPsort,1));
+f = gobjects(tot_combi,1);
+ax = gobjects(tot_combi,1);
 
 %% Plotting + save figure!
-f1 = figure;
-ax1 = axes('XScale','log','YScale','linear');
-hold(ax1,'on')
-for p = p_iter 
-for nT = Tbath_iter 
-    %Fig. 1: Plotting the fractional frequency plot 
-    figure(f1)
-%     toplot = NOISE(p).FFTnoise{1}(:,4) > 0;
-%     plot(NOISE(p).FFTnoise{1}(toplot,1),10*log10(NOISE(Pr).FFTnoise{1}(toplot,4)),...
-%         '-','color','k','LineWidth',2)
-    toplot = NOISE(p).FFTnoise{nT}(:,4) > 0;
-    plot(NOISE(p).FFTnoise{nT}(toplot,1),10*log10(NOISE(Pr).FFTnoise{nT}(toplot,4)),...
-            '-','color',Tcolors(nT,:),'LineWidth',1)
-    xlabel('F [Hz]');ylabel('S_F/F^2 [dBc/Hz]')
-    xlim([0.5,1e5]);grid on;ylim([-220,-140])    
+ %This has side effect that it creates a figure if it is not yet present so needs to be after you create figure.
+for kidn = kidn_iter % iterate over CKIDs.
+    % IndexPsort is a vector of all the indices of powers for a specific
+    % KID in Increasing order. 
     
-end
-end
+    for p = power_iter % This is the power iterator over a specific kid 
+    f(p) = figure;
+    ax(p) = axes('XScale','log','YScale','linear');
+    hold(ax(p),'on')
+    Tcolors = colormapJetJB(length(Tbath_iter));
+        for nT = Tbath_iter 
+            %Fig. 1: Plotting the fractional frequency plot 
+            %toplot = NOISE(p).FFTnoise{1}(:,4) > 0;
+            %plot(NOISE(p).FFTnoise{1}(toplot,1),10*log10(NOISE(Pr).FFTnoise{1}(toplot,4)),...
+            %         '-','color','k','LineWidth',2)
+            toplot = NOISE(p).FFTnoise{nT}(:,4) > 0;
+            plot(NOISE(p).FFTnoise{nT}(toplot,1),10*log10(NOISE(Pr).FFTnoise{nT}(toplot,4)),...
+                    '-','color',Tcolors(nT,:),'LineWidth',1)
+            xlabel('F [Hz]');ylabel('S_F/F^2 [dBc/Hz]')
+            xlim([0.5,1e5]);grid on;ylim([-220,-140])
+            title('')
 
-hold(ax1,'off')
-export_path_graph = append('../../../Export_Figures_noGit/LT254_DA_figures/Part_1_GR/f1KID',string(kidn),'T',sprintf('%1.3f',NOISE(p).Temperature(nT)),'.png');
-exportgraphics(ax1,export_path_graph)  
+        end % End Bath temperature.
+    hold(ax(p),'off')
+    export_path_graph = append('../../../Export_Figures_noGit/LT254_DA_figures/Part_1_GR/f1KID',string(kidn),'T',sprintf('%1.3f',NOISE(p).Temperature(nT)),'.png');
+    exportgraphics(ax1,export_path_graph)  
+    end % End power 
+end % End #KID
+
+
 
 
 
