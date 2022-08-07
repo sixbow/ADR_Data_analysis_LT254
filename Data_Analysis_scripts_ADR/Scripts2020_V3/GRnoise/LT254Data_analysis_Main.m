@@ -39,14 +39,13 @@ ax = gobjects(tot_combi,1);
 for kidn = kidn_iter % iterate over CKIDs.
     % IndexPsort is a vector of all the indices of powers for a specific
     % KID in Increasing order. 
-    %power_iter = IndexPopt(kidn); %[Index] - Popt -Number of P_read values. For now I look at 1 power. 
-    power_iter = IndexPsort{kidn,1}; %[Index] - All P_read Number of P_read values. For now I look at 1 power. 
+    power_iter = IndexPopt(kidn); %[Index] - Popt -Number of P_read values. For now I look at 1 power. 
+    %power_iter = IndexPsort{kidn,1}; %[Index] - All P_read Number of P_read values. For now I look at 1 power. 
     
     for p = power_iter % This is the power iterator over a specific kid 
     f(p) = figure;
     ax(p) = axes('XScale','log','YScale','linear');
     hold(ax(p),'on')
-    disp(['p = ' string(p)])
     Tcolors = colormapJetJB(length(Tbath_iter));
         for nT = Tbath_iter 
             %Fig. 1: Plotting the fractional frequency plot 
@@ -58,9 +57,11 @@ for kidn = kidn_iter % iterate over CKIDs.
                     '-','color',Tcolors(nT,:),'LineWidth',1)
             xlabel('F [Hz]');ylabel('S_F/F^2 [dBc/Hz]')
             xlim([0.5,1e5]);grid on;ylim([-220,-140])
-            title('')
-
+            title(append('KID#',string(NOISE(p).KIDnumber)," |Power ",string(NOISE(p).ReadPower),"dBm"));
+            legendTvalues{nT} = sprintf('%1.3f',NOISE(kidn).Temperature(nT));
         end % End Bath temperature.
+    hTl(kidn) = legend(legendTvalues,'location','eastOutside');
+    hTl(kidn).ItemTokenSize = [10,10];
     hold(ax(p),'off')
     export_path_graph = append('../../../Export_Figures_noGit/LT254_DA_figures/Part_1_GR/f1KID',string(kidn),'T',sprintf('%1.3f',NOISE(p).Temperature(nT)),'.png');
     exportgraphics(ax(p),export_path_graph)  
