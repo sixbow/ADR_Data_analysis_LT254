@@ -18,21 +18,26 @@ freq = NOISE(1).FFTnoise{1,1}(:,1);
 kidn_iter = 2; %[Index] Select KID.
 % IndexPopt' Here you can select which powers you want 
     
-Tbath_iter = 14; %[Index] Number of Temperatures T_bath. Likely loop between 1:14;
+Tbath_iter = 5; %[Index] Number of Temperatures T_bath. Likely loop between 1:14;
 
 % Variable (Change at your own risk!)
 
 % TLS fit range 
-TLSfitmin = 2;% [Hz]
-TLSfitmax = 20;% [Hz]
-[~,TLSf_min_i] = min(abs(freq-TLSfitmin)) % This gives the min index
-[~,TLSf_max_i] = min(abs(freq-TLSfitmax)) % This gives the max index
+TLSfitmin = 3;% [Hz]
+TLSfitmax = 30;% [Hz]
+[~,TLSf_min_i] = min(abs(freq-TLSfitmin)); % This gives the min index
+[~,TLSf_max_i] = min(abs(freq-TLSfitmax)); % This gives the max index
+C_v_TLS_0 = [(10^-15) 1.5];% CTLS at 1 Hz , power with what  the power law decreases. TLS ~0.5
+C_v0_dBlog = [-150 1.5];% CTLS at 1 Hz , power with what  the power law decreases. TLS ~0.5
+
 % Combined fit range: GR model + TLS noise model = approx GR model at high
 % freq
-CBfitmin = 100;% [Hz]
-CBfitmax = 10000;%  [Hz]
-[~,CBf_min_i] = min(abs(freq-CBfitmin)) % "
-[~,CBf_max_i] = min(abs(freq-CBfitmax)) % "
+CBfitmin = 300;% [Hz]
+CBfitmax = 200000;%  [Hz]
+[~,CBf_min_i] = min(abs(freq-CBfitmin)); % "
+[~,CBf_max_i] = min(abs(freq-CBfitmax)); % "
+C_v_CB_0 = [(10^-17) 0.0001];% CTLS at 1 Hz , power with what  the power law decreases. TLS ~0.5
+
 %%
 tot_combi = length(concat_v(kidn_iter,IndexPsort,1));
 f = gobjects(tot_combi,1);
@@ -45,13 +50,17 @@ ax = gobjects(tot_combi,1);
 % This we will use to obtain a non-linear fit of the data. This gives heavy
 % weight on the parts of the graph that are high on log log plot since here
 % the difference is the biggest. 
-Model_oneoverf = @(C_v,fdata)C_v(1).*power(fdata,C_v(2)); %Model we use to fit C_v is the constants vector that we are trying to find.
+Model_oneoverf = @(C_v,fdata)C_v(1).*power(fdata,-1*C_v(2)); %Model we use to fit C_v is the constants vector that we are trying to find.
 Model_GR = @(C_v,fdata) C_v(1)./(1+power((2.*pi.*fdata.*C_v(2)),2)); %Model we use to fit C_v is the constants vector that we are trying to find.
+%Model_CB = @(C_v,fdata) C_TLS_corr.*power(fdata,-1*gamma_TLS)+C_v(1)./(1+power((2.*pi.*fdata.*C_v(2)),2)); %Model we use to fit C_v is the constants vector that we are trying to find.
 
 %These models below are meant to be used in log space. Maybe later f = 10^x
 % --> Later..
-%Model_oneoverf_logspace = @(C_v,xdata)10*log10(C_v(1)) -10.*C_v(2).*x; %Model we use to fit C_v is the constants vector that we are trying to find.
+Model_oneoverf_dBlog = @(C_v,xdata)10*log10(C_v(1)) -10.*C_v(2).*xdata; %Model we use to fit C_v is the constants vector that we are trying to find.
 %Model_GR_logspace = @(C_v,xdata) 10*log10(C(1))+10.*log10(1./(1+power((2.*pi.*power(10,x).*C(2)),2))); %Model we use to fit C_v is the constants vector that we are trying to find.
+
+%Linear helper line
+Model_line = @(C_v,xdata)C_v(1).*xdata+C_v(2);
 
 %% Plotting + save figure!
  %This has side effect that it creates a figure if it is not yet present so needs to be after you create figure.
@@ -66,21 +75,38 @@ Model_GR = @(C_v,fdata) C_v(1)./(1+power((2.*pi.*fdata.*C_v(2)),2)); %Model we u
     f(p) = figure;
     ax(p) = axes('XScale','log','YScale','linear');
     hold(ax(p),'on')
-    Tcolors = colormapJetJB(length(Tbath_iter));
+    Tcolors = colormapJetJB(14); % this has been set to 14 such that you always generate the set of colors such that you always obtain the same color for a high temp.
         for nT = Tbath_iter
             
             % Fit TLS ~2 - 20Hz
-            %linDataY = 
             
-            %TLS_coof(p,nT) = nonlinfitSdB(freq,
+            linDataY_TLS = NOISE(p).FFTnoise{nT}(:,4);
+            TLS_coof_lin{p,nT} = LLS_TLS_SdB(freq(TLSf_min_i:TLSf_max_i),linDataY_TLS(TLSf_min_i:TLSf_max_i),Model_oneoverf,C_v_TLS_0);
             
-            
-            
-            
-            
+            %f2 = figure;
+            dBlogDataX = log10(freq(TLSf_min_i:TLSf_max_i));
+            dBlogDataY = 10.*log10(NOISE(p).FFTnoise{nT}(:,4));
+            %plot(dBlogDataX,dBlogDataY(TLSf_min_i:TLSf_max_i))
+            TLS_coof_dBlog{p,nT} = polyfit(dBlogDataX,dBlogDataY(TLSf_min_i:TLSf_max_i),1);
+            C_TLS = power(10,(TLS_coof_dBlog{p,nT}(2)/10));% This is the constant extracted from the linear fit in log space.
+            gamma_TLS = -(TLS_coof_dBlog{p,nT}(1)/10); % "
+            figure(f(p)) % Brings the plotting figure back into focus.
             
             % Fit GR-noise + TLS ~400Hz - 100KHz
-
+            
+            linDataY_CB = NOISE(p).FFTnoise{nT}(:,4);
+            linDataY_CB = linDataY_CB-Model_oneoverf([C_TLS gamma_TLS],freq); % subtract the TLS line..
+            %f3 = figure
+            %ax3 = axes('XScale','log','YScale','log');
+            %plot(freq(CBf_min_i:CBf_max_i),linDataY_CB(CBf_min_i:CBf_max_i))
+            %title('f3:Log-log')
+            figure(f(p))
+            
+            n_num = mean(linDataY_CB(CBf_min_i:CBf_max_i))% This is the normalizing term to ensure numerical stability of trust region method.
+            C_TLS_corr = C_TLS./n_num
+            CB_coof_lin_CB{p,nT} = LLS_TLS_SdB(freq(CBf_min_i:CBf_max_i),linDataY_CB(CBf_min_i:CBf_max_i),Model_GR,C_v_CB_0);
+            
+            
             % Save these parameters in a struct/class?
             % contents: C_TLS, gamma, Res_TLS_gamma
             % C_GR, tau_qp, Residual_GR_Tau
@@ -92,21 +118,24 @@ Model_GR = @(C_v,fdata) C_v(1)./(1+power((2.*pi.*fdata.*C_v(2)),2)); %Model we u
             %toplot = NOISE(p).FFTnoise{1}(:,4) > 0;
             %plot(NOISE(p).FFTnoise{1}(toplot,1),10*log10(NOISE(p).FFTnoise{1}(toplot,4)),...
             %         '-','color','k','LineWidth',2)
-            toplot = NOISE(p).FFTnoise{nT}(:,4) > 0;
+            toplot = NOISE(p).FFTnoise{nT}(:,4) > 0; % makes sure you only plot positive data. As you approach low noise you data can become negative due to noise.
             plot(NOISE(p).FFTnoise{nT}(toplot,1),10*log10(NOISE(p).FFTnoise{nT}(toplot,4)),...
-                    '-','color',Tcolors(nT+1-min(Tbath_iter),:),'LineWidth',1)
+                    '-','color',Tcolors(nT,:),'LineWidth',1)
                 
-            xline(freq(TLSf_min_i),'--','Color','c')
-            xline(freq(TLSf_max_i),'--','Color','c')
             
-            xline(freq(CBf_min_i),'--','Color','m')
-            xline(freq(CBf_max_i),'--','Color','m')
             xlabel('F [Hz]');ylabel('S_F/F^2 [dBc/Hz]')
             %Old: %xlim([0.5,1e5]);grid on;ylim([-220,-140])
             xlim([0.1,5e5]);grid on;ylim([-220,-140])
             title(append('KID#',string(NOISE(p).KIDnumber)," |Power ",string(NOISE(p).ReadPower),"dBm"));
             legendTvalues{nT+1-min(Tbath_iter)} = sprintf('%1.3f',NOISE(kidn).Temperature(nT));
+            %plot(freq(toplot),10*log10(Model_oneoverf(TLS_coof_lin{p,nT},freq(toplot))),'--','Color',Tcolors(nT,:),'LineWidth',1)
+            plot(freq(toplot),Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot))),'-.','Color',Tcolors(nT,:),'LineWidth',1)
         end % End Bath temperature.
+    xline(freq(TLSf_min_i),'--','Color','c','LineWidth',1)
+    xline(freq(TLSf_max_i),'--','Color','c','LineWidth',1)
+
+    xline(freq(CBf_min_i),'--','Color','m','LineWidth',1)
+    xline(freq(CBf_max_i),'--','Color','m','LineWidth',1)
     hTl(kidn) = legend(legendTvalues,'location','eastOutside');
     hTl(kidn).ItemTokenSize = [10,10];
     hold(ax(p),'off')

@@ -1,7 +1,8 @@
-function coof = nonlinfitSdB(XDATA,YDATA,func,coof0)
+function coof = LLS_TLS_SdB(XDATA,YDATA,func,coof0)
 %nonlinfitSdB <strong>nonlinfitSdB(XDATA,YDATA,func,coof0)</strong>
 % This version normalizes the YDATA to make it stable because it uses trust
-% region standard.
+% region standard. This needs to be adapted for the problem at hand. 
+
 n_num = mean(YDATA);
 YDATA_N = YDATA./n_num;
 coof0(1) = (coof0(1)./n_num);
