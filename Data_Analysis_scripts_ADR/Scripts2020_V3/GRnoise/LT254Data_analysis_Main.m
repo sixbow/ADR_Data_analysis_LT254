@@ -15,7 +15,7 @@ FFTsubsubdir=['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_v
 load([ChipInfo_path FFTsubsubdir filesep 'NOISE_2D.mat'])
 freq = NOISE(1).FFTnoise{1,1}(:,1);
 %% User variables
-kidn_iter = 2; %[Index] Select KID.
+kidn_iter = 1; %[Index] Select KID.
 % IndexPopt' Here you can select which powers you want 
     
 Tbath_iter = 1:14; %[Index] Number of Temperatures T_bath. Likely loop between 1:14;
@@ -23,7 +23,7 @@ Tbath_iter = 1:14; %[Index] Number of Temperatures T_bath. Likely loop between 1
 % Variable (Change at your own risk!)
 
 % TLS fit range 
-TLSfitmin = 3;% [Hz]
+TLSfitmin = 0.8;% [Hz]
 TLSfitmax = 30;% [Hz]
 [~,TLSf_min_i] = min(abs(freq-TLSfitmin)); % This gives the min index
 [~,TLSf_max_i] = min(abs(freq-TLSfitmax)); % This gives the max index
@@ -32,8 +32,8 @@ C_v0_dBlog = [-150 1.5];% CTLS at 1 Hz , power with what  the power law decrease
 
 % Combined fit range: GR model + TLS noise model = approx GR model at high
 % freq
-CBfitmin = 300;% [Hz]
-CBfitmax = 200000;%  [Hz]
+CBfitmin = 200;% [Hz]
+CBfitmax = 150000;%  [Hz]
 [~,CBf_min_i] = min(abs(freq-CBfitmin)); % "
 [~,CBf_max_i] = min(abs(freq-CBfitmax)); % "
 C_v_CB_0 = [(10^-17) 0.0001];% CTLS at 1 Hz , power with what  the power law decreases. TLS ~0.5
@@ -51,7 +51,7 @@ ax = gobjects(tot_combi,1);
 % weight on the parts of the graph that are high on log log plot since here
 % the difference is the biggest. 
 Model_oneoverf = @(C_v,fdata)C_v(1).*power(fdata,-1*C_v(2)); %Model we use to fit C_v is the constants vector that we are trying to find.
-Model_GR = @(C_v,fdata) C_v(1)./(1+power((2.*pi.*fdata.*C_v(2)),2)); %Model we use to fit C_v is the constants vector that we are trying to find.
+Model_GR = @(C_v,fdata) C_v(1)./((1+power((2.*pi.*fdata.*C_v(2)),2).*(1))); %Model we use to fit C_v is the constants vector that we are trying to find.
 %Model_CB = @(C_v,fdata) C_TLS_corr.*power(fdata,-1*gamma_TLS)+C_v(1)./(1+power((2.*pi.*fdata.*C_v(2)),2)); %Model we use to fit C_v is the constants vector that we are trying to find.
 
 %These models below are meant to be used in log space. Maybe later f = 10^x
@@ -68,8 +68,8 @@ Model_line = @(C_v,xdata)C_v(1).*xdata+C_v(2);
  for kidn = kidn_iter % iterate over CKIDs.
     % IndexPsort is a vector of all the indices of powers for a specific
     % KID in Increasing order. 
-    power_iter = IndexPopt(kidn); %[Index] - Popt -Number of P_read values. For now I look at 1 power. 
-    %power_iter = IndexPsort{kidn,1}; %[Index] - All P_read Number of P_read values. For now I look at 1 power. 
+    %power_iter = IndexPopt(kidn); %[Index] - Popt -Number of P_read values. For now I look at 1 power. 
+    power_iter = IndexPsort{kidn,1}(5); %[Index] - All P_read Number of P_read values. For now I look at 1 power. 
     
     for p = power_iter % This is the power iterator over a specific kid 
     f(p) = figure;
@@ -120,7 +120,7 @@ Model_line = @(C_v,xdata)C_v(1).*xdata+C_v(2);
             %         '-','color','k','LineWidth',2)
             toplot = NOISE(p).FFTnoise{nT}(:,4) > 0; % makes sure you only plot positive data. As you approach low noise you data can become negative due to noise.
             plot(NOISE(p).FFTnoise{nT}(toplot,1),10*log10(NOISE(p).FFTnoise{nT}(toplot,4)),...
-                    '-','color',Tcolors(nT,:),'LineWidth',1)
+                    '-','color',Tcolors(nT,:),'LineWidth',1.5)
                 
             
             xlabel('F [Hz]');ylabel('S_F/F^2 [dBc/Hz]')
@@ -129,17 +129,24 @@ Model_line = @(C_v,xdata)C_v(1).*xdata+C_v(2);
             title(append('KID#',string(NOISE(p).KIDnumber)," |Power ",string(NOISE(p).ReadPower),"dBm"));
             legendTvalues{nT+1-min(Tbath_iter)} = sprintf('%1.3f',NOISE(kidn).Temperature(nT));
             %plot(freq(toplot),10*log10(Model_oneoverf(TLS_coof_lin{p,nT},freq(toplot))),'--','Color',Tcolors(nT,:),'LineWidth',1)
-            plot(freq(toplot),Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot))),'-.','Color',Tcolors(nT,:),'LineWidth',1)
-            plot(freq(CBf_min_i:CBf_max_i),10.*log10(linDataY_CB(CBf_min_i:CBf_max_i)));
-            plot(freq,10.*log10(Model_GR(CB_coof_lin_CB{p,nT},freq)),'-.','Color',Tcolors(nT,:),'LineWidth',1);
+            %plot(freq(toplot),Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot))),'-.','Color',Tcolors(nT,:),'LineWidth',1)
+            plot(freq(CBf_min_i:CBf_max_i),10.*log10(linDataY_CB(CBf_min_i:CBf_max_i)),'--','Color',Tcolors(nT,:),'LineWidth',0.5,'HandleVisibility','off');%
+            %compensated lines!
+            
+            
+            
+            %plot(freq(toplot),10.*log10(Model_GR(CB_coof_lin_CB{p,nT},freq(toplot))),'-.','Color',Tcolors(nT,:),'LineWidth',1);
+            toplotTLSplusGR =lintodb(dbtolin(Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot)))) + Model_GR(CB_coof_lin_CB{p,nT},freq(toplot)));
+            plot(freq(toplot),toplotTLSplusGR,'-.','Color',Tcolors(nT,:),'LineWidth',1.5,'HandleVisibility','off');
         end % End Bath temperature.
-    xline(freq(TLSf_min_i),'--','Color','c','LineWidth',1)
-    xline(freq(TLSf_max_i),'--','Color','c','LineWidth',1)
-
-    xline(freq(CBf_min_i),'--','Color','m','LineWidth',1)
-    xline(freq(CBf_max_i),'--','Color','m','LineWidth',1)
+    
     hTl(kidn) = legend(legendTvalues,'location','eastOutside');
     hTl(kidn).ItemTokenSize = [10,10];
+    xline(freq(TLSf_min_i),'--','Color','c','LineWidth',1,'HandleVisibility','off')
+    xline(freq(TLSf_max_i),'--','Color','c','LineWidth',1,'HandleVisibility','off')
+    xline(freq(CBf_min_i),'--','Color','m','LineWidth',1,'HandleVisibility','off')
+    xline(freq(CBf_max_i),'--','Color','m','LineWidth',1,'HandleVisibility','off')
+    
     hold(ax(p),'off')
     export_path_graph = append('../../../Export_Figures_noGit/LT254_DA_figures/Part_1_GR/f1KID',string(kidn),'T',sprintf('%1.3f',NOISE(p).Temperature(nT)),'.png');
     exportgraphics(ax(p),export_path_graph)  
