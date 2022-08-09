@@ -96,7 +96,7 @@ Model_line = @(C_v,xdata)C_v(1).*xdata+C_v(2);
             TLS_coof_dBlog{p,nT} = polyfit(dBlogDataX,dBlogDataY(TLSf_min_i:TLSf_max_i),1);
             C_TLS = power(10,(TLS_coof_dBlog{p,nT}(2)/10));% This is the constant extracted from the linear fit in log space.
             gamma_TLS = -(TLS_coof_dBlog{p,nT}(1)/10); % "
-            TLS_coof_dBlog_to_lin{p,nT} = [C_TLS gamma_TLS];
+            TLS_coof_dBlog_to_lin{p,nT} = [dbtolin(TLS_coof_dBlog{p,nT}(2))]
             figure(f(p)) % Brings the plotting figure back into focus.
             
             % Fit GR-noise + TLS ~400Hz - 100KHz

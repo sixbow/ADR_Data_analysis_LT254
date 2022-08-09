@@ -1,0 +1,26 @@
+clc
+close all 
+clear all 
+N = 100;
+a= 2;
+b = 4;
+c = 0.5;
+x = linspace(-10,10,N);
+f = @(x)myfunc1(x,a,b);
+g = @(x)myfunc2(x,c);
+
+fming = @(x)f(x)-g(x);
+
+plot(x,f(x),x,g(x),x,fming(x));
+grid on
+% finding the intersect!
+[x_inter,y_inter] = findinterse
+
+%%
+
+function out = myfunc1(x,a,b)
+out = a.*x + b;
+end 
+function out = myfunc2(x,c)
+out = c.*(x.^2);
+end
