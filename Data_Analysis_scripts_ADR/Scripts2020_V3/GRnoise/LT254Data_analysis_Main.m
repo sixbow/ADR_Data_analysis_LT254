@@ -15,7 +15,7 @@ FFTsubsubdir=['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_v
 load([ChipInfo_path FFTsubsubdir filesep 'NOISE_2D.mat'])
 freq = NOISE(1).FFTnoise{1,1}(:,1);
 %% User variables
-kidn_iter = 1; %[Index] Select KID.
+kidn_iter = 1:6; %[Index] Select KID.
 % IndexPopt' Here you can select which powers you want 
     
 Tbath_iter = 1:14; %[Index] Number of Temperatures T_bath. Likely loop between 1:14;
@@ -32,7 +32,7 @@ C_v0_dBlog = [-150 1.5];% CTLS at 1 Hz , power with what  the power law decrease
 
 % Combined fit range: GR model + TLS noise model = approx GR model at high
 % freq
-CBfitmin = 200;% [Hz]
+CBfitmin = 1000;% [Hz]
 CBfitmax = 150000;%  [Hz]
 [~,CBf_min_i] = min(abs(freq-CBfitmin)); % "
 [~,CBf_max_i] = min(abs(freq-CBfitmax)); % "
@@ -68,11 +68,11 @@ Model_line = @(C_v,xdata)C_v(1).*xdata+C_v(2);
  for kidn = kidn_iter % iterate over CKIDs.
     % IndexPsort is a vector of all the indices of powers for a specific
     % KID in Increasing order. 
-    %power_iter = IndexPopt(kidn); %[Index] - Popt -Number of P_read values. For now I look at 1 power. 
-    power_iter = IndexPsort{kidn,1}(5); %[Index] - All P_read Number of P_read values. For now I look at 1 power. 
+    power_iter = IndexPopt(kidn); %[Index] - Popt -Number of P_read values. For now I look at 1 power. 
+    %power_iter = IndexPsort{kidn,1}(7); %[Index] - All P_read Number of P_read values. For now I look at 1 power. 
     
     for p = power_iter % This is the power iterator over a specific kid 
-    f(p) = figure;
+    f(p) = figure('WindowState','maximized');
     ax(p) = axes('XScale','log','YScale','linear');
     hold(ax(p),'on')
     Tcolors = colormapJetJB(14); % this has been set to 14 such that you always generate the set of colors such that you always obtain the same color for a high temp.
@@ -102,7 +102,6 @@ Model_line = @(C_v,xdata)C_v(1).*xdata+C_v(2);
             %title('f3:Log-log')
             figure(f(p))
             
-            n_num = mean(linDataY_CB(CBf_min_i:CBf_max_i))% This is the normalizing term to ensure numerical stability of trust region method.
             %C_TLS_corr = C_TLS./n_num
             CB_coof_lin_CB{p,nT} = LLS_TLS_SdB(freq(CBf_min_i:CBf_max_i),linDataY_CB(CBf_min_i:CBf_max_i),Model_GR,C_v_CB_0);
             
@@ -129,13 +128,13 @@ Model_line = @(C_v,xdata)C_v(1).*xdata+C_v(2);
             title(append('KID#',string(NOISE(p).KIDnumber)," |Power ",string(NOISE(p).ReadPower),"dBm"));
             legendTvalues{nT+1-min(Tbath_iter)} = sprintf('%1.3f',NOISE(kidn).Temperature(nT));
             %plot(freq(toplot),10*log10(Model_oneoverf(TLS_coof_lin{p,nT},freq(toplot))),'--','Color',Tcolors(nT,:),'LineWidth',1)
-            %plot(freq(toplot),Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot))),'-.','Color',Tcolors(nT,:),'LineWidth',1)
+            plot(freq(toplot),Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot))),'-.','Color',Tcolors(nT,:),'LineWidth',1,'HandleVisibility','off')
             plot(freq(CBf_min_i:CBf_max_i),10.*log10(linDataY_CB(CBf_min_i:CBf_max_i)),'--','Color',Tcolors(nT,:),'LineWidth',0.5,'HandleVisibility','off');%
             %compensated lines!
             
             
             
-            %plot(freq(toplot),10.*log10(Model_GR(CB_coof_lin_CB{p,nT},freq(toplot))),'-.','Color',Tcolors(nT,:),'LineWidth',1);
+            plot(freq(toplot),10.*log10(Model_GR(CB_coof_lin_CB{p,nT},freq(toplot))),'-.','Color',Tcolors(nT,:),'LineWidth',1,'HandleVisibility','off');
             toplotTLSplusGR =lintodb(dbtolin(Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot)))) + Model_GR(CB_coof_lin_CB{p,nT},freq(toplot)));
             plot(freq(toplot),toplotTLSplusGR,'-.','Color',Tcolors(nT,:),'LineWidth',1.5,'HandleVisibility','off');
         end % End Bath temperature.
@@ -153,6 +152,7 @@ Model_line = @(C_v,xdata)C_v(1).*xdata+C_v(2);
     end % End power 
 end % End #KID
 
+CB_coof_lin_CB;
 
 
 
