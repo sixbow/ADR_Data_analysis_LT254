@@ -40,6 +40,7 @@ CBfitmax = 150000;%  [Hz]
 [~,CBf_max_i] = min(abs(freq-CBfitmax)); % "
 C_v_CB_0 = [(10^-17) 0.0001];% CTLS at 1 Hz , power with what  the power law decreases. TLS ~0.5
 
+fguess = 1000; % [Hz] initial guess for the intersection point of the TLS and GR noise. 
 
 %CB_lb = [10^-25 0.0001/CBfitmin];
 %CB_ub = [10^-8 1000/CBfitmax];
@@ -113,9 +114,12 @@ Model_line = @(C_v,xdata)C_v(1).*xdata+C_v(2);
             CB_coof_lin_CB{p,nT} = LLS_TLS_SdB(freq(CBf_min_i:CBf_max_i),linDataY_CB(CBf_min_i:CBf_max_i),Model_GR,C_v_CB_0);
             
             % Finding intersects
+            fTLS_curr = @(x)Model_oneoverf(TLS_coof_dBlog_to_lin{p,nT},x);
+            fGR_curr = @(x)Model_GR(CB_coof_lin_CB{p,nT},x);
+            [f_inter(p,nT),S_inter(p,nT)] = findintersect_SdB(fTLS_curr,fGR_curr,fguess);
             
-            
-            
+            plot(f_inter(p,nT),lintodb(S_inter(p,nT)),'o','Color',Tcolors(nT,:),'LineWidth',1.5,'HandleVisibility','off')
+            %plot(1000,-170,'o','MarkerFaceColor', 'b','LineWidth',30)
             % Save these parameters in a struct/class?
             % contents: C_TLS, gamma, Res_TLS_gamma
             % C_GR, tau_qp, Residual_GR_Tau
@@ -138,14 +142,15 @@ Model_line = @(C_v,xdata)C_v(1).*xdata+C_v(2);
             title(append('KID#',string(NOISE(p).KIDnumber)," |Power ",string(NOISE(p).ReadPower),"dBm"));
             legendTvalues{nT+1-min(Tbath_iter)} = append(sprintf('%1.3f',NOISE(kidn).Temperature(nT)),' K');
             %plot(freq(toplot),10*log10(Model_oneoverf(TLS_coof_lin{p,nT},freq(toplot))),'--','Color',Tcolors(nT,:),'LineWidth',1)
-            plot(freq(toplot),Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot))),'-.','Color',Tcolors(nT,:),'LineWidth',1,'HandleVisibility','off')
+            %plot(freq(toplot),Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot))),'-.','Color',Tcolors(nT,:),'LineWidth',1,'HandleVisibility','off')
             plot(freq(CBf_min_i:CBf_max_i),10.*log10(linDataY_CB(CBf_min_i:CBf_max_i)),'--','Color',Tcolors(nT,:),'LineWidth',0.5,'HandleVisibility','off');%
             %compensated lines!
             
             
-            
-            plot(freq(toplot),10.*log10(Model_GR(CB_coof_lin_CB{p,nT},freq(toplot))),'-.','Color',Tcolors(nT,:),'LineWidth',1,'HandleVisibility','off');
+            % GR lines
+            %plot(freq(toplot),10.*log10(Model_GR(CB_coof_lin_CB{p,nT},freq(toplot))),'-.','Color',Tcolors(nT,:),'LineWidth',1,'HandleVisibility','off');
             toplotTLSplusGR =lintodb(dbtolin(Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot)))) + Model_GR(CB_coof_lin_CB{p,nT},freq(toplot)));
+            % Final model lines
             plot(freq(toplot),toplotTLSplusGR,'-.','Color',Tcolors(nT,:),'LineWidth',1.5,'HandleVisibility','off');
         end % End Bath temperature.
     

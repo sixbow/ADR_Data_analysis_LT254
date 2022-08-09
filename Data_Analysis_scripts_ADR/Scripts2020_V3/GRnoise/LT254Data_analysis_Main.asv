@@ -40,6 +40,7 @@ CBfitmax = 150000;%  [Hz]
 [~,CBf_max_i] = min(abs(freq-CBfitmax)); % "
 C_v_CB_0 = [(10^-17) 0.0001];% CTLS at 1 Hz , power with what  the power law decreases. TLS ~0.5
 
+fguess = 1000; % [Hz] initial guess for the intersection point of the TLS and GR noise. 
 
 %CB_lb = [10^-25 0.0001/CBfitmin];
 %CB_ub = [10^-8 1000/CBfitmax];
@@ -96,7 +97,7 @@ Model_line = @(C_v,xdata)C_v(1).*xdata+C_v(2);
             TLS_coof_dBlog{p,nT} = polyfit(dBlogDataX,dBlogDataY(TLSf_min_i:TLSf_max_i),1);
             C_TLS = power(10,(TLS_coof_dBlog{p,nT}(2)/10));% This is the constant extracted from the linear fit in log space.
             gamma_TLS = -(TLS_coof_dBlog{p,nT}(1)/10); % "
-            TLS_coof_dBlog_to_lin{p,nT} = [dbtolin(TLS_coof_dBlog{p,nT}(2))]
+            TLS_coof_dBlog_to_lin{p,nT} = [C_TLS gamma_TLS];
             figure(f(p)) % Brings the plotting figure back into focus.
             
             % Fit GR-noise + TLS ~400Hz - 100KHz
@@ -113,9 +114,12 @@ Model_line = @(C_v,xdata)C_v(1).*xdata+C_v(2);
             CB_coof_lin_CB{p,nT} = LLS_TLS_SdB(freq(CBf_min_i:CBf_max_i),linDataY_CB(CBf_min_i:CBf_max_i),Model_GR,C_v_CB_0);
             
             % Finding intersects
+            fTLS_curr = @(x)Model_oneoverf(TLS_coof_dBlog_to_lin{p,nT},x);
+            fGR_curr = @(x)Model_GR(CB_coof_lin_CB{p,nT},x);
+            [f_inter(p,nT),S_inter(p,nT)] = findintersect_SdB(fTLS_curr,fGR_curr,fguess);
             
-            
-            
+            plot(f_inter(p,nT),dbtolin(S_inter(p,nT)),'o','MarkerFaceColor', 'b','LineWidth',30)%,'Color',Tcolors(nT,:),'o', 'MarkerFaceColor', 'b')
+            plot(f_inter(p,nT),dbtolin(S_inter(p,nT)),'o','MarkerFaceColor', 'b','LineWidth',30)
             % Save these parameters in a struct/class?
             % contents: C_TLS, gamma, Res_TLS_gamma
             % C_GR, tau_qp, Residual_GR_Tau
