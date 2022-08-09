@@ -1,0 +1,25 @@
+clc
+clear all
+close all
+N = 100;
+XDATA = linspace(1,10,N);
+b = -4;
+f1 = figure;
+ax = axes();
+for i=1:10
+YDATA = XDATA.*2 + (3*randn(1,N) -0.5 ) + b;
+coof0 = 1.45;
+
+f = @(C,xdata)myfunc(C,xdata,b);
+
+[Cout,~,~,~,~] = lsqcurvefit(f,coof0,XDATA,YDATA);
+
+
+hold(ax,'on')
+plot(XDATA,YDATA,XDATA,f(Cout,XDATA));
+hold(ax,'off')
+end
+% Functions end!!
+function out = myfunc(C,xdata,b)
+out = C.*xdata + b;
+end
