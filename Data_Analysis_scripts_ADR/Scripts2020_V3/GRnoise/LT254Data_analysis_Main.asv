@@ -12,10 +12,10 @@ load([ChipInfo_path FFTsubsubdir filesep 'NOISE_2D.mat'])
 freq = NOISE(1).FFTnoise{1,1}(:,1);
 % User variables
 
-kidn_iter = 1; %[Index] Select KID.
+kidn_iter = 1:6; %[Index] Select KID.
 % IndexPopt' Here you can select which powers you want 
     
-Tbath_iter = 1:2:14; %[Index] Number of Temperatures T_bath. Likely loop between 1:14;
+Tbath_iter = 1:14; %[Index] Number of Temperatures T_bath. Likely loop between 1:14;
 
 % Variable (Change at your own risk!)
 
@@ -36,11 +36,12 @@ CBfitmax = 150000;%  [Hz]
 [~,CBf_max_i] = min(abs(freq-CBfitmax)); % "
 C_v_CB_0 = [(10^-17) 0.0001];% CTLS at 1 Hz , power with what  the power law decreases. TLS ~0.5
 
-fguess = 1000; % [Hz] initial guess for the intersection point of the TLS and GR noise. 
+fguess = 2000; % [Hz] initial guess for the intersection point of the TLS and GR noise. 
 
-%CB_lb = [10^-25 0.0001/CBfitmin];
-%CB_ub = [10^-8 1000/CBfitmax];
-
+% CB_lb = [10^-20 0.000000000000001];
+% CB_ub = [10^-15 1];
+CB_lb = [10^-20 (1/(2*pi*CBfitmax))];
+CB_ub = [10^-15 (1/(2*pi*CBfitmin))];
 %
 tot_combi = length(concat_v(kidn_iter,IndexPsort,1));
 f = gobjects(tot_combi,1);
@@ -67,7 +68,11 @@ Model_line = @(C_v,xdata)C_v(1).*xdata+C_v(2);
 
 %% Part 1: Sec 1 | Plotting + save figure!
  %This has side effect that it creates a figure if it is not yet present so needs to be after you create figure.
-
+ % Swithches for user to play with ----------------------------------------
+   SW_plotGR = 0;
+   SW_plotTLS = 0;
+ %-------------------------------------------------------------------------
+ 
  for kidn = kidn_iter % iterate over CKIDs.
     % IndexPsort is a vector of all the indices of powers for a specific
     % KID in Increasing order. 
@@ -100,21 +105,15 @@ Model_line = @(C_v,xdata)C_v(1).*xdata+C_v(2);
             
             linDataY_CB = NOISE(p).FFTnoise{nT}(:,4);
             linDataY_CB = linDataY_CB-Model_oneoverf([C_TLS gamma_TLS],freq); % subtract the TLS line..
-            %f3 = figure
-            %ax3 = axes('XScale','log','YScale','log');
-            %plot(freq(CBf_min_i:CBf_max_i),linDataY_CB(CBf_min_i:CBf_max_i))
-            %title('f3:Log-log')
-            figure(f(p))
             
-            %This coof is 
-            CB_coof_lin{p,nT} = LLS_TLS_SdB(freq(CBf_min_i:CBf_max_i),linDataY_CB(CBf_min_i:CBf_max_i),Model_GR,C_v_CB_0);
+            %Fitting GR noise spectrum 
+            CB_coof_lin{p,nT} = LLS_CB_SdB(freq(CBf_min_i:CBf_max_i),linDataY_CB(CBf_min_i:CBf_max_i),Model_GR,C_v_CB_0,CB_lb,CB_ub);
             
             % Finding intersects
             fTLS_curr = @(x)Model_oneoverf(TLS_coof_dBlog_to_lin{p,nT},x);
             fGR_curr = @(x)Model_GR(CB_coof_lin{p,nT},x);
             [f_inter(p,nT),S_inter(p,nT)] = findintersect_SdB(fTLS_curr,fGR_curr,fguess);
-            
-            plot(f_inter(p,nT),lintodb(S_inter(p,nT)),'o','Color',Tcolors(nT,:),'LineWidth',1.5,'HandleVisibility','off')
+            plot(f_inter(p,nT),lintodb(S_inter(p,nT)),'o','Color',Tcolors(nT,:),'LineWidth',1.5,'HandleVisibility','off');
             %plot(1000,-170,'o','MarkerFaceColor', 'b','LineWidth',30)
             % Save these parameters in a struct/class?
             % contents: C_TLS, gamma, Res_TLS_gamma
@@ -140,17 +139,22 @@ Model_line = @(C_v,xdata)C_v(1).*xdata+C_v(2);
             legendTvalues{nT} = append(sprintf('%1.3f',NOISE(kidn).Temperature(nT)),' K');
             
             %plot(freq(toplot),10*log10(Model_oneoverf(TLS_coof_lin{p,nT},freq(toplot))),'--','Color',Tcolors(nT,:),'LineWidth',1)
-            %plot(freq(toplot),Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot))),'-.','Color',Tcolors(nT,:),'LineWidth',1,'HandleVisibility','off')
+            if SW_plotTLS
+            plot(freq(toplot),Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot))),'-.','Color','black','LineWidth',1,'HandleVisibility','off')
+            end %Plotting TLS lines
             plot(freq(CBf_min_i:CBf_max_i),10.*log10(linDataY_CB(CBf_min_i:CBf_max_i)),'--','Color',Tcolors(nT,:),'LineWidth',0.5,'HandleVisibility','off');%
             %compensated lines!
             
             
             % GR lines
-            %plot(freq(toplot),10.*log10(Model_GR(CB_coof_lin_CB{p,nT},freq(toplot))),'-.','Color',Tcolors(nT,:),'LineWidth',1,'HandleVisibility','off');
+            if SW_plotGR
+                plot(freq(toplot),10.*log10(Model_GR(CB_coof_lin{p,nT},freq(toplot))),'-.','Color','black','LineWidth',1,'HandleVisibility','off');
+                %plot(freq(toplot),10.*log10(Model_GR(CB_coof_lin_CB{p,nT},freq(toplot))),'-.','Color',Tcolors(nT,:),'LineWidth',1,'HandleVisibility','off');
+            end % Plots GR lines if user switch is high.
             toplotTLSplusGR =lintodb(dbtolin(Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot)))) + Model_GR(CB_coof_lin{p,nT},freq(toplot)));
             % Final model lines
             plot(freq(toplot),toplotTLSplusGR,'-.','Color',Tcolors(nT,:),'LineWidth',1.5,'HandleVisibility','off');
-            xline(1/(2*pi*abs(CB_coof_lin{p,nT}(2))),'--','Color',,'LineWidth',0.25,'HandleVisibility','off')
+            xline(1/(2*pi*abs(CB_coof_lin{p,nT}(2))),'--','Color',Tcolors(nT,:),'LineWidth',0.25,'HandleVisibility','off')
         end % End Bath temperature.
     legendTvalues = legendTvalues(~cellfun('isempty',legendTvalues));
     % this removes the zero entries from the legendTvalues celll.
@@ -184,32 +188,30 @@ end % End #KID
             ax2(nT) = axes('XScale','log','YScale','linear');
             hold(ax2(nT),'on')
             % Fit TLS ~2 - 20Hz
-            
+            %---TLS noise fit in linear space-----(Not used!)--------------
             linDataY_TLS = NOISE(p).FFTnoise{nT}(:,4);
             TLS_coof_lin{p,nT} = LLS_TLS_SdB(freq(TLSf_min_i:TLSf_max_i),linDataY_TLS(TLSf_min_i:TLSf_max_i),Model_oneoverf,C_v_TLS_0);
-            
-            %f2 = figure;
+            %---TLS noise fit linear in Log-log space----------------------
             dBlogDataX = log10(freq(TLSf_min_i:TLSf_max_i));
             dBlogDataY = 10.*log10(NOISE(p).FFTnoise{nT}(:,4));
-            %plot(dBlogDataX,dBlogDataY(TLSf_min_i:TLSf_max_i))
+            
             TLS_coof_dBlog{p,nT} = polyfit(dBlogDataX,dBlogDataY(TLSf_min_i:TLSf_max_i),1);
             C_TLS = power(10,(TLS_coof_dBlog{p,nT}(2)/10));% This is the constant extracted from the linear fit in log space.
             gamma_TLS = -(TLS_coof_dBlog{p,nT}(1)/10); % "
-            %figure(f2(nT)) % Brings the plotting figure back into focus.
-            
-            % Fit GR-noise + TLS ~400Hz - 100KHz
+           
+            %-Fit GR-noise + TLS ~400Hz - 100KHz---------------------------
             
             linDataY_CB = NOISE(p).FFTnoise{nT}(:,4);
             linDataY_CB = linDataY_CB-Model_oneoverf([C_TLS gamma_TLS],freq); % subtract the TLS line..
-            %f3 = figure
-            %ax3 = axes('XScale','log','YScale','log');
-            %plot(freq(CBf_min_i:CBf_max_i),linDataY_CB(CBf_min_i:CBf_max_i))
-            %title('f3:Log-log')
-            %figure(f2(nT))
+            CB_coof_lin{p,nT} = LLS_CB_SdB(freq(CBf_min_i:CBf_max_i),linDataY_CB(CBf_min_i:CBf_max_i),Model_GR,C_v_CB_0,CB_lb,CB_ub);
             
-            %C_TLS_corr = C_TLS./n_num
-            CB_coof_lin{p,nT} = LLS_TLS_SdB(freq(CBf_min_i:CBf_max_i),linDataY_CB(CBf_min_i:CBf_max_i),Model_GR,C_v_CB_0);
             
+            %---Finding intersects-----------------------------------------
+            fTLS_curr = @(x)Model_oneoverf(TLS_coof_dBlog_to_lin{p,nT},x);
+            fGR_curr = @(x)Model_GR(CB_coof_lin{p,nT},x);
+            [f_inter(p,nT),S_inter(p,nT)] = findintersect_SdB(fTLS_curr,fGR_curr,fguess);
+            plot(f_inter(p,nT),lintodb(S_inter(p,nT)),'o','Color','black','LineWidth',1.5,'HandleVisibility','off');
+
             
             % Save these parameters in a struct/class?
             % contents: C_TLS, gamma, Res_TLS_gamma
@@ -218,29 +220,27 @@ end % End #KID
             % Measure for flatnes (Derivative!!)
             % Or you could say that a 2 db Diffence between GR-noise and measured data.
             
-            % Fig. 1: Plotting the fractional frequency plot 
-            %toplot = NOISE(p).FFTnoise{1}(:,4) > 0;
-            %plot(NOISE(p).FFTnoise{1}(toplot,1),10*log10(NOISE(p).FFTnoise{1}(toplot,4)),...
-            %         '-','color','k','LineWidth',2)
+            % Fig. 1: Plotting the fractional frequency plot---------------
             toplot = NOISE(p).FFTnoise{nT}(:,4) > 0; % makes sure you only plot positive data. As you approach low noise you data can become negative due to noise.
             plot(NOISE(p).FFTnoise{nT}(toplot,1),10*log10(NOISE(p).FFTnoise{nT}(toplot,4)),...
                     '-','color',Tcolors(nT,:),'LineWidth',1.5)
                 
             
             xlabel('F [Hz]');ylabel('S_F/F^2 [dBc/Hz]')
-            %Old: %xlim([0.5,1e5]);grid on;ylim([-220,-140])
+            %xlim([0.5,1e5]);grid on;ylim([-220,-140])
             xlim([0.1,5e5]);grid on;ylim([-220,-140])
             title(append('KID#',string(NOISE(p).KIDnumber)," |Power ",string(NOISE(p).ReadPower),"dBm"));
             legendTvalues2 = append(sprintf('%1.3f',NOISE(kidn).Temperature(nT)),' K');
-            %plot(freq(toplot),10*log10(Model_oneoverf(TLS_coof_lin{p,nT},freq(toplot))),'--','Color',Tcolors(nT,:),'LineWidth',1)
-            plot(freq(toplot),Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot))),'-.','Color',Tcolors(nT,:),'LineWidth',1,'HandleVisibility','off')
+            % TLS noise plot 
+            plot(freq(toplot),Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot))),'-.','Color','black','LineWidth',1,'HandleVisibility','off')
             plot(freq(CBf_min_i:CBf_max_i),10.*log10(linDataY_CB(CBf_min_i:CBf_max_i)),'--','Color',Tcolors(nT,:),'LineWidth',0.5,'HandleVisibility','off');%
             %compensated lines!
             
             
-            
-            plot(freq(toplot),10.*log10(Model_GR(CB_coof_lin{p,nT},freq(toplot))),'-.','Color',Tcolors(nT,:),'LineWidth',1,'HandleVisibility','off');
+            % GR model plot
+            plot(freq(toplot),10.*log10(Model_GR(CB_coof_lin{p,nT},freq(toplot))),'-.','Color','black','LineWidth',1,'HandleVisibility','off');
             toplotTLSplusGR =lintodb(dbtolin(Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot)))) + Model_GR(CB_coof_lin{p,nT},freq(toplot)));
+            % Total model: TLS + GR noise. 
             plot(freq(toplot),toplotTLSplusGR,'-.','Color',Tcolors(nT,:),'LineWidth',1.5,'HandleVisibility','off');
             hTl2(kidn) = legend(legendTvalues2,'location','eastOutside');
             hTl2(kidn).ItemTokenSize = [10,10];
@@ -252,6 +252,7 @@ end % End #KID
             hold(ax2(nT),'off')
             export_path_graph = append('../../../Export_Figures_noGit/LT254_DA_figures/Part_1_GR/f2KID',string(kidn),'T',sprintf('%1.3f',NOISE(p).Temperature(nT)),'.png');
             exportgraphics(ax2(nT),export_path_graph)
+            %close(f2(nT)) % Closes the figures after use
         end % End Bath temperature. 
     end % End power 
 end % End #KID
