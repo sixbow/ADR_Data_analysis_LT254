@@ -109,11 +109,11 @@ Model_line = @(C_v,xdata)C_v(1).*xdata+C_v(2);
             figure(f(p))
             
             %This coof is 
-            CB_coof_lin_CB{p,nT} = LLS_TLS_SdB(freq(CBf_min_i:CBf_max_i),linDataY_CB(CBf_min_i:CBf_max_i),Model_GR,C_v_CB_0);
+            CB_coof_lin{p,nT} = LLS_TLS_SdB(freq(CBf_min_i:CBf_max_i),linDataY_CB(CBf_min_i:CBf_max_i),Model_GR,C_v_CB_0);
             
             % Finding intersects
             fTLS_curr = @(x)Model_oneoverf(TLS_coof_dBlog_to_lin{p,nT},x);
-            fGR_curr = @(x)Model_GR(CB_coof_lin_CB{p,nT},x);
+            fGR_curr = @(x)Model_GR(CB_coof_lin{p,nT},x);
             [f_inter(p,nT),S_inter(p,nT)] = findintersect_SdB(fTLS_curr,fGR_curr,fguess);
             
             plot(f_inter(p,nT),lintodb(S_inter(p,nT)),'o','Color',Tcolors(nT,:),'LineWidth',1.5,'HandleVisibility','off')
@@ -149,9 +149,10 @@ Model_line = @(C_v,xdata)C_v(1).*xdata+C_v(2);
             
             % GR lines
             %plot(freq(toplot),10.*log10(Model_GR(CB_coof_lin_CB{p,nT},freq(toplot))),'-.','Color',Tcolors(nT,:),'LineWidth',1,'HandleVisibility','off');
-            toplotTLSplusGR =lintodb(dbtolin(Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot)))) + Model_GR(CB_coof_lin_CB{p,nT},freq(toplot)));
+            toplotTLSplusGR =lintodb(dbtolin(Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot)))) + Model_GR(CB_coof_lin{p,nT},freq(toplot)));
             % Final model lines
             plot(freq(toplot),toplotTLSplusGR,'-.','Color',Tcolors(nT,:),'LineWidth',1.5,'HandleVisibility','off');
+            xline(1/(2*pi*abs(CB_coof_lin{p,nT}(2))),'--','Color','c','LineWidth',1,'HandleVisibility','off')
         end % End Bath temperature.
     legendTvalues = legendTvalues(~cellfun('isempty',legendTvalues));
     % this removes the zero entries from the legendTvalues celll.
@@ -209,7 +210,7 @@ end % End #KID
             %figure(f2(nT))
             
             %C_TLS_corr = C_TLS./n_num
-            CB_coof_lin_CB{p,nT} = LLS_TLS_SdB(freq(CBf_min_i:CBf_max_i),linDataY_CB(CBf_min_i:CBf_max_i),Model_GR,C_v_CB_0);
+            CB_coof_lin{p,nT} = LLS_TLS_SdB(freq(CBf_min_i:CBf_max_i),linDataY_CB(CBf_min_i:CBf_max_i),Model_GR,C_v_CB_0);
             
             
             % Save these parameters in a struct/class?
@@ -240,8 +241,8 @@ end % End #KID
             
             
             
-            plot(freq(toplot),10.*log10(Model_GR(CB_coof_lin_CB{p,nT},freq(toplot))),'-.','Color',Tcolors(nT,:),'LineWidth',1,'HandleVisibility','off');
-            toplotTLSplusGR =lintodb(dbtolin(Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot)))) + Model_GR(CB_coof_lin_CB{p,nT},freq(toplot)));
+            plot(freq(toplot),10.*log10(Model_GR(CB_coof_lin{p,nT},freq(toplot))),'-.','Color',Tcolors(nT,:),'LineWidth',1,'HandleVisibility','off');
+            toplotTLSplusGR =lintodb(dbtolin(Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot)))) + Model_GR(CB_coof_lin{p,nT},freq(toplot)));
             plot(freq(toplot),toplotTLSplusGR,'-.','Color',Tcolors(nT,:),'LineWidth',1.5,'HandleVisibility','off');
             hTl2(kidn) = legend(legendTvalues2,'location','eastOutside');
             hTl2(kidn).ItemTokenSize = [10,10];
@@ -298,7 +299,7 @@ nT = 4 ;%Choose Temp index
             %title('f3:Log-log')
             
             %C_TLS_corr = C_TLS./n_num
-            CB_coof_lin_CB{p,nT} = LLS_TLS_SdB(freq(CBf_min_i:CBf_max_i),linDataY_CB(CBf_min_i:CBf_max_i),Model_GR,C_v_CB_0);
+            CB_coof_lin{p,nT} = LLS_TLS_SdB(freq(CBf_min_i:CBf_max_i),linDataY_CB(CBf_min_i:CBf_max_i),Model_GR,C_v_CB_0);
             
             
             % Save these parameters in a struct/class?
@@ -329,8 +330,8 @@ nT = 4 ;%Choose Temp index
             
             
             
-            plot(freq(toplot),10.*log10(Model_GR(CB_coof_lin_CB{p,nT},freq(toplot))),'-.','Color',Tcolors(nT,:),'LineWidth',1,'HandleVisibility','off');
-            toplotTLSplusGR =lintodb(dbtolin(Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot)))) + Model_GR(CB_coof_lin_CB{p,nT},freq(toplot)));
+            plot(freq(toplot),10.*log10(Model_GR(CB_coof_lin{p,nT},freq(toplot))),'-.','Color',Tcolors(nT,:),'LineWidth',1,'HandleVisibility','off');
+            toplotTLSplusGR =lintodb(dbtolin(Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot)))) + Model_GR(CB_coof_lin{p,nT},freq(toplot)));
             plot(freq(toplot),toplotTLSplusGR,'-.','Color',Tcolors(nT,:),'LineWidth',1.5,'HandleVisibility','off');
     
     %hTl1(kidn) = legend(legendTvalues,'location','eastOutside');
