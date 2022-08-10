@@ -12,10 +12,10 @@ load([ChipInfo_path FFTsubsubdir filesep 'NOISE_2D.mat'])
 freq = NOISE(1).FFTnoise{1,1}(:,1);
 % User variables
 
-kidn_iter = 1:6; %[Index] Select KID.
+kidn_iter = 2; %[Index] Select KID.
 % IndexPopt' Here you can select which powers you want 
     
-Tbath_iter = 1:14; %[Index] Number of Temperatures T_bath. Likely loop between 1:14;
+Tbath_iter = 1:3:14; %[Index] Number of Temperatures T_bath. Likely loop between 1:14;
 
 % Variable (Change at your own risk!)
 
@@ -71,6 +71,7 @@ Model_line = @(C_v,xdata)C_v(1).*xdata+C_v(2);
  % Swithches for user to play with ----------------------------------------
    SW_plotGR = 0;
    SW_plotTLS = 0;
+   SW_f2plotlinTLS = 1;
  %-------------------------------------------------------------------------
  
  for kidn = kidn_iter % iterate over CKIDs.
@@ -173,7 +174,9 @@ end % End #KID
 
 %% Part 1: Sec 2 | Plotting per Temperature + save figure!
  %This has side effect that it creates a figure if it is not yet present so needs to be after you create figure.
-
+ % Swithches for user to play with ----------------------------------------
+   SW_f2plotlinTLS = 0; % [Binary] plots the fit in linear space.
+ %-------------------------------------------------------------------------
  for kidn = kidn_iter % iterate over CKIDs.
     % IndexPsort is a vector of all the indices of powers for a specific
     % KID in Increasing order. 
@@ -191,6 +194,10 @@ end % End #KID
             %---TLS noise fit in linear space-----(Not used!)--------------
             linDataY_TLS = NOISE(p).FFTnoise{nT}(:,4);
             TLS_coof_lin{p,nT} = LLS_TLS_SdB(freq(TLSf_min_i:TLSf_max_i),linDataY_TLS(TLSf_min_i:TLSf_max_i),Model_oneoverf,C_v_TLS_0);
+            if SW_f2plotlinTLS
+                plot(freq(toplot),lintodb(Model_oneoverf(TLS_coof_lin{p,nT},freq(toplot))),'--','Color','black','LineWidth',1,'HandleVisibility','off');
+                %plot(freq(toplot),10.*log10(Model_GR(CB_coof_lin_CB{p,nT},freq(toplot))),'-.','Color',Tcolors(nT,:),'LineWidth',1,'HandleVisibility','off');
+            end
             %---TLS noise fit linear in Log-log space----------------------
             dBlogDataX = log10(freq(TLSf_min_i:TLSf_max_i));
             dBlogDataY = 10.*log10(NOISE(p).FFTnoise{nT}(:,4));
@@ -230,20 +237,20 @@ end % End #KID
             %xlim([0.5,1e5]);grid on;ylim([-220,-140])
             xlim([0.1,5e5]);grid on;ylim([-220,-140])
             title(append('KID#',string(NOISE(p).KIDnumber)," |Power ",string(NOISE(p).ReadPower),"dBm"));
-            legendTvalues2 = append(sprintf('%1.3f',NOISE(kidn).Temperature(nT)),' K');
+            legendTvalues2 = [{append(sprintf('%1.3f',NOISE(kidn).Temperature(nT)),' K')} {'GR model'} {'TLS model'} {'Combined model'} ];
             % TLS noise plot 
-            plot(freq(toplot),Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot))),'-.','Color','black','LineWidth',1,'HandleVisibility','off')
+            plot(freq(toplot),Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot))),'-.','Color','black','LineWidth',1)
             plot(freq(CBf_min_i:CBf_max_i),10.*log10(linDataY_CB(CBf_min_i:CBf_max_i)),'--','Color',Tcolors(nT,:),'LineWidth',0.5,'HandleVisibility','off');%
             %compensated lines!
             
             
             % GR model plot
-            plot(freq(toplot),10.*log10(Model_GR(CB_coof_lin{p,nT},freq(toplot))),'-.','Color','black','LineWidth',1,'HandleVisibility','off');
+            plot(freq(toplot),10.*log10(Model_GR(CB_coof_lin{p,nT},freq(toplot))),':','Color','black','LineWidth',1.5);
             toplotTLSplusGR =lintodb(dbtolin(Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot)))) + Model_GR(CB_coof_lin{p,nT},freq(toplot)));
             % Total model: TLS + GR noise. 
-            plot(freq(toplot),toplotTLSplusGR,'-.','Color',Tcolors(nT,:),'LineWidth',1.5,'HandleVisibility','off');
+            plot(freq(toplot),toplotTLSplusGR,'--','Color',Tcolors(nT,:),'LineWidth',1.5);
             hTl2(kidn) = legend(legendTvalues2,'location','eastOutside');
-            hTl2(kidn).ItemTokenSize = [10,10];
+            %hTl2(kidn).ItemTokenSize = [20,10];
             xline(freq(TLSf_min_i),'--','Color','c','LineWidth',1,'HandleVisibility','off')
             xline(freq(TLSf_max_i),'--','Color','c','LineWidth',1,'HandleVisibility','off')
             xline(freq(CBf_min_i),'--','Color','m','LineWidth',1,'HandleVisibility','off')
