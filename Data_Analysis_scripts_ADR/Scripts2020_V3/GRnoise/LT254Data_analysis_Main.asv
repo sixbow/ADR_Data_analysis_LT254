@@ -70,10 +70,10 @@ Model_line = @(C_v,xdata)C_v(1).*xdata+C_v(2);
 % REMEMBER to load 2D Data first!!
 %This has side effect that it creates a figure if it is not yet present so needs to be after you create figure.
  % Swithches for user to play with ----------------------------------------
-   SW_plotGR = 0;
-   SW_plotTLS = 0;
-   SW_f2plotlinTLS = 1;
-   SW_load2D = 1;
+   SW_plotGR = 0;%[Binary] Plots the GR noise curve (Used)
+   SW_plotTLS = 0;%[Binary] Plots polyfit in log log space (Used)
+   SW_f2plotlinTLS = 1;%[Binary] plots the power law linear fit. Usually worse!
+   SW_load2D = 1; %[Binary] Loads the data
  %-------------------------------------------------------------------------
  if SW_load2D
 load([ChipInfo_path FFTsubsubdir filesep 'NOISE_2D.mat'])
@@ -180,14 +180,16 @@ end % End #KID
 
 %% Part 1: Sec 2 | Plotting per Temperature + save figure!
 % REMEMBER to load 2D Data first!!
+% Swithches for user to play with ----------------------------------------
+   SW_f2plotlinTLS = 0; % [Binary] plots the fit in linear space.
+   SW_load2D = 1; %[Binary] Loads the data
+ %-------------------------------------------------------------------------
 if SW_load2D
 load([ChipInfo_path FFTsubsubdir filesep 'NOISE_2D.mat'])
 freq = NOISE(1).FFTnoise{1,1}(:,1);
 end
  %This has side effect that it creates a figure if it is not yet present so needs to be after you create figure.
- % Swithches for user to play with ----------------------------------------
-   SW_f2plotlinTLS = 0; % [Binary] plots the fit in linear space.
- %-------------------------------------------------------------------------
+ 
  for kidn = kidn_iter % iterate over CKIDs.
     % IndexPsort is a vector of all the indices of powers for a specific
     % KID in Increasing order. 
@@ -287,6 +289,11 @@ FFT_power_subsubdir=['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep '
 load([ChipInfo_path FFT_power_subsubdir filesep 'NOISE_P.mat']) % 
 freq = NOISE(1).FFTnoise{1,1}(:,1);
 clearvars legendPvalues;
+
+SliceFreq = 1000;% [Hz] Freq at which we will take a slice of the spectrum and plot this according to Gau.
+[~,Slice_i] = min(abs(freq-SliceFreq)); % "
+
+
 % Part 2: Sec 2
  % Swithches for user to play with ----------------------------------------
    SW_plotGR = 0;
@@ -354,12 +361,15 @@ clearvars legendPvalues;
             toplot = NOISE(p).FFTnoise{nT}(:,4) > 0; % makes sure you only plot positive data. As you approach low noise you data can become negative due to noise.
             plot(NOISE(p).FFTnoise{nT}(toplot,1),10*log10(NOISE(p).FFTnoise{nT}(toplot,4)),...
                     '-','color',Pcolors((p-min(power_iter)+1),:),'LineWidth',1.5)
-                
-            
+            %Slice_i    
+            plot(NOISE(p).FFTnoise{nT}(Slice_i,1),lintodb(NOISE(p).FFTnoise{nT}(Slice_i,4)),...
+                    'o','color',Pcolors((p-min(power_iter)+1),:),'LineWidth',1,'MarkerFaceColor',Pcolors((p-min(power_iter)+1),:),'HandleVisibility','off')
+            P2S2_SF_Eval_dB(kidn,p) = lintodb(NOISE(p).FFTnoise{nT}(Slice_i,4));
+            P2S2_InternalPowerNaive(kidn,p) = NOISE(p).InternalPower;
             xlabel('F [Hz]');ylabel('S_F/F^2 [dBc/Hz]')
             %Old: %xlim([0.5,1e5]);grid on;ylim([-220,-140])
             xlim([0.1,5e5]);grid on;ylim([-220,-140])
-            title(append('KID#',string(NOISE(p).KIDnumber)," |T = ",string(NOISE(p).Temperature(nT)),"K"));
+            title(append('KID#',string(NOISE(p).KIDnumber)," | T = ",string(NOISE(p).Temperature(nT)),"K"));
             %legendTvalues{nT+1-min(Tbath_iter)} = append(sprintf('%1.3f',NOISE(p).Temperature(nT)),' K');
             legendPvalues{p} = append(sprintf('%3.0f',NOISE(p).ReadPower),' dBc');
             %plot(freq(toplot),10*log10(Model_oneoverf(TLS_coof_lin{p,nT},freq(toplot))),'--','Color',Pcolors(p,:),'LineWidth',1)
@@ -395,10 +405,34 @@ clearvars legendPvalues;
     hTl1(kidn) = legend(legendPvalues,'location','eastOutside');
     hTl1(kidn).ItemTokenSize = [10,10];
     hold(ax3(kidn),'off')   
-    export_path_graph = append('../../../Export_Figures_noGit/LT254_DA_figures/Part_1_GR/f3KID',string(kidn),'Pread',sprintf('%2.0f',NOISE(p).ReadPower),'.png');
+    export_path_graph = append('../../../Export_Figures_noGit/LT254_DA_figures/Part_2_TLS/f3KID',string(kidn),'Pread',sprintf('%2.0f',NOISE(p).ReadPower),'.png');
     exportgraphics(ax3(kidn),export_path_graph)
  
 end % End #KID
+
+
+%% Part 2. Sec 2 - Plotting the curves like in Gau
+f4 = figure('WindowState','maximized');
+ax4 = axes('XScale','linear','YScale','linear');
+hold(ax4,'on')
+% Info: NOISE(p).InternalPower = 10*log10((2/pi)*10.^(NOISE(p).ReadPower/10).*(NOISE(p).Ql.^2./NOISE(p).Qc));
+% WARNING: This definition might not be correct. And according to Akira
+% this can be a tricky topic to go into!
+for kidn=kidn_iter
+plot(P2S2_InternalPowerNaive(kidn,:),P2S2_SF_Eval_dB(kidn,:),'-o')
+
+end
+hold(ax4,'off')
+
+
+
+
+
+
+
+
+
+
 
 disp("Jobs done!!")
 if SW_playJobs_done

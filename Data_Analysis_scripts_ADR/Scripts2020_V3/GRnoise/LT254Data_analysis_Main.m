@@ -364,8 +364,8 @@ SliceFreq = 1000;% [Hz] Freq at which we will take a slice of the spectrum and p
             %Slice_i    
             plot(NOISE(p).FFTnoise{nT}(Slice_i,1),lintodb(NOISE(p).FFTnoise{nT}(Slice_i,4)),...
                     'o','color',Pcolors((p-min(power_iter)+1),:),'LineWidth',1,'MarkerFaceColor',Pcolors((p-min(power_iter)+1),:),'HandleVisibility','off')
-            SF_Eval_dB(kidn,p) = lintodb(NOISE(p).FFTnoise{nT}(Slice_i,4));
-
+            P2S2_SF_Eval_dB(kidn,p) = lintodb(NOISE(p).FFTnoise{nT}(Slice_i,4));
+            P2S2_InternalPowerNaive(kidn,p) = NOISE(p).InternalPower;
             xlabel('F [Hz]');ylabel('S_F/F^2 [dBc/Hz]')
             %Old: %xlim([0.5,1e5]);grid on;ylim([-220,-140])
             xlim([0.1,5e5]);grid on;ylim([-220,-140])
@@ -409,15 +409,31 @@ SliceFreq = 1000;% [Hz] Freq at which we will take a slice of the spectrum and p
     exportgraphics(ax3(kidn),export_path_graph)
  
 end % End #KID
+
+
 %% Part 2. Sec 2 - Plotting the curves like in Gau
+f4 = figure('WindowState','maximized');
+ax4 = axes('XScale','linear','YScale','linear');
+hold(ax4,'on')
+% Info: NOISE(p).InternalPower = 10*log10((2/pi)*10.^(NOISE(p).ReadPower/10).*(NOISE(p).Ql.^2./NOISE(p).Qc));
+% WARNING: This definition might not be correct. And according to Akira
+% this can be a tricky topic to go into!
+for kidn=kidn_iter
+plot(P2S2_InternalPowerNaive(kidn,:),P2S2_SF_Eval_dB(kidn,:),'-o')
+% This needs to be sorted in Power
+% I need to add the lines from Gau paper
+end
+hold(ax4,'off')
+grid on
+xlabel('P_{int}^{*}');ylabel('S_F/F^2 @1KHz [dBc/Hz]')
+
+xlim([-110,-15]);grid on;ylim([-200,-150])
 
 
 
 
 
-
-
-
+%%
 
 
 
