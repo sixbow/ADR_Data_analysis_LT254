@@ -2,9 +2,7 @@
 % This script does the main data analysis to how the interplay is between
 % the TLS-noise and the GR-noise when we vary the temperature
 % Author: Sietse de Boer
-klier
-
-
+klier % Clearing...
 % Importing Data
 %
 addpath('..\subroutines')
@@ -14,7 +12,7 @@ load([ChipInfo_path FFTsubsubdir filesep 'NOISE_2D.mat'])
 freq = NOISE(1).FFTnoise{1,1}(:,1);
 % User variables
 
-kidn_iter = 1; %[Index] Select KID.
+kidn_iter = 1:6; %[Index] Select KID.
 % IndexPopt' Here you can select which powers you want 
     
 Tbath_iter = 1:2:14; %[Index] Number of Temperatures T_bath. Likely loop between 1:14;
@@ -152,7 +150,7 @@ Model_line = @(C_v,xdata)C_v(1).*xdata+C_v(2);
             toplotTLSplusGR =lintodb(dbtolin(Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot)))) + Model_GR(CB_coof_lin{p,nT},freq(toplot)));
             % Final model lines
             plot(freq(toplot),toplotTLSplusGR,'-.','Color',Tcolors(nT,:),'LineWidth',1.5,'HandleVisibility','off');
-            xline(1/(2*pi*abs(CB_coof_lin{p,nT}(2))),'--','Color','c','LineWidth',1,'HandleVisibility','off')
+            xline(1/(2*pi*abs(CB_coof_lin{p,nT}(2))),'--','Color',Tcolors(nT,:),'LineWidth',0.25,'HandleVisibility','off')
         end % End Bath temperature.
     legendTvalues = legendTvalues(~cellfun('isempty',legendTvalues));
     % this removes the zero entries from the legendTvalues celll.
