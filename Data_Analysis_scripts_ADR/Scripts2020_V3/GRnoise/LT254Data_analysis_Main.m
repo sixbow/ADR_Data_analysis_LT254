@@ -12,7 +12,7 @@ load([ChipInfo_path FFTsubsubdir filesep 'NOISE_2D.mat'])
 freq = NOISE(1).FFTnoise{1,1}(:,1);
 % User variables
 
-kidn_iter = 2; %[Index] Select KID.
+kidn_iter = 1:6; %[Index] Select KID.
 % IndexPopt' Here you can select which powers you want 
     
 Tbath_iter = 1:3:14; %[Index] Number of Temperatures T_bath. Likely loop between 1:14;
@@ -68,12 +68,17 @@ Model_line = @(C_v,xdata)C_v(1).*xdata+C_v(2);
 
 %% Part 1: Sec 1 | Plotting + save figure!
 % REMEMBER to load 2D Data first!!
- %This has side effect that it creates a figure if it is not yet present so needs to be after you create figure.
+%This has side effect that it creates a figure if it is not yet present so needs to be after you create figure.
  % Swithches for user to play with ----------------------------------------
-   SW_plotGR = 0;
-   SW_plotTLS = 0;
-   SW_f2plotlinTLS = 1;
+   SW_plotGR = 0;%[Binary] Plots the GR noise curve (Used)
+   SW_plotTLS = 0;%[Binary] Plots polyfit in log log space (Used)
+   SW_f2plotlinTLS = 1;%[Binary] plots the power law linear fit. Usually worse!
+   SW_load2D = 1; %[Binary] Loads the data
  %-------------------------------------------------------------------------
+ if SW_load2D
+load([ChipInfo_path FFTsubsubdir filesep 'NOISE_2D.mat'])
+freq = NOISE(1).FFTnoise{1,1}(:,1);
+end
  
  for kidn = kidn_iter % iterate over CKIDs.
     % IndexPsort is a vector of all the indices of powers for a specific
@@ -175,10 +180,16 @@ end % End #KID
 
 %% Part 1: Sec 2 | Plotting per Temperature + save figure!
 % REMEMBER to load 2D Data first!!
- %This has side effect that it creates a figure if it is not yet present so needs to be after you create figure.
- % Swithches for user to play with ----------------------------------------
+% Swithches for user to play with ----------------------------------------
    SW_f2plotlinTLS = 0; % [Binary] plots the fit in linear space.
+   SW_load2D = 1; %[Binary] Loads the data
  %-------------------------------------------------------------------------
+if SW_load2D
+load([ChipInfo_path FFTsubsubdir filesep 'NOISE_2D.mat'])
+freq = NOISE(1).FFTnoise{1,1}(:,1);
+end
+ %This has side effect that it creates a figure if it is not yet present so needs to be after you create figure.
+ 
  for kidn = kidn_iter % iterate over CKIDs.
     % IndexPsort is a vector of all the indices of powers for a specific
     % KID in Increasing order. 
@@ -278,6 +289,11 @@ FFT_power_subsubdir=['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep '
 load([ChipInfo_path FFT_power_subsubdir filesep 'NOISE_P.mat']) % 
 freq = NOISE(1).FFTnoise{1,1}(:,1);
 clearvars legendPvalues;
+
+SliceFreq = 1000;% [Hz] Freq at which we will take a slice of the spectrum and plot this according to Gau.
+[~,Slice_i] = min(abs(freq-SliceFreq)); % "
+
+
 % Part 2: Sec 2
  % Swithches for user to play with ----------------------------------------
    SW_plotGR = 0;
@@ -299,8 +315,8 @@ clearvars legendPvalues;
     
     for p = power_iter % This is the power iterator over a specific kid 
     
-    Pcolors = colormapcoolSdB(max(power_iter)); % this has been set to 14 such that you always generate the set of colors such that you always obtain the same color for a high temp.
-        
+    %Pcolors = colormapcoolSdB(max(power_iter)); % this has been set to 14 such that you always generate the set of colors such that you always obtain the same color for a high temp.
+    Pcolors = colormapcoolSdB(max(power_iter)-min(power_iter)+1)   
             
             % Fit TLS ~2 - 20Hz
             
@@ -344,20 +360,23 @@ clearvars legendPvalues;
             %         '-','color','k','LineWidth',2)
             toplot = NOISE(p).FFTnoise{nT}(:,4) > 0; % makes sure you only plot positive data. As you approach low noise you data can become negative due to noise.
             plot(NOISE(p).FFTnoise{nT}(toplot,1),10*log10(NOISE(p).FFTnoise{nT}(toplot,4)),...
-                    '-','color',Pcolors(p,:),'LineWidth',1.5)
-                
-            
+                    '-','color',Pcolors((p-min(power_iter)+1),:),'LineWidth',1.5)
+            %Slice_i    
+            plot(NOISE(p).FFTnoise{nT}(Slice_i,1),lintodb(NOISE(p).FFTnoise{nT}(Slice_i,4)),...
+                    'o','color',Pcolors((p-min(power_iter)+1),:),'LineWidth',1,'MarkerFaceColor',Pcolors((p-min(power_iter)+1),:),'HandleVisibility','off')
+            SF_Eval_dB(kidn,p) = lintodb(NOISE(p).FFTnoise{nT}(Slice_i,4));
+
             xlabel('F [Hz]');ylabel('S_F/F^2 [dBc/Hz]')
             %Old: %xlim([0.5,1e5]);grid on;ylim([-220,-140])
             xlim([0.1,5e5]);grid on;ylim([-220,-140])
-            title(append('KID#',string(NOISE(p).KIDnumber)," |T = ",string(NOISE(p).Temperature(nT)),"K"));
+            title(append('KID#',string(NOISE(p).KIDnumber)," | T = ",string(NOISE(p).Temperature(nT)),"K"));
             %legendTvalues{nT+1-min(Tbath_iter)} = append(sprintf('%1.3f',NOISE(p).Temperature(nT)),' K');
             legendPvalues{p} = append(sprintf('%3.0f',NOISE(p).ReadPower),' dBc');
             %plot(freq(toplot),10*log10(Model_oneoverf(TLS_coof_lin{p,nT},freq(toplot))),'--','Color',Pcolors(p,:),'LineWidth',1)
             if SW_plotTLS
             plot(freq(toplot),Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot))),'-.','Color','black','LineWidth',1,'HandleVisibility','off')
             end %Plotting TLS lines
-            plot(freq(CBf_min_i:CBf_max_i),10.*log10(linDataY_CB(CBf_min_i:CBf_max_i)),'--','Color',Pcolors(p,:),'LineWidth',0.5,'HandleVisibility','off');%
+            plot(freq(CBf_min_i:CBf_max_i),10.*log10(linDataY_CB(CBf_min_i:CBf_max_i)),'--','Color',Pcolors((p-min(power_iter)+1),:),'LineWidth',0.5,'HandleVisibility','off');%
             %compensated lines!
             
             
@@ -368,8 +387,8 @@ clearvars legendPvalues;
             end % Plots GR lines if user switch is high.
             toplotTLSplusGR =lintodb(dbtolin(Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot)))) + Model_GR(CB_coof_lin{p,nT},freq(toplot)));
             % Final model lines
-            plot(freq(toplot),toplotTLSplusGR,'-.','Color',Pcolors(p,:),'LineWidth',1.5,'HandleVisibility','off');
-            xline(1/(2*pi*abs(CB_coof_lin{p,nT}(2))),'--','Color',Pcolors(p,:),'LineWidth',0.25,'HandleVisibility','off')
+            plot(freq(toplot),toplotTLSplusGR,'-.','Color',Pcolors((p-min(power_iter)+1),:),'LineWidth',1.5,'HandleVisibility','off');
+            xline(1/(2*pi*abs(CB_coof_lin{p,nT}(2))),'--','Color',Pcolors((p-min(power_iter)+1),:),'LineWidth',0.25,'HandleVisibility','off')
     
     xline(freq(TLSf_min_i),'--','Color','c','LineWidth',1,'HandleVisibility','off')
     xline(freq(TLSf_max_i),'--','Color','c','LineWidth',1,'HandleVisibility','off')
@@ -386,10 +405,23 @@ clearvars legendPvalues;
     hTl1(kidn) = legend(legendPvalues,'location','eastOutside');
     hTl1(kidn).ItemTokenSize = [10,10];
     hold(ax3(kidn),'off')   
-    export_path_graph = append('../../../Export_Figures_noGit/LT254_DA_figures/Part_1_GR/f3KID',string(kidn),'Pread',sprintf('%2.0f',NOISE(p).ReadPower),'.png');
+    export_path_graph = append('../../../Export_Figures_noGit/LT254_DA_figures/Part_2_TLS/f3KID',string(kidn),'Pread',sprintf('%2.0f',NOISE(p).ReadPower),'.png');
     exportgraphics(ax3(kidn),export_path_graph)
  
 end % End #KID
+%% Part 2. Sec 2 - Plotting the curves like in Gau
+
+
+
+
+
+
+
+
+
+
+
+
 
 disp("Jobs done!!")
 if SW_playJobs_done
