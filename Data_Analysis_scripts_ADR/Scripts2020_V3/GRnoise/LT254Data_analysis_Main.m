@@ -2,9 +2,7 @@
 % This script does the main data analysis to how the interplay is between
 % the TLS-noise and the GR-noise when we vary the temperature
 % Author: Sietse de Boer
-clc 
-clear all;
-close all;
+klier
 
 
 % Importing Data
@@ -19,7 +17,7 @@ freq = NOISE(1).FFTnoise{1,1}(:,1);
 kidn_iter = 1; %[Index] Select KID.
 % IndexPopt' Here you can select which powers you want 
     
-Tbath_iter = 1:14; %[Index] Number of Temperatures T_bath. Likely loop between 1:14;
+Tbath_iter = 1:2:14; %[Index] Number of Temperatures T_bath. Likely loop between 1:14;
 
 % Variable (Change at your own risk!)
 
@@ -140,7 +138,9 @@ Model_line = @(C_v,xdata)C_v(1).*xdata+C_v(2);
             %Old: %xlim([0.5,1e5]);grid on;ylim([-220,-140])
             xlim([0.1,5e5]);grid on;ylim([-220,-140])
             title(append('KID#',string(NOISE(p).KIDnumber)," |Power ",string(NOISE(p).ReadPower),"dBm"));
-            legendTvalues{nT+1-min(Tbath_iter)} = append(sprintf('%1.3f',NOISE(kidn).Temperature(nT)),' K');
+            %legendTvalues{nT+1-min(Tbath_iter)} = append(sprintf('%1.3f',NOISE(kidn).Temperature(nT)),' K');
+            legendTvalues{nT} = append(sprintf('%1.3f',NOISE(kidn).Temperature(nT)),' K');
+            
             %plot(freq(toplot),10*log10(Model_oneoverf(TLS_coof_lin{p,nT},freq(toplot))),'--','Color',Tcolors(nT,:),'LineWidth',1)
             %plot(freq(toplot),Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot))),'-.','Color',Tcolors(nT,:),'LineWidth',1,'HandleVisibility','off')
             plot(freq(CBf_min_i:CBf_max_i),10.*log10(linDataY_CB(CBf_min_i:CBf_max_i)),'--','Color',Tcolors(nT,:),'LineWidth',0.5,'HandleVisibility','off');%
@@ -153,7 +153,8 @@ Model_line = @(C_v,xdata)C_v(1).*xdata+C_v(2);
             % Final model lines
             plot(freq(toplot),toplotTLSplusGR,'-.','Color',Tcolors(nT,:),'LineWidth',1.5,'HandleVisibility','off');
         end % End Bath temperature.
-    
+    legendTvalues = legendTvalues(~cellfun('isempty',legendTvalues));
+    % this removes the zero entries from the legendTvalues celll.
     hTl1(kidn) = legend(legendTvalues,'location','eastOutside');
     hTl1(kidn).ItemTokenSize = [10,10];
     xline(freq(TLSf_min_i),'--','Color','c','LineWidth',1,'HandleVisibility','off')
