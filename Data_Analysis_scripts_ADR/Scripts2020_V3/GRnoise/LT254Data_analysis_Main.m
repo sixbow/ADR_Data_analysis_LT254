@@ -299,7 +299,7 @@ SliceFreq = 1000;% [Hz] Freq at which we will take a slice of the spectrum and p
    SW_plotGR = 0;
    SW_plotTLS = 1;
    SW_f2plotlinTLS = 1;
-   SW_playJobs_done = 1; % Put zero to surpress Job's done sound
+   SW_playJobs_done = 0; % Put zero to surpress Job's done sound
    SW_playGiorgio = 0; %Plays daft punk after your done. Because it is nice!
  %-------------------------------------------------------------------------
  nT = 1;% choose index for temperature.
@@ -418,22 +418,32 @@ hold(ax4,'on')
 % Info: NOISE(p).InternalPower = 10*log10((2/pi)*10.^(NOISE(p).ReadPower/10).*(NOISE(p).Ql.^2./NOISE(p).Qc));
 % WARNING: This definition might not be correct. And according to Akira
 % this can be a tricky topic to go into!
+
+Customcolormap = [0 0 1  ; 0 0 0.9; 0 0 0.8 ;0 1 0 ;0 0.9 0;0 0.8 0];
+
+
+
 for kidn=kidn_iter
-plot(P2S2_InternalPowerNaive(kidn,:),P2S2_SF_Eval_dB(kidn,:),'-o')
+p1 = plot(P2S2_InternalPowerNaive(kidn,IndexPsort{kidn,1}),P2S2_SF_Eval_dB(kidn,IndexPsort{kidn,1}),'-o');
+set(p1,'Color',Customcolormap(kidn,:));
+set(p1,'MarkerFaceColor',Customcolormap(kidn,:));
 % This needs to be sorted in Power
 % I need to add the lines from Gau paper
+
 end
+plot(linspace(-90,-30,2),Model_line([-0.5 -192],linspace(-80,-40,2)),'--','LineWidth',2,'Color','black')
+f4legendstr = [{'\#1 ( C7G3: 2-2-2 ?)'} {'\#2 ( C9G3: 2-2-2 ?)'} {'\#3 ( C8G3: 2-2-2 ?)'} {'\#4 ( C10G4: 4-4-4 ?)'} {'\#5 ( C11G4: 4-4-4 ?)'} {'\#6 ( C12G4: 4-4-4 ?)'} {'$P_{int}^{-\frac{1}{2}}$ (Theory)'}];
+f4lgd = legend(f4legendstr, 'interpreter','latex');
+f4lgd.FontSize = 14;
 hold(ax4,'off')
 grid on
 xlabel('P_{int}^{*}');ylabel('S_F/F^2 @1KHz [dBc/Hz]')
 
 xlim([-110,-15]);grid on;ylim([-200,-150])
+title('Gau compare - Need to add Gau data!')
 
-
-
-
-
-%%
+export_path_graph = append('../../../Export_Figures_noGit/LT254_DA_figures/Part_2_TLS/f4Gau','.png');
+exportgraphics(ax4,export_path_graph)
 
 
 
