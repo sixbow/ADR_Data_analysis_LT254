@@ -13,7 +13,7 @@ ChipInfo.path = ['../..' filesep]; %root path where data is, one higher than the
 %FFTsubdir = ['Noise 120mK' filesep 'FFT' filesep 'Power'];  120mK    %
 FFTsubdir = ['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D'];     %
 
-SW_corr_noise_setup = 0; % if 1 corrects setup noise, 0 no correction.
+SW_corr_noise_setup = 1; % if 1 corrects setup noise, 0 no correction.
 
 %\\FFT\2D
 ChipInfo.IndexPref = 1;     %Index of the power that is used as reference for Popt finding. (should not matter here)
@@ -215,26 +215,14 @@ for p=1:length(RawFFTfiles) %LOOP OVER ALL FILES (aka KID-P-combinations)
     
     for nT=1:length(NOISE(p).Temperature)
         %Calculate frequency noise
-        %Normalized Frequency Noise (Sf/F^2) [1/Hz] (defined by J. Gao)
-        
-        %setup corrected
-        if SW_corr_noise_setup
+        %Normalized Frequency Noise (Sf/F^2) [1/Hz] (defined by J. Gao) - 
+        %setupcorrected
         tempnoise = (10.^(NOISE(p).FFTnoise{nT}(:,2)/10))*(1/(4*NOISE(p).Ql(nT))^2);
+        
         Setup_level = mean(tempnoise(end-10:end-5));
         NOISE(p).FFTnoise{nT}(:,4) = tempnoise - Setup_level;
-        disp("Frequeny Noise corrected")
         %NOISE(p).FFTnoise{1}(NOISE(p).FFTnoise{1}(:,4)<0,4) = NaN;
         clear tempnoise Setup_level fres Q S21min FitResult
-        elseif SW_corr_noise_setup==0
-        tempnoise = (10.^(NOISE(p).FFTnoise{nT}(:,2)/10))*(1/(4*NOISE(p).Ql(nT))^2);
-        NOISE(p).FFTnoise{nT}(:,4) = tempnoise;
-        disp("Frequeny Noise uncorrected")
-        %NOISE(p).FFTnoise{1}(NOISE(p).FFTnoise{1}(:,4)<0,4) = NaN;
-        clear tempnoise Setup_level fres Q S21min FitResult 
-        end 
-        
-        
-        
         
         %Frequency Noise (defined by B. Mazin) not used
         %NOISE(p).FFTnoise{nT}(:,5) = NOISE(p).FFTnoise{nT}(:,4)*(NOISE(p).Fres(nT)*1e9)^2;

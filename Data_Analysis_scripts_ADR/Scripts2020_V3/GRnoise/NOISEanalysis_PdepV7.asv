@@ -13,7 +13,7 @@ ChipInfo.path = ['../..' filesep]; %root path where data is, one higher than the
 %ChipInfo.path = [cd filesep '..']; %root path where data is, one higher than the scripts
 %ChipInfo.path = [ '..' filesep '..' ];%without filesep at end
 
-FFTsubdir = ['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_120mK' filesep 'FFT' filesep 'Power']; % 120mK    %
+%FFTsubdir = ['Noise 120mK' filesep 'FFT' filesep 'Power'];  120mK    %
 %FFTsubdir = ['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D'];     %
 %FFTsubdir = ['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D_Popt'];     %
 
@@ -213,20 +213,11 @@ for p=1:length(RawFFTfiles) %LOOP OVER ALL FILES (aka KID-P-combinations)
     %Calculate the resonator bandwidth (used later in Popt determination)
     NOISE(p).Bandwidth = NOISE(p).Fres./NOISE(p).Ql;
     
-    %Normalized Frequency Noise (Sf/F^2) [1/Hz] (defined by J. Gao) 
-    %setup corrected %
-    if SW_corr_noise_setup %S: setup corrected case
+    %Normalized Frequency Noise (Sf/F^2) [1/Hz] (defined by J. Gao) - setup corrected %
     tempnoise = (10.^(NOISE(p).FFTnoise{1}(:,2)/10))*(1/(4*NOISE(p).Ql(1,1))^2);
     NOISE(p).Setup_level = mean(tempnoise(end-10:end-5));
-    disp('Frac.freq noise corrected')
     NOISE(p).FFTnoise{1}(:,4) = tempnoise - NOISE(p).Setup_level;
     clear tempnoise Setup_level fres Q S21min FitResult
-    elseif SW_corr_noise_setup==0 %S: setup not corrected case
-    tempnoise = (10.^(NOISE(p).FFTnoise{1}(:,2)/10))*(1/(4*NOISE(p).Ql(1,1))^2);
-    NOISE(p).FFTnoise{1}(:,4) = tempnoise;
-    disp('Frac.freq noise not corrected')
-    clear tempnoise Setup_level fres Q S21min FitResult    
-    end
     
     %Frequency Noise (defined by B. Mazin) not used
     %NOISE(p).FFTnoise{1}(:,5) = NOISE(p).FFTnoise{1}(:,4)*(NOISE(p).Fres(1,1)*1e9)^2;

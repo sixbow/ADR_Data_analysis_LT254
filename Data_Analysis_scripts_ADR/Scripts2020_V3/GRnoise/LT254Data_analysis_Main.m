@@ -15,7 +15,7 @@ freq = NOISE(1).FFTnoise{1,1}(:,1);
 kidn_iter = 1:6; %[Index] Select KID.
 % IndexPopt' Here you can select which powers you want 
     
-Tbath_iter = 1:3:14; %[Index] Number of Temperatures T_bath. Likely loop between 1:14;
+Tbath_iter = 1:14; %[Index] Number of Temperatures T_bath. Likely loop between 1:14;
 
 % Variable (Change at your own risk!)
 
@@ -47,6 +47,7 @@ tot_combi = length(concat_v(kidn_iter,IndexPsort,1));
 f = gobjects(tot_combi,1);
 ax = gobjects(tot_combi,1);
 
+%Readout_noise_level = 10^
 
 
 % Define fitting model 
