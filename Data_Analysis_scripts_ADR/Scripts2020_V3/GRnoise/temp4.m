@@ -20,6 +20,6 @@ plot(XDATA,YDATA,XDATA,f(Cout,XDATA));
 hold(ax,'off')
 end
 % Functions end!!
-function out = myfunc(xdata,a,b)
+function out = myfunc(b,xdata,a,b)
 out = a.*xdata + b;
 end

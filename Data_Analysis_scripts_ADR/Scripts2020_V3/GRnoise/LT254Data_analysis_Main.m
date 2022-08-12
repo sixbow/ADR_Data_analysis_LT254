@@ -50,6 +50,16 @@ ax = gobjects(tot_combi,1);
 setup_noise_eval_freq = 350000;% [Hz]
 [~,Snoise_i] = min(abs(freq-setup_noise_eval_freq)); % "
 
+%--Readout power selection -------------------------------------------------
+SW_powerselector = 1 ;% choose power yourself or select Popt from file
+power_selector = 7 ;% The index of the power that you want from low to high
+
+if SW_powerselector % 1 case
+f_power_iter = @(kidn)IndexPsort{kidn,1}(power_selector);
+else % else
+f_power_iter = @(kidn)IndexPopt(1,kidn);
+end 
+%-/Readout power selection -------------------------------------------------
 
 % Define fitting model 
 % Here I will define the models that we will be using to fit the data. 
@@ -58,6 +68,7 @@ setup_noise_eval_freq = 350000;% [Hz]
 % the difference is the biggest. 
 Model_oneoverf = @(C_v,fdata)C_v(1).*power(fdata,-1*C_v(2)); %Model we use to fit C_v is the constants vector that we are trying to find.
 Model_GR = @(C_v,fdata) C_v(1)./((1+power((2.*pi.*fdata.*C_v(2)),2).*(1))); %Model we use to fit C_v is the constants vector that we are trying to find.
+Model_CB = @(C_v,fdata) C_v(1)./((1+power((2.*pi.*fdata.*C_v(2)),2).*(1)))+ Scurr_noise_level;
 %Model_CB = @(C_v,fdata) C_TLS_corr.*power(fdata,-1*gamma_TLS)+C_v(1)./(1+power((2.*pi.*fdata.*C_v(2)),2)); %Model we use to fit C_v is the constants vector that we are trying to find.
 
 %These models below are meant to be used in log space. Maybe later f = 10^x
@@ -86,22 +97,22 @@ end
     % IndexPsort is a vector of all the indices of powers for a specific
     % KID in Increasing order. 
     %power_iter = IndexPopt(kidn); %[Index] - Popt -Number of P_read values. For now I look at 1 power. 
-    power_iter = IndexPsort{kidn,1}(7); %[Index] - All P_read Number of P_read values. For now I look at 1 power. 
+    power_iter = f_power_iter(kidn); %[Index] - All P_read Number of P_read values. For now I look at 1 power. 
     
     for p = power_iter % This is the power iterator over a specific kid 
     S_noise_level(p) = NOISE(p).FFTnoise{1}(Snoise_i,4); % This is the setup noise level evaluated at 350000Hz.
-
     f(p) = figure('WindowState','maximized');
     ax(p) = axes('XScale','log','YScale','linear');
     hold(ax(p),'on')
     Tcolors = colormapJetJB(14); % this has been set to 14 such that you always generate the set of colors such that you always obtain the same color for a high temp.
+    
         for nT = Tbath_iter
             
             % Fit TLS ~2 - 20Hz
             
             linDataY_TLS = NOISE(p).FFTnoise{nT}(:,4);
             TLS_coof_lin{p,nT} = LLS_TLS_SdB(freq(TLSf_min_i:TLSf_max_i),linDataY_TLS(TLSf_min_i:TLSf_max_i),Model_oneoverf,C_v_TLS_0);
-            
+            Scurr_noise_level = S_noise_level(p) ;
             %f2 = figure;
             dBlogDataX = log10(freq(TLSf_min_i:TLSf_max_i));
             dBlogDataY = 10.*log10(NOISE(p).FFTnoise{nT}(:,4));
@@ -118,11 +129,11 @@ end
             linDataY_CB = linDataY_CB-Model_oneoverf([C_TLS gamma_TLS],freq); % subtract the TLS line..
             
             %Fitting GR noise spectrum 
-            CB_coof_lin{p,nT} = LLS_CB_SdB(freq(CBf_min_i:CBf_max_i),linDataY_CB(CBf_min_i:CBf_max_i),Model_GR,C_v_CB_0,CB_lb,CB_ub);
+            CB_coof_lin{p,nT} = LLS_CB_SdB(freq(CBf_min_i:CBf_max_i),linDataY_CB(CBf_min_i:CBf_max_i),Model_CB,C_v_CB_0,CB_lb,CB_ub);
             
             % Finding intersects
             fTLS_curr = @(x)abs(Model_oneoverf(TLS_coof_dBlog_to_lin{p,nT},x));
-            fGR_curr = @(x)Model_GR(CB_coof_lin{p,nT},x);
+            fGR_curr = @(x)Model_CB(CB_coof_lin{p,nT},x);
             [f_inter(p,nT),S_inter(p,nT)] = findintersect_SdB(fTLS_curr,fGR_curr,fguess);
             plot(f_inter(p,nT),lintodb(S_inter(p,nT)),'o','Color',Tcolors(nT,:),'LineWidth',1.5,'HandleVisibility','off');
             %plot(1000,-170,'o','MarkerFaceColor', 'b','LineWidth',30)
@@ -159,10 +170,10 @@ end
             
             % GR lines
             if SW_plotGR
-                plot(freq(toplot),10.*log10(Model_GR(CB_coof_lin{p,nT},freq(toplot))),'-.','Color','black','LineWidth',1,'HandleVisibility','off');
-                %plot(freq(toplot),10.*log10(Model_GR(CB_coof_lin_CB{p,nT},freq(toplot))),'-.','Color',Tcolors(nT,:),'LineWidth',1,'HandleVisibility','off');
+                plot(freq(toplot),10.*log10(Model_CB(CB_coof_lin{p,nT},freq(toplot))),'-.','Color','black','LineWidth',1,'HandleVisibility','off');
+                %plot(freq(toplot),10.*log10(Model_CB(CB_coof_lin_CB{p,nT},freq(toplot))),'-.','Color',Tcolors(nT,:),'LineWidth',1,'HandleVisibility','off');
             end % Plots GR lines if user switch is high.
-            toplotTLSplusGR =lintodb(dbtolin(Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot)))) + Model_GR(CB_coof_lin{p,nT},freq(toplot)));
+            toplotTLSplusGR =lintodb(dbtolin(Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot)))) + Model_CB(CB_coof_lin{p,nT},freq(toplot)));
             % Final model lines
             plot(freq(toplot),toplotTLSplusGR,'-.','Color',Tcolors(nT,:),'LineWidth',1.5,'HandleVisibility','off');
             xline(1/(2*pi*abs(CB_coof_lin{p,nT}(2))),'--','Color',Tcolors(nT,:),'LineWidth',0.25,'HandleVisibility','off')
@@ -181,7 +192,7 @@ end
     exportgraphics(ax(p),export_path_graph)  
     end % End power 
 end % End #KID
-
+disp('Part 1: Sec 1 - Done!')
 %% Part 1: Sec 2 | Plotting per Temperature + save figure!
 % REMEMBER to load 2D Data first!!
 % Swithches for user to play with ----------------------------------------
@@ -194,26 +205,24 @@ freq = NOISE(1).FFTnoise{1,1}(:,1);
 end
  %This has side effect that it creates a figure if it is not yet present so needs to be after you create figure.
  
- for kidn = kidn_iter % iterate over CKIDs.
-    % IndexPsort is a vector of all the indices of powers for a specific
-    % KID in Increasing order. 
-    power_iter = IndexPopt(kidn); %[Index] - Popt -Number of P_read values. For now I look at 1 power. 
-    %power_iter = IndexPsort{kidn,1}(7); %[Index] - All P_read Number of P_read values. For now I look at 1 power. 
-    
+ for kidn = kidn_iter % iterate over CKIDs. 
+    power_iter = f_power_iter(kidn); %[Index] - All P_read Number of P_read values. For now I look at 1 power. 
+    S_noise_level(p) = NOISE(p).FFTnoise{1}(Snoise_i,4); % This is the setup noise level evaluated at 350000Hz.
     for p = power_iter % This is the power iterator over a specific kid 
-    
+    S_noise_level(p) = NOISE(p).FFTnoise{1}(Snoise_i,4); % This is the setup noise level evaluated at 350000Hz.
     Tcolors = colormapJetJB(14); % this has been set to 14 such that you always generate the set of colors such that you always obtain the same color for a high temp.
         for nT = Tbath_iter
             f2(nT) = figure('WindowState','maximized');
             ax2(nT) = axes('XScale','log','YScale','linear');
             hold(ax2(nT),'on')
+            Scurr_noise_level = S_noise_level(p) ;
             % Fit TLS ~2 - 20Hz
             %---TLS noise fit in linear space-----(Not used!)--------------
             linDataY_TLS = NOISE(p).FFTnoise{nT}(:,4);
             TLS_coof_lin{p,nT} = LLS_TLS_SdB(freq(TLSf_min_i:TLSf_max_i),linDataY_TLS(TLSf_min_i:TLSf_max_i),Model_oneoverf,C_v_TLS_0);
             if SW_f2plotlinTLS
                 plot(freq(toplot),lintodb(Model_oneoverf(TLS_coof_lin{p,nT},freq(toplot))),'--','Color','black','LineWidth',1,'HandleVisibility','off');
-                %plot(freq(toplot),10.*log10(Model_GR(CB_coof_lin_CB{p,nT},freq(toplot))),'-.','Color',Tcolors(nT,:),'LineWidth',1,'HandleVisibility','off');
+                %plot(freq(toplot),10.*log10(Model_CB(CB_coof_lin_CB{p,nT},freq(toplot))),'-.','Color',Tcolors(nT,:),'LineWidth',1,'HandleVisibility','off');
             end
             %---TLS noise fit linear in Log-log space----------------------
             dBlogDataX = log10(freq(TLSf_min_i:TLSf_max_i));
@@ -227,15 +236,19 @@ end
             
             linDataY_CB = NOISE(p).FFTnoise{nT}(:,4);
             linDataY_CB = linDataY_CB-Model_oneoverf([C_TLS gamma_TLS],freq); % subtract the TLS line..
-            CB_coof_lin{p,nT} = LLS_CB_SdB(freq(CBf_min_i:CBf_max_i),linDataY_CB(CBf_min_i:CBf_max_i),Model_GR,C_v_CB_0,CB_lb,CB_ub);
+            CB_coof_lin{p,nT} = LLS_CB_SdB(freq(CBf_min_i:CBf_max_i),linDataY_CB(CBf_min_i:CBf_max_i),Model_CB,C_v_CB_0,CB_lb,CB_ub);
             
             
             %---Finding intersects-----------------------------------------
             fTLS_curr = @(x)abs(Model_oneoverf(TLS_coof_dBlog_to_lin{p,nT},x));
-            fGR_curr = @(x)Model_GR(CB_coof_lin{p,nT},x);
+            fGR_curr = @(x)Model_CB(CB_coof_lin{p,nT},x);
+%             ftest(nT) = figure('WindowState','maximized');
+%             axtest(nT) = axes('XScale','log','YScale','linear');
+%             hold(axtest(nT),'on')
+%             plot(freq,fTLS_curr(freq),freq,fGR_curr(freq) )
             [f_inter(p,nT),S_inter(p,nT)] = findintersect_SdB(fTLS_curr,fGR_curr,fguess);
             plot(f_inter(p,nT),lintodb(S_inter(p,nT)),'o','Color','black','LineWidth',1.5,'HandleVisibility','off');
-
+%             hold(axtest(nT),'off')
             
             % Save these parameters in a struct/class?
             % contents: C_TLS, gamma, Res_TLS_gamma
@@ -262,8 +275,8 @@ end
             
             
             % GR model plot
-            plot(freq(toplot),10.*log10(Model_GR(CB_coof_lin{p,nT},freq(toplot))),':','Color','black','LineWidth',1.5);
-            toplotTLSplusGR =lintodb(dbtolin(Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot)))) + Model_GR(CB_coof_lin{p,nT},freq(toplot)));
+            plot(freq(toplot),10.*log10(Model_CB(CB_coof_lin{p,nT},freq(toplot))),':','Color','black','LineWidth',1.5);
+            toplotTLSplusGR =lintodb(dbtolin(Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot)))) + Model_CB(CB_coof_lin{p,nT},freq(toplot)));
             % Total model: TLS + GR noise. 
             plot(freq(toplot),toplotTLSplusGR,'--','Color',Tcolors(nT,:),'LineWidth',1.5);
             hTl2(kidn) = legend(legendTvalues2,'location','eastOutside');
@@ -343,11 +356,11 @@ SliceFreq = 1000;% [Hz] Freq at which we will take a slice of the spectrum and p
             linDataY_CB = linDataY_CB-Model_oneoverf([C_TLS gamma_TLS],freq); % subtract the TLS line..
             
             %Fitting GR noise spectrum 
-            CB_coof_lin{p,nT} = LLS_CB_SdB(freq(CBf_min_i:CBf_max_i),linDataY_CB(CBf_min_i:CBf_max_i),Model_GR,C_v_CB_0,CB_lb,CB_ub);
+            CB_coof_lin{p,nT} = LLS_CB_SdB(freq(CBf_min_i:CBf_max_i),linDataY_CB(CBf_min_i:CBf_max_i),Model_CB,C_v_CB_0,CB_lb,CB_ub);
             
             % Finding intersects
             fTLS_curr = @(x)abs(Model_oneoverf(TLS_coof_dBlog_to_lin{p,nT},x));
-            fGR_curr = @(x)Model_GR(CB_coof_lin{p,nT},x);
+            fGR_curr = @(x)Model_CB(CB_coof_lin{p,nT},x);
             [f_inter(p,nT),S_inter(p,nT)] = findintersect_SdB(fTLS_curr,fGR_curr,fguess);
             %plot(f_inter(p,nT),lintodb(S_inter(p,nT)),'o','Color',Pcolors(p,:),'LineWidth',1.5,'HandleVisibility','off');
             %plot(1000,-170,'o','MarkerFaceColor', 'b','LineWidth',30)
@@ -386,10 +399,10 @@ SliceFreq = 1000;% [Hz] Freq at which we will take a slice of the spectrum and p
             
             % GR lines
             if SW_plotGR
-                plot(freq(toplot),10.*log10(Model_GR(CB_coof_lin{p,nT},freq(toplot))),'-.','Color','black','LineWidth',1,'HandleVisibility','off');
-                %plot(freq(toplot),10.*log10(Model_GR(CB_coof_lin_CB{p,nT},freq(toplot))),'-.','Color',Pcolors(p,:),'LineWidth',1,'HandleVisibility','off');
+                plot(freq(toplot),10.*log10(Model_CB(CB_coof_lin{p,nT},freq(toplot))),'-.','Color','black','LineWidth',1,'HandleVisibility','off');
+                %plot(freq(toplot),10.*log10(Model_CB(CB_coof_lin_CB{p,nT},freq(toplot))),'-.','Color',Pcolors(p,:),'LineWidth',1,'HandleVisibility','off');
             end % Plots GR lines if user switch is high.
-            toplotTLSplusGR =lintodb(dbtolin(Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot)))) + Model_GR(CB_coof_lin{p,nT},freq(toplot)));
+            toplotTLSplusGR =lintodb(dbtolin(Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot)))) + Model_CB(CB_coof_lin{p,nT},freq(toplot)));
             % Final model lines
             plot(freq(toplot),toplotTLSplusGR,'-.','Color',Pcolors((p-min(power_iter)+1),:),'LineWidth',1.5,'HandleVisibility','off');
             xline(1/(2*pi*abs(CB_coof_lin{p,nT}(2))),'--','Color',Pcolors((p-min(power_iter)+1),:),'LineWidth',0.25,'HandleVisibility','off')
@@ -539,7 +552,7 @@ end
 %             %title('f3:Log-log')
 %             
 %             %C_TLS_corr = C_TLS./n_num
-%             CB_coof_lin{p,nT} = LLS_TLS_SdB(freq(CBf_min_i:CBf_max_i),linDataY_CB(CBf_min_i:CBf_max_i),Model_GR,C_v_CB_0);
+%             CB_coof_lin{p,nT} = LLS_TLS_SdB(freq(CBf_min_i:CBf_max_i),linDataY_CB(CBf_min_i:CBf_max_i),Model_CB,C_v_CB_0);
 %             
 %             
 %             % Save these parameters in a struct/class?
@@ -570,8 +583,8 @@ end
 %             
 %             
 %             
-%             plot(freq(toplot),10.*log10(Model_GR(CB_coof_lin{p,nT},freq(toplot))),'-.','Color',Tcolors(nT,:),'LineWidth',1,'HandleVisibility','off');
-%             toplotTLSplusGR =lintodb(dbtolin(Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot)))) + Model_GR(CB_coof_lin{p,nT},freq(toplot)));
+%             plot(freq(toplot),10.*log10(Model_CB(CB_coof_lin{p,nT},freq(toplot))),'-.','Color',Tcolors(nT,:),'LineWidth',1,'HandleVisibility','off');
+%             toplotTLSplusGR =lintodb(dbtolin(Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot)))) + Model_CB(CB_coof_lin{p,nT},freq(toplot)));
 %             plot(freq(toplot),toplotTLSplusGR,'-.','Color',Tcolors(nT,:),'LineWidth',1.5,'HandleVisibility','off');
 %     
 %     %hTl1(kidn) = legend(legendTvalues,'location','eastOutside');
