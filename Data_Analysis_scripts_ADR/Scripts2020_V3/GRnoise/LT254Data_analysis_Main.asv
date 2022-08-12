@@ -46,8 +46,9 @@ CB_ub = [10^-15 (1/(2*pi*CBfitmin))];
 tot_combi = length(concat_v(kidn_iter,IndexPsort,1));
 f = gobjects(tot_combi,1);
 ax = gobjects(tot_combi,1);
-
-%Readout_noise_level = mean()
+% Setup noise estimate
+setup_noise_eval_freq = 350000;% [Hz]
+[~,Snoise_i] = min(abs(freq-setup_noise_eval_freq)); % "
 
 
 % Define fitting model 
@@ -84,10 +85,12 @@ end
  for kidn = kidn_iter % iterate over CKIDs.
     % IndexPsort is a vector of all the indices of powers for a specific
     % KID in Increasing order. 
-    power_iter = IndexPopt(kidn); %[Index] - Popt -Number of P_read values. For now I look at 1 power. 
-    %power_iter = IndexPsort{kidn,1}(7); %[Index] - All P_read Number of P_read values. For now I look at 1 power. 
+    %power_iter = IndexPopt(kidn); %[Index] - Popt -Number of P_read values. For now I look at 1 power. 
+    power_iter = IndexPsort{kidn,1}(7); %[Index] - All P_read Number of P_read values. For now I look at 1 power. 
     
     for p = power_iter % This is the power iterator over a specific kid 
+    S_noise_level(p) = NOISE(p).FFTnoise{1}(Snoise_i,4); % This is the setup noise level evaluated at 
+
     f(p) = figure('WindowState','maximized');
     ax(p) = axes('XScale','log','YScale','linear');
     hold(ax(p),'on')
