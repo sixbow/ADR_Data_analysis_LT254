@@ -5,10 +5,17 @@ close all
 %% (1) Single plots
 FFTsubsubdir=['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D'];% This is where the
 
-o = Cfit(FFTsubsubdir,'NOISE_2D.mat')
-kidn_iter = 1:6;
-P_iter = 7; 
+%% Plotting: single plot!
+SW_simsome = 1;
+if SW_simsome
+kidn_iter = 1;
+P_iter = 6; 
 T_iter = 12;
+elseif SW_simsome == 0
+kidn_iter = 1:6;
+P_iter = 1:7; 
+T_iter = 1:14;
+end
 %-------
 fignum=1;
 axnum = fignum;
@@ -16,7 +23,10 @@ axnum = fignum;
 SW.plottls = 1;
 SW.plotgr = 1;
 SW.plotFknee = 1;
-%-------
+
+o = Cfit(FFTsubsubdir,'NOISE_2D.mat')
+
+%-------Do all analysis..
 for kidn = kidn_iter
 for Pindex= P_iter
 for Tindex= T_iter

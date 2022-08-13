@@ -65,7 +65,7 @@ classdef Cfit < handle
             obj.CBfit.C0 = [(10^-18) 1.591549430918954e-06];% CTLS at 1 Hz , power with what  the power law decreases. TLS ~0.5
             obj.CBfit.lb = [10^-20 (1/(2*pi*obj.CBfit.max))];
             obj.CBfit.ub = [10^-15 (1/(2*pi*obj.CBfit.min))];
-            obj.fguess = 2000; % [Hz] initial guess for the intersection point of the TLS and GR noise. 
+            obj.fguess = [1 100000]; % [Hz] initial guess for the intersection point of the TLS and GR noise. 
 			%-------/End:Combined fitting parameters (Default!)------------
             obj.test = 3.14;
             disp('Initialized Cfit object!')
@@ -82,7 +82,7 @@ classdef Cfit < handle
             obj.Sff_sys_noise{kidn,Pindex,nT} = obj.NOISE(p).FFTnoise{nT}(Snoise_i,4); % This is the setup noise level evaluated at 350000Hz
             %Updating and Setting anonymous functions
             obj.UpA(kidn,Pindex,nT)
-            disp('hoi')
+            %disp('hoi')
 			%+++++|Begin:TLS fitting---------------------------------------
             dBlogDataX = log10(obj.freq);
             dBlogDataY = 10.*log10(obj.NOISE(p).FFTnoise{nT}(:,4));
@@ -90,19 +90,19 @@ classdef Cfit < handle
             obj.TLSfit.Ctls{kidn,Pindex,nT} =  power(10,(TLS_coof_dBlog{kidn,Pindex,nT}(2)/10));
             obj.TLSfit.gamma{kidn,Pindex,nT} = -(TLS_coof_dBlog{kidn,Pindex,nT}(1)/10);
             obj.TLSfit.C{kidn,Pindex,nT} = [obj.TLSfit.Ctls{kidn,Pindex,nT} obj.TLSfit.gamma{kidn,Pindex,nT}];
-            disp(string(obj.TLSfit.C{kidn,Pindex,nT}(1)))
+            %disp(string(obj.TLSfit.C{kidn,Pindex,nT}(1)))
             Ctls = obj.TLSfit.Ctls;% Output to user
             gamma = obj.TLSfit.gamma;% Output to user
             
-            disp('doei')
+            %disp('doei')
 			%-------/End:TLS fitting---------------------------------------
          
 			%+++++|Begin:Combined fitting----------------------------------
 			% Fit GR-noise + TLS ~400Hz - 100KHz
-            disp(string(obj.TLSfit.C{kidn,Pindex,nT}(1)))
+            %disp(string(obj.TLSfit.C{kidn,Pindex,nT}(1)))
             
-            disp(string(obj.TLSfit.C{kidn,Pindex,nT}(2)))
-            disp(obj.fTLS)
+            %disp(string(obj.TLSfit.C{kidn,Pindex,nT}(2)))
+            %disp(obj.fTLS)
             obj.Sff_minusTLS{kidn,Pindex,nT} = obj.Sff{kidn,Pindex,nT}-obj.fTLS(obj.TLSfit.C{kidn,Pindex,nT},obj.freq); % subtract the TLS line..
             
             %Fitting GR noise spectrum 
@@ -119,17 +119,17 @@ classdef Cfit < handle
         
         function UpA(obj,kidn,Pindex,nT)
             obj.fTLS = @(C_v,fdata)C_v(1).*power(fdata,-1*C_v(2)); %Model we use to fit C_v is the constants vector that we are trying to find.
-            obj.fCB  = @(C_v,fdata) C_v(1)./((1+power((2.*pi.*fdata.*C_v(2)),2).*(1)))+ obj.Sff_sys_noise{kidn,Pindex,nT};
+            obj.fCB  = @(C_v,fdata) C_v(1)./((1+power((2.*pi.*fdata.*C_v(2)),2)))+ obj.Sff_sys_noise{kidn,Pindex,nT};
             obj.fline = @(C_v,xdata)C_v(1).*xdata+C_v(2);
         end
         function UpA_filled(obj,kidn,Pindex,nT)
-            a = obj.TLSfit.C{kidn,Pindex,nT}(1)
-            b = obj.TLSfit.C{kidn,Pindex,nT}(2)
-            c = obj.CBfit.C{kidn,Pindex,nT}(1)
-            d = obj.CBfit.C{kidn,Pindex,nT}(2)
+            a = obj.TLSfit.C{kidn,Pindex,nT}(1);
+            b = obj.TLSfit.C{kidn,Pindex,nT}(2);
+            c = obj.CBfit.C{kidn,Pindex,nT}(1);
+            d = obj.CBfit.C{kidn,Pindex,nT}(2);
             
-            obj.fTLS_filled = @(fdata)a.*power(fdata,-1*b);
-            obj.fCB_filled = @(fdata)c./((1+power((2.*pi.*fdata.*d),2).*(1)))+ obj.Sff_sys_noise{kidn,Pindex,nT};
+            obj.fTLS_filled = @(fdata)a.*power(abs(fdata),-1*b);
+            obj.fCB_filled = @(fdata)c./((1+power((2.*pi.*fdata.*d),2)))+ obj.Sff_sys_noise{kidn,Pindex,nT};
         end
     
        
@@ -137,8 +137,24 @@ classdef Cfit < handle
             %genFknee method finds the Fknee based on the fits.
             p = obj.findp(kidn,Pindex);
             UpA_filled(obj,kidn,Pindex,nT);
-            
+            try
             [obj.Fknee{kidn,Pindex,nT},obj.Sknee{kidn,Pindex,nT}] = findintersect_SdB2(obj.fTLS_filled,obj.fCB_filled,obj.fguess);
+            catch e
+            fprintf(1,'There was an error! The message was:\n%s',e.message);
+            warning('Problem using function.  Skipping... Setting to NaN');
+            obj.Fknee{kidn,Pindex,nT} = NaN;
+            obj.Sknee{kidn,Pindex,nT} = NaN;
+            figure
+            axes()
+            plot(linspace(obj.fguess(1),obj.fguess(2),1000),obj.fTLS_filled(linspace(obj.fguess(1),obj.fguess(2),1000))-obj.fCB_filled(linspace(obj.fguess(1),obj.fguess(2),1000)))
+            figure
+            axes('XScale','log','YScale','log')
+            hold on
+            plot(linspace(obj.fguess(1),obj.fguess(2),1000),obj.fTLS_filled(linspace(obj.fguess(1),obj.fguess(2),1000))-obj.fCB_filled(linspace(obj.fguess(1),obj.fguess(2),1000)))
+            plot(linspace(obj.fguess(1),obj.fguess(2),1000),-obj.fTLS_filled(linspace(obj.fguess(1),obj.fguess(2),1000))+obj.fCB_filled(linspace(obj.fguess(1),obj.fguess(2),1000)))
+            hold off
+            end
+            
         end
         %-----:End fitting and calcuations.---------------------------------
         %>>>>>:Begin Plotting fuctions.-------------------------------------
@@ -180,14 +196,14 @@ classdef Cfit < handle
             title(append('KID#',string(obj.NOISE(p).KIDnumber)," |Power ",string(obj.NOISE(p).ReadPower),"dBm")); 
             %+++++|Begin:Add TLS line--------------------------------------
             if SW.plottls
-            disp(string(size(obj.TLSfit.C)))
-            disp(string(obj.TLSfit.C{kidn,Pindex,nT}(1)))
-            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fTLS(obj.TLSfit.C{kidn,Pindex,nT},obj.freq(toplot))))
+            %disp(string(size(obj.TLSfit.C)))
+            %disp(string(obj.TLSfit.C{kidn,Pindex,nT}(1)))
+            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fTLS(obj.TLSfit.C{kidn,Pindex,nT},obj.freq(toplot))),'Color','black')
             end
             %-------/End:Add TLS line--------------------------------------
             %+++++|Begin:Plot CB fit---------------------------------------
 			if SW.plotgr
-            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fCB(obj.CBfit.C{kidn,Pindex,nT},obj.freq(toplot))))
+            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fCB(obj.CBfit.C{kidn,Pindex,nT},obj.freq(toplot))),'Color','black')
             end
             %-------/End:Plot CB fit---------------------------------------
 			%+++++|Begin:Visualize Fknee-----------------------------------
