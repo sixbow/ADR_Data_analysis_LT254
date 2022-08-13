@@ -1,4 +1,4 @@
-classdef Cfit %< handle
+classdef Cfit < handle
     %Cfit is the base class for our data analysis.
     %
     
@@ -11,13 +11,14 @@ classdef Cfit %< handle
         % matrices of generated data.
         Sff
         Sff_sys_noise
+        Sff_minusTLS
         %Looping vars
         kidn_iter
         power_iter
         Tbath_iter
         %Fitting vars
-        TLSf
-        CBf
+        TLSfit
+        CBfit
         fguess
         % Anonymous functions
         fTLS
@@ -46,20 +47,20 @@ classdef Cfit %< handle
             obj.power_iter = obj.IndexPsort{obj.kidn_iter,1};
             obj.Tbath_iter = 1:14;
             %-----TLS fitting parameters (Default!)
-            obj.TLSf.min = 0.8;% [Hz]
-            obj.TLSf.max= 30;% [Hz]
-            [~,obj.TLSf.mini] = min(abs(obj.freq-obj.TLSf.min)); % This gives the min index
-            [~,obj.TLSf.maxi] = min(abs(obj.freq-obj.TLSf.max)); % This gives the max index
-            obj.TLSf.C0 = [(10^-15) 1.5];% [CTLS gamma]  linear scale. CTLS at 1 Hz , power with what  the power law decreases. gamma TLS ~0.5
+            obj.TLSfit.min = 0.8;% [Hz]
+            obj.TLSfit.max= 30;% [Hz]
+            [~,obj.TLSfit.mini] = min(abs(obj.freq-obj.TLSfit.min)); % This gives the min index
+            [~,obj.TLSfit.maxi] = min(abs(obj.freq-obj.TLSfit.max)); % This gives the max index
+            obj.TLSfit.C0 = [(10^-15) 1.5];% [CTLS gamma]  linear scale. CTLS at 1 Hz , power with what  the power law decreases. gamma TLS ~0.5
  			%-------/End:TLS fitting parameters (Default!)-----------------
             %+++++|Begin:Combined fitting parameters (Default!)------------
-            obj.CBf.min = 1000;% [Hz]
-            obj.CBf.max = 150000;%  [Hz]
-            [~,obj.CBf.mini] = min(abs(obj.freq-obj.CBf.min)); % "
-            [~,obj.CBf.maxi] = min(abs(obj.freq-obj.CBf.max)); % "
-            obj.CBf.C0 = [(10^-18) 1.591549430918954e-06];% CTLS at 1 Hz , power with what  the power law decreases. TLS ~0.5
-            obj.CBf.lb = [10^-20 (1/(2*pi*obj.CBf.max))];
-            obj.CBf.ub = [10^-15 (1/(2*pi*obj.CBf.min))];
+            obj.CBfit.min = 1000;% [Hz]
+            obj.CBfit.max = 150000;%  [Hz]
+            [~,obj.CBfit.mini] = min(abs(obj.freq-obj.CBfit.min)); % "
+            [~,obj.CBfit.maxi] = min(abs(obj.freq-obj.CBfit.max)); % "
+            obj.CBfit.C0 = [(10^-18) 1.591549430918954e-06];% CTLS at 1 Hz , power with what  the power law decreases. TLS ~0.5
+            obj.CBfit.lb = [10^-20 (1/(2*pi*obj.CBfit.max))];
+            obj.CBfit.ub = [10^-15 (1/(2*pi*obj.CBfit.min))];
             obj.fguess = 2000; % [Hz] initial guess for the intersection point of the TLS and GR noise. 
 			%-------/End:Combined fitting parameters (Default!)------------
             obj.test = 3.14;
@@ -77,19 +78,39 @@ classdef Cfit %< handle
             obj.Sff_sys_noise{p,nT} = obj.NOISE(p).FFTnoise{nT}(Snoise_i,4); % This is the setup noise level evaluated at 350000Hz
             %Updating and Setting anonymous functions
             obj.UpA(p,nT)
+            disp('hoi')
 			%+++++|Begin:TLS fitting---------------------------------------
             dBlogDataX = log10(obj.freq);
             dBlogDataY = 10.*log10(obj.NOISE(p).FFTnoise{nT}(:,4));
-            TLS_coof_dBlog{p,nT} = polyfit(dBlogDataX(obj.TLSf.mini:obj.TLSf.maxi),dBlogDataY(obj.TLSf.mini:obj.TLSf.maxi),1);
-            obj.TLSf.Ctls{p,nT} =  power(10,(TLS_coof_dBlog{p,nT}(2)/10));
-            obj.TLSf.gamma{p,nT} = -(TLS_coof_dBlog{p,nT}(1)/10);
-            obj.TLSf.C{p,nT} = [obj.TLSf.Ctls obj.TLSf.gamma];
-            Ctls = obj.TLSf.Ctls;% Output to user
-            gamma = obj.TLSf.gamma;% Output to user
+            TLS_coof_dBlog{p,nT} = polyfit(dBlogDataX(obj.TLSfit.mini:obj.TLSfit.maxi),dBlogDataY(obj.TLSfit.mini:obj.TLSfit.maxi),1);
+            obj.TLSfit.Ctls{p,nT} =  power(10,(TLS_coof_dBlog{p,nT}(2)/10));
+            obj.TLSfit.gamma{p,nT} = -(TLS_coof_dBlog{p,nT}(1)/10);
+            obj.TLSfit.C{p,nT} = [obj.TLSfit.Ctls{p,nT} obj.TLSfit.gamma{p,nT}];
+            disp(string(obj.TLSfit.C{p,nT}(1)))
+            Ctls = obj.TLSfit.Ctls;% Output to user
+            gamma = obj.TLSfit.gamma;% Output to user
+            
+            disp('doei')
 			%-------/End:TLS fitting---------------------------------------
          
 			%+++++|Begin:Combined fitting----------------------------------
-			%-------/End:Combined fitting---------------------------------- 
+			% Fit GR-noise + TLS ~400Hz - 100KHz
+            
+            linDataY_CB = obj.Sff{p,nT};
+            obj.Sff_minusTLS{p,nT} = linDataY_CB-obj.fTLS(obj.TLSfit.C{p,nT},obj.freq(toplot)); % subtract the TLS line..
+            
+            %Fitting GR noise spectrum 
+            CB_coof_lin{p,nT} = LLS_CB_SdB(freq(CBf_min_i:CBf_max_i),linDataY_CB(CBf_min_i:CBf_max_i),Model_CB,C_v_CB_0,CB_lb,CB_ub);
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            %-------/End:Combined fitting---------------------------------- 
         end% End genfitsingle
         
         function UpA(obj,p,nT)
@@ -128,12 +149,12 @@ classdef Cfit %< handle
         end
         
         
-        function plotsingle(obj,fig_n,ax_n,kidn,pindex,nT)
+        function plotsingle(obj,fig_n,ax_n,kidn,pindex,nT,SW)
             %plots to figure currently in focus.
             p = obj.findp(kidn,pindex);
             UpA(obj,p,nT)
             obj.Sff{p,nT} = obj.NOISE(p).FFTnoise{nT}(:,4);
-            toplot = obj.NOISE(p).FFTnoise{nT}(:,4) > 0;
+            toplot = obj.Sff{p,nT} > 0;
             figure(obj.fig(fig_n))
             plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.Sff{p,nT}(toplot)));
             %plot()
@@ -141,6 +162,29 @@ classdef Cfit %< handle
             %Old: %xlim([0.5,1e5]);grid on;ylim([-220,-140])
             xlim([0.1,5e5]);grid on;ylim([-220,-140])
             title(append('KID#',string(obj.NOISE(p).KIDnumber)," |Power ",string(obj.NOISE(p).ReadPower),"dBm")); 
+            %+++++|Begin:Add TLS line--------------------------------------
+            if SW.plottls
+            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fTLS(obj.TLSfit.C{p,nT},obj.freq(toplot))))
+            end
+            %-------/End:Add TLS line--------------------------------------
+            %+++++|Begin:Plot CB fit---------------------------------------
+			if SW.plotgr
+            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fCB(obj.CBfit.C{p,nT},obj.freq(toplot))))
+            end
+            %-------/End:Plot CB fit---------------------------------------
+
+            
+            
+            
+            
+            %+++++|Begin:fitting ranges------------------------------------
+			xline(obj.freq(obj.TLSfit.mini),'--','Color','c','LineWidth',1,'HandleVisibility','off')
+            xline(obj.freq(obj.TLSfit.maxi),'--','Color','c','LineWidth',1,'HandleVisibility','off')
+            xline(obj.freq(obj.CBfit.mini),'--','Color','m','LineWidth',1,'HandleVisibility','off')
+            xline(obj.freq(obj.CBfit.maxi),'--','Color','m','LineWidth',1,'HandleVisibility','off')
+            %-------/End:fitting ranges------------------------------------
+
+            
             
         end
         function plotcomptau(obj)

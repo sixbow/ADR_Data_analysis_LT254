@@ -1,13 +1,22 @@
 %% Refactor OOP version!
 
+close all
 
 %% (1) Single plots
 o = Cfit(FFTsubsubdir,'NOISE_2D.mat')
-[CTLS,gamma]= o.genfitsingle(1,5,10);
-o = o.init_figax(2,2,'loglin');
-o.plotsingle(2,2,1,5,10)
-
-
+kidn = 1;
+pindex = 7; 
+Tindex = 10;
+%-------
+fignum=1;
+axnum = fignum;
+%-------
+SW.plottls = 1;
+SW.plotgr = 1;
+%-------
+[CTLS,gamma]= o.genfitsingle(kidn,pindex,Tindex);
+o = o.init_figax(fignum,axnum,'loglin');
+o.plotsingle(fignum,axnum,kidn,pindex,Tindex,SW)
 
 
 
