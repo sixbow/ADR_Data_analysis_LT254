@@ -180,6 +180,8 @@ classdef Cfit < handle
             title(append('KID#',string(obj.NOISE(p).KIDnumber)," |Power ",string(obj.NOISE(p).ReadPower),"dBm")); 
             %+++++|Begin:Add TLS line--------------------------------------
             if SW.plottls
+            disp(string(size(obj.TLSfit.C)))
+            disp(string(obj.TLSfit.C{p,nT}(1)))
             plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fTLS(obj.TLSfit.C{p,nT},obj.freq(toplot))))
             end
             %-------/End:Add TLS line--------------------------------------
