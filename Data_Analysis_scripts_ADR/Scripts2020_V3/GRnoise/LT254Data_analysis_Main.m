@@ -506,11 +506,9 @@ end
 
 
 
-%% Test 1: So if we make an error in the gamma coof. does this explain the discrapancy?
+%% Refactor OOP version!
 
-
-
-
+o = Cfit(FFTsubsubdir,'NOISE_2D.mat')
 
 
 
