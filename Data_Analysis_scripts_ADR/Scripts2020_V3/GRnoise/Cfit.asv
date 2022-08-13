@@ -20,10 +20,14 @@ classdef Cfit < handle
         TLSfit
         CBfit
         fguess
+        Fknee
+        Sknee
         % Anonymous functions
         fTLS
         fCB
         fline
+        fTLS_filled
+        fCB_filled
         %Plotting vars
         fig % Figure handle.
         ax  % Axes handle.]
@@ -77,7 +81,7 @@ classdef Cfit < handle
             [~,Snoise_i] = min(abs(obj.freq-setup_noise_eval_freq)); % "
             obj.Sff_sys_noise{p,nT} = obj.NOISE(p).FFTnoise{nT}(Snoise_i,4); % This is the setup noise level evaluated at 350000Hz
             %Updating and Setting anonymous functions
-            obj.UpA(p,nT)
+            
             disp('hoi')
 			%+++++|Begin:TLS fitting---------------------------------------
             dBlogDataX = log10(obj.freq);
@@ -96,19 +100,17 @@ classdef Cfit < handle
 			%+++++|Begin:Combined fitting----------------------------------
 			% Fit GR-noise + TLS ~400Hz - 100KHz
             
-            linDataY_CB = obj.Sff{p,nT};
-            obj.Sff_minusTLS{p,nT} = linDataY_CB-obj.fTLS(obj.TLSfit.C{p,nT},obj.freq(toplot)); % subtract the TLS line..
+            
+            obj.Sff_minusTLS{p,nT} = obj.Sff{p,nT}-obj.fTLS(obj.TLSfit.C{p,nT},obj.freq); % subtract the TLS line..
             
             %Fitting GR noise spectrum 
-            CB_coof_lin{p,nT} = LLS_CB_SdB(freq(CBf_min_i:CBf_max_i),linDataY_CB(CBf_min_i:CBf_max_i),Model_CB,C_v_CB_0,CB_lb,CB_ub);
+            obj.CBfit.C{p,nT} = LLS_CB_SdB(obj.freq(obj.CBfit.mini:obj.CBfit.maxi),obj.Sff_minusTLS{p,nT}(obj.CBfit.mini:obj.CBfit.maxi),obj.fCB,obj.CBfit.C0,obj.CBfit.lb,obj.CBfit.ub);
+            disp('Fitted GR!')    
             
             
             
             
-            
-            
-            
-            
+            obj.UpA(p,nT)
             
             %-------/End:Combined fitting---------------------------------- 
         end% End genfitsingle
@@ -117,12 +119,22 @@ classdef Cfit < handle
             obj.fTLS = @(C_v,fdata)C_v(1).*power(fdata,-1*C_v(2)); %Model we use to fit C_v is the constants vector that we are trying to find.
             obj.fCB  = @(C_v,fdata) C_v(1)./((1+power((2.*pi.*fdata.*C_v(2)),2).*(1)))+ obj.Sff_sys_noise{p,nT};
             obj.fline = @(C_v,xdata)C_v(1).*xdata+C_v(2);
+            a = obj.TLSfit.C{p,nT}(1)
+            b = obj.TLSfit.C{p,nT}(2)
+            c = obj.CBfit.C{p,nT}(1)
+            d = obj.CBfit.C{p,nT}(2)
+            
+            obj.fTLS_filled = @(fdata)a.*power(fdata,-1*b);
+            obj.fCB_filled = @(fdata)c./((1+power((2.*pi.*fdata.*d),2).*(1)))+ obj.Sff_sys_noise{p,nT};
         end
     
-        
-        
-        function genFknee(obj)
+       
+        function genFknee(obj,kidn,pindex,nT)
             %genFknee method finds the Fknee based on the fits.
+            p = obj.findp(kidn,pindex);
+            UpA(obj,p,nT);
+            
+            [obj.Fknee{p,nT},obj.Sknee{p,nT}] = findintersect_SdB2(obj.fTLS_filled,obj.fCB_filled,obj.fguess);
         end
         %-----:End fitting and calcuations.---------------------------------
         %>>>>>:Begin Plotting fuctions.-------------------------------------
@@ -172,6 +184,11 @@ classdef Cfit < handle
             plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fCB(obj.CBfit.C{p,nT},obj.freq(toplot))))
             end
             %-------/End:Plot CB fit---------------------------------------
+			%+++++|Begin:Visualize Fknee-----------------------------------
+			if SW.plotFknee
+            plot(obj.ax(ax_n),obj.Fknee{p,nT},lintodb(obj.Sknee{p,nT}),'o','LineWidth',2)
+            end
+            %-------/End:Visualize Fknee-----------------------------------
 
             
             

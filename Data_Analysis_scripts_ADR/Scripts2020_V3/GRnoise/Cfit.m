@@ -20,10 +20,14 @@ classdef Cfit < handle
         TLSfit
         CBfit
         fguess
+        Fknee
+        Sknee
         % Anonymous functions
         fTLS
         fCB
         fline
+        fTLS_filled
+        fCB_filled
         %Plotting vars
         fig % Figure handle.
         ax  % Axes handle.]
@@ -95,8 +99,10 @@ classdef Cfit < handle
          
 			%+++++|Begin:Combined fitting----------------------------------
 			% Fit GR-noise + TLS ~400Hz - 100KHz
+            disp(string(obj.TLSfit.C{p,nT}(1)))
             
-            
+            disp(string(obj.TLSfit.C{p,nT}(2)))
+            disp(obj.fTLS)
             obj.Sff_minusTLS{p,nT} = obj.Sff{p,nT}-obj.fTLS(obj.TLSfit.C{p,nT},obj.freq); % subtract the TLS line..
             
             %Fitting GR noise spectrum 
@@ -116,11 +122,23 @@ classdef Cfit < handle
             obj.fCB  = @(C_v,fdata) C_v(1)./((1+power((2.*pi.*fdata.*C_v(2)),2).*(1)))+ obj.Sff_sys_noise{p,nT};
             obj.fline = @(C_v,xdata)C_v(1).*xdata+C_v(2);
         end
+        function UpA_filled(obj,p,nT)
+            a = obj.TLSfit.C{p,nT}(1)
+            b = obj.TLSfit.C{p,nT}(2)
+            c = obj.CBfit.C{p,nT}(1)
+            d = obj.CBfit.C{p,nT}(2)
+            
+            obj.fTLS_filled = @(fdata)a.*power(fdata,-1*b);
+            obj.fCB_filled = @(fdata)c./((1+power((2.*pi.*fdata.*d),2).*(1)))+ obj.Sff_sys_noise{p,nT};
+        end
     
-        
-        
-        function genFknee(obj)
+       
+        function genFknee(obj,kidn,pindex,nT)
             %genFknee method finds the Fknee based on the fits.
+            p = obj.findp(kidn,pindex);
+            UpA_filled(obj,p,nT);
+            
+            [obj.Fknee{p,nT},obj.Sknee{p,nT}] = findintersect_SdB2(obj.fTLS_filled,obj.fCB_filled,obj.fguess);
         end
         %-----:End fitting and calcuations.---------------------------------
         %>>>>>:Begin Plotting fuctions.-------------------------------------
@@ -170,6 +188,11 @@ classdef Cfit < handle
             plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fCB(obj.CBfit.C{p,nT},obj.freq(toplot))))
             end
             %-------/End:Plot CB fit---------------------------------------
+			%+++++|Begin:Visualize Fknee-----------------------------------
+			if SW.plotFknee
+            plot(obj.ax(ax_n),obj.Fknee{p,nT},lintodb(obj.Sknee{p,nT}),'o','LineWidth',2)
+            end
+            %-------/End:Visualize Fknee-----------------------------------
 
             
             
