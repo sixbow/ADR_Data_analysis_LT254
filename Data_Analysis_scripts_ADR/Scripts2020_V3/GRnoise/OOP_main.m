@@ -6,9 +6,9 @@ close all
 FFTsubsubdir=['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D'];% This is where the
 
 o = Cfit(FFTsubsubdir,'NOISE_2D.mat')
-kidn_iter = 1;
-P_iter = 1; 
-T_iter = 8;
+kidn_iter = 1:6;
+P_iter = 7; 
+T_iter = 12;
 %-------
 fignum=1;
 axnum = fignum;
@@ -29,7 +29,7 @@ o = o.init_figax(fignum,axnum,'loglin');
 for kidn = kidn_iter
 for Pindex= P_iter
 for Tindex= T_iter
-o.plotsingle(fignum,axnum,kidn,pindex,Tindex,SW)
+o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW)
 end
 end 
 end

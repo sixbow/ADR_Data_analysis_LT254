@@ -76,21 +76,21 @@ classdef Cfit < handle
         function  [Ctls,gamma]= genfitsingle(obj,kidn,pindex,nT)
             %genfit method fits the TLS fit and the GR fits 
             p = obj.findp(kidn,pindex);
-            obj.Sff{p,nT} = obj.NOISE(p).FFTnoise{nT}(:,4);
+            obj.Sff{kidn,Pindex,nT} = obj.NOISE(p).FFTnoise{nT}(:,4);
             setup_noise_eval_freq = 350000;% [Hz]
             [~,Snoise_i] = min(abs(obj.freq-setup_noise_eval_freq)); % "
-            obj.Sff_sys_noise{p,nT} = obj.NOISE(p).FFTnoise{nT}(Snoise_i,4); % This is the setup noise level evaluated at 350000Hz
+            obj.Sff_sys_noise{kidn,Pindex,nT} = obj.NOISE(p).FFTnoise{nT}(Snoise_i,4); % This is the setup noise level evaluated at 350000Hz
             %Updating and Setting anonymous functions
-            
+            obj.UpA(p,nT)
             disp('hoi')
 			%+++++|Begin:TLS fitting---------------------------------------
             dBlogDataX = log10(obj.freq);
             dBlogDataY = 10.*log10(obj.NOISE(p).FFTnoise{nT}(:,4));
-            TLS_coof_dBlog{p,nT} = polyfit(dBlogDataX(obj.TLSfit.mini:obj.TLSfit.maxi),dBlogDataY(obj.TLSfit.mini:obj.TLSfit.maxi),1);
-            obj.TLSfit.Ctls{p,nT} =  power(10,(TLS_coof_dBlog{p,nT}(2)/10));
-            obj.TLSfit.gamma{p,nT} = -(TLS_coof_dBlog{p,nT}(1)/10);
-            obj.TLSfit.C{p,nT} = [obj.TLSfit.Ctls{p,nT} obj.TLSfit.gamma{p,nT}];
-            disp(string(obj.TLSfit.C{p,nT}(1)))
+            TLS_coof_dBlog{kidn,Pindex,nT} = polyfit(dBlogDataX(obj.TLSfit.mini:obj.TLSfit.maxi),dBlogDataY(obj.TLSfit.mini:obj.TLSfit.maxi),1);
+            obj.TLSfit.Ctls{kidn,Pindex,nT} =  power(10,(TLS_coof_dBlog{kidn,Pindex,nT}(2)/10));
+            obj.TLSfit.gamma{kidn,Pindex,nT} = -(TLS_coof_dBlog{kidn,Pindex,nT}(1)/10);
+            obj.TLSfit.C{kidn,Pindex,nT} = [obj.TLSfit.Ctls{kidn,Pindex,nT} obj.TLSfit.gamma{kidn,Pindex,nT}];
+            disp(string(obj.TLSfit.C{kidn,Pindex,nT}(1)))
             Ctls = obj.TLSfit.Ctls;% Output to user
             gamma = obj.TLSfit.gamma;% Output to user
             
@@ -99,26 +99,30 @@ classdef Cfit < handle
          
 			%+++++|Begin:Combined fitting----------------------------------
 			% Fit GR-noise + TLS ~400Hz - 100KHz
+            disp(string(obj.TLSfit.C{kidn,Pindex,nT}(1)))
             
-            
-            obj.Sff_minusTLS{p,nT} = obj.Sff{p,nT}-obj.fTLS(obj.TLSfit.C{p,nT},obj.freq); % subtract the TLS line..
+            disp(string(obj.TLSfit.C{kidn,Pindex,nT}(2)))
+            disp(obj.fTLS)
+            obj.Sff_minusTLS{kidn,Pindex,nT} = obj.Sff{kidn,Pindex,nT}-obj.fTLS(obj.TLSfit.C{kidn,Pindex,nT},obj.freq); % subtract the TLS line..
             
             %Fitting GR noise spectrum 
-            obj.CBfit.C{p,nT} = LLS_CB_SdB(obj.freq(obj.CBfit.mini:obj.CBfit.maxi),obj.Sff_minusTLS{p,nT}(obj.CBfit.mini:obj.CBfit.maxi),obj.fCB,obj.CBfit.C0,obj.CBfit.lb,obj.CBfit.ub);
+            obj.CBfit.C{kidn,Pindex,nT} = LLS_CB_SdB(obj.freq(obj.CBfit.mini:obj.CBfit.maxi),obj.Sff_minusTLS{kidn,Pindex,nT}(obj.CBfit.mini:obj.CBfit.maxi),obj.fCB,obj.CBfit.C0,obj.CBfit.lb,obj.CBfit.ub);
             disp('Fitted GR!')    
             
             
             
             
-            obj.UpA(p,nT)
+            
             
             %-------/End:Combined fitting---------------------------------- 
         end% End genfitsingle
         
         function UpA(obj,p,nT)
             obj.fTLS = @(C_v,fdata)C_v(1).*power(fdata,-1*C_v(2)); %Model we use to fit C_v is the constants vector that we are trying to find.
-            obj.fCB  = @(C_v,fdata) C_v(1)./((1+power((2.*pi.*fdata.*C_v(2)),2).*(1)))+ obj.Sff_sys_noise{p,nT};
+            obj.fCB  = @(C_v,fdata) C_v(1)./((1+power((2.*pi.*fdata.*C_v(2)),2).*(1)))+ obj.Sff_sys_noise{kidn,Pindex,nT};
             obj.fline = @(C_v,xdata)C_v(1).*xdata+C_v(2);
+        end
+        function UpA_filled(obj,p,nT)
             a = obj.TLSfit.C{p,nT}(1)
             b = obj.TLSfit.C{p,nT}(2)
             c = obj.CBfit.C{p,nT}(1)
@@ -132,7 +136,7 @@ classdef Cfit < handle
         function genFknee(obj,kidn,pindex,nT)
             %genFknee method finds the Fknee based on the fits.
             p = obj.findp(kidn,pindex);
-            UpA(obj,p,nT);
+            UpA_filled(obj,p,nT);
             
             [obj.Fknee{p,nT},obj.Sknee{p,nT}] = findintersect_SdB2(obj.fTLS_filled,obj.fCB_filled,obj.fguess);
         end
@@ -176,6 +180,8 @@ classdef Cfit < handle
             title(append('KID#',string(obj.NOISE(p).KIDnumber)," |Power ",string(obj.NOISE(p).ReadPower),"dBm")); 
             %+++++|Begin:Add TLS line--------------------------------------
             if SW.plottls
+            disp(string(size(obj.TLSfit.C)))
+            disp(string(obj.TLSfit.C{p,nT}(1)))
             plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fTLS(obj.TLSfit.C{p,nT},obj.freq(toplot))))
             end
             %-------/End:Add TLS line--------------------------------------
