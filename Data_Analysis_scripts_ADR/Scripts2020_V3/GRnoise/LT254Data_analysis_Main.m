@@ -87,7 +87,7 @@ Model_line = @(C_v,xdata)C_v(1).*xdata+C_v(2);
    SW_load2D = 1; %[Binary] Loads the data
    SW_plotsetup = 1;%[Binary] decides if you want to plot the found noise level
  %-------------------------------------------------------------------------
- if SW_load2D
+if SW_load2D
 load([ChipInfo_path FFTsubsubdir filesep 'NOISE_2D.mat'])
 freq = NOISE(1).FFTnoise{1,1}(:,1);
 end
