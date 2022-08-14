@@ -26,6 +26,7 @@ classdef Cfit < handle
         fTLS
         fCB
         fline
+        fTotal
         fTLS_filled
         fCB_filled
         %Plotting vars
@@ -124,6 +125,7 @@ classdef Cfit < handle
             obj.fTLS = @(C_v,fdata)C_v(1).*power(fdata,-1*C_v(2)); %Model we use to fit C_v is the constants vector that we are trying to find.
             obj.fCB  = @(C_v,fdata) C_v(1)./((1+power((2.*pi.*fdata.*C_v(2)),2)))+ obj.Sff_sys_noise{kidn,Pindex,nT};
             obj.fline = @(C_v,xdata)C_v(1).*xdata+C_v(2);
+            obj.fTotal = @(C_v_TLS,C_v_CB,fdata)obj.fTLS(C_v_TLS,fdata)+obj.fCB(C_v_CB,fdata);
         end
         function UpA_filled(obj,kidn,Pindex,nT)
             a = obj.TLSfit.C{kidn,Pindex,nT}(1);
@@ -187,13 +189,9 @@ classdef Cfit < handle
             hold(obj.ax(ax_n),'on') 
         end
         
-        function plottest(obj,fig_n,ax_n)
-            figure(obj.fig(fig_n))
-            plot(obj.ax(ax_n),[1 2 3],[4 5 6])
-        end
         
         
-        function plotsingle(obj,fig_n,ax_n,kidn,Pindex,nT,SW,marker,Colorv)
+        function [figh_out,axh_out] = plotsingle(obj,fig_n,ax_n,kidn,Pindex,nT,SW,marker,Colorv)
             %plots to figure currently in focus.
             p = obj.findp(kidn,Pindex);
             UpA(obj,kidn,Pindex,nT)
@@ -207,7 +205,7 @@ classdef Cfit < handle
             xlabel('F [Hz]');ylabel('S_F/F^2 [dBc/Hz]')
             %Old: %xlim([0.5,1e5]);grid on;ylim([-220,-140])
             xlim([0.1,5e5]);grid on;ylim([-220,-140])
-            title(append('KID#',string(obj.NOISE(p).KIDnumber)," |Power ",string(obj.NOISE(p).ReadPower),"dBm")); 
+            %title(append('KID#',string(obj.NOISE(p).KIDnumber)," |Power ",string(obj.NOISE(p).ReadPower),"dBm")); 
             %+++++|Begin:Add TLS line--------------------------------------
             if SW.plottls
             %disp(string(size(obj.TLSfit.C)))
@@ -220,13 +218,19 @@ classdef Cfit < handle
             plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fCB(obj.CBfit.C{kidn,Pindex,nT},obj.freq(toplot))),':','Color','black','LineWidth',1.5)
             end
             %-------/End:Plot CB fit---------------------------------------
-			%+++++|Begin:Visualize Fknee-----------------------------------
+            %+++++|Begin:Total line----------------------------------------
+			if SW.plotTotal
+            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fTotal(obj.TLSfit.C{kidn,Pindex,nT},obj.CBfit.C{kidn,Pindex,nT},obj.freq(toplot))),'--','LineWidth',2)
+            end
+            %-------/End:Total line----------------------------------------
+
+            %+++++|Begin:Visualize Fknee-----------------------------------
 			if SW.plotFknee
             plot(obj.ax(ax_n),obj.Fknee{kidn,Pindex,nT},lintodb(obj.Sknee{kidn,Pindex,nT}),marker,'Color',Colorv,'LineWidth',2)
             end
             %-------/End:Visualize Fknee-----------------------------------
-
-            
+            figh_out = obj.fig(fig_n)
+            axh_out = obj.ax(ax_n)
             
             
             
@@ -249,6 +253,49 @@ classdef Cfit < handle
             
         end
         %<<<<<End Plotting fuctions.---------------------------------------
+		
+        %+++++|Begin:Getters-----------------------------------------------
+        function Temp = getT(obj,kidn,Pindex,nT)
+            p = findp(kidn,Pindex);
+            Temp = obj.NOISE(p).Temperature(nT);
+        end
+        function Pread = getPread(obj,kidn,Pindex,~)
+            p = findp(kidn,Pindex);
+            Pread = obj.NOISE(p).ReadPower;
+        end
+        function Pread = getFread(obj,kidn,Pindex,~)
+            p = findp(kidn,Pindex);
+            Pread = obj.NOISE(p).Fread;
+        end
+        function Pint = getPint(obj,kidn,Pindex,nT)
+            p = findp(kidn,Pindex);
+            Pint = obj.NOISE(p).InternalPower(nT);
+        end
+        function out = getQi(obj,kidn,Pindex,nT)
+            p = findp(kidn,Pindex);
+            out = obj.NOISE(p).Qi(nT);
+        end
+        function out = getQc(obj,kidn,Pindex,nT)
+            p = findp(kidn,Pindex);
+            out = obj.NOISE(p).Qc(nT);
+        end
+        function out = getFres(obj,kidn,Pindex,nT)
+            p = findp(kidn,Pindex);
+            out = obj.NOISE(p).Fres(nT);
+        end
+        function out = getTauRes(obj,kidn,Pindex,nT)
+            p = findp(kidn,Pindex);
+            out = obj.NOISE(p).TauRes(nT);
+        end
+        function out = getS21min(obj,kidn,Pindex,nT)
+            p = findp(kidn,Pindex);
+            out = obj.NOISE(p).S21min(nT);
+        end
+		%-------/End:Getters-----------------------------------------------
+		
+        
+        %+++++|Begin:Setters-----------------------------------------------
+		%-------/End:Setters-----------------------------------------------
         
         %+++++|Begin:Auxillary func----------------------------------------
         function p = findp(obj,kidn,Pindex)% this tells you what p belongs to what power index.

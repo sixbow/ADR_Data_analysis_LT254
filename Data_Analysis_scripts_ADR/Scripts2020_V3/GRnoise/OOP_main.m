@@ -3,7 +3,7 @@
 close all
 
 %% (1) Single plots
-figurepath = ['..' filesep '..' filesep '..' filesep 'Export_Figures_noGit\OOP\automatisch' filesep ]
+figurepath = ['..' filesep '..' filesep '..' filesep 'Export_Figures_noGit\OOP\automatisch' filesep ];
 FFTsubsubdir=['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D'];% This is where the
 addpath('..\subroutines')
 %% Plotting: single plot!
@@ -26,7 +26,7 @@ SW.plottls = 0;
 SW.plotgr = 0;
 SW.plotFknee = 1;
 
-o = Cfit(FFTsubsubdir,'NOISE_2D.mat')
+o = Cfit(FFTsubsubdir,'NOISE_2D.mat');
 
 %-------Do all analysis..
 for kidn = kidn_iter
@@ -48,10 +48,11 @@ SW.plotdata = 1;
 SW.plottls = 1;
 SW.plotgr = 1;
 SW.plotFknee = 1;
+SW.plotTotal = 1;
 for kidn = kidn_iter
 for Pindex= P_iter
 for Tindex= T_iter
-o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'o','black')
+[f1,ax1] = o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'o','black');
 end
 end 
 end
@@ -60,7 +61,7 @@ legend('Data','TLS fit','GR + sys noise','Combined')
 
 
 
-%% Fknee compare G3,G4
+%% (2) Fknee compare G3,G4 - Temperature
 P_iter = 7; 
 T_iter = 1:14;
 %-------
@@ -76,7 +77,7 @@ o = o.init_figax(fignum,axnum,'loglin');
 for kidn = 1:3 % G3
 for Pindex= P_iter
 for Tindex= T_iter
-o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'x',Tcolors(Tindex,:))
+[f2,ax2] = o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'x',Tcolors(Tindex,:));
 end
 end
 end
@@ -89,7 +90,7 @@ end
 end
 end
 
-filename = 'G3G4compare';
+filename = 'G3G4compareT';
 saveas(gca,[figurepath  filename '.fig' ])
 exportgraphics(gca,[figurepath  filename '.png' ]) 
 exportgraphics(gca,[figurepath filename '.pdf' ]) 
@@ -99,7 +100,7 @@ exportgraphics(gca,[figurepath filename '.pdf' ])
 
 
 
-%% Fknee compare G3,G4
+%% (2) Fknee compare G3,G4 - Power
 P_iter = 1:7; 
 T_iter = 3;
 %-------
@@ -108,14 +109,14 @@ SW.plottls = 0;
 SW.plotgr = 0;
 SW.plotFknee = 1;
 %-------
-fignum=2;
+fignum=3;
 axnum = fignum;
 Pcolors = colormapcoolSdB(7);
 o = o.init_figax(fignum,axnum,'loglin');
 for kidn = 1:3 % G3
 for Pindex= P_iter
 for Tindex= T_iter
-o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'x',Pcolors(Pindex,:))
+[f3,ax3] = o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'x',Pcolors(Pindex,:));
 end
 end
 end
