@@ -88,6 +88,7 @@ o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'o',Tcolors(Tindex,:))
 end
 end
 end
+
 filename = 'G3G4compare';
 saveas(gca,[figurepath  filename '.fig' ])
 exportgraphics(gca,[figurepath  filename '.png' ]) 

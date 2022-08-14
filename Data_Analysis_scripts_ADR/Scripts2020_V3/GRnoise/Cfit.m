@@ -141,10 +141,9 @@ classdef Cfit < handle
             %p = obj.findp(kidn,Pindex);
             % Analytic 
             
-            obj.Fknee{kidn,Pindex,nT} = power(10,log10(obj.CBfit.Cgr{kidn,Pindex,nT}/obj.TLSfit.Ctls{kidn,Pindex,nT})/(-1*obj.TLSfit.gamma{kidn,Pindex,nT}));
-%             disp(string(size(obj.Fknee{kidn,Pindex,nT})))
-%             disp(string(obj.Fknee{kidn,Pindex,nT}))
-%             disp('Jeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeej')
+%             obj.Fknee{kidn,Pindex,nT} = power(10,log10(obj.CBfit.Cgr{kidn,Pindex,nT}/obj.TLSfit.Ctls{kidn,Pindex,nT})/(-1*obj.TLSfit.gamma{kidn,Pindex,nT}));
+            obj.Fknee{kidn,Pindex,nT} = power(obj.TLSfit.Ctls{kidn,Pindex,nT}/obj.CBfit.Cgr{kidn,Pindex,nT},(1/obj.TLSfit.gamma{kidn,Pindex,nT}));
+
             obj.Sknee{kidn,Pindex,nT} = obj.CBfit.Cgr{kidn,Pindex,nT}
             
             
