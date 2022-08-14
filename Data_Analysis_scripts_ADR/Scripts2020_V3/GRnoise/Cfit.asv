@@ -69,7 +69,7 @@ classdef Cfit < handle
             obj.CBfit.ub = [10^-15 (1/(2*pi*obj.CBfit.min))];
             obj.fguess = [1 100000]; % [Hz] initial guess for the intersection point of the TLS and GR noise. 
 			%-------/End:Combined fitting parameters (Default!)------------
-            obj.resnormthreshold = 1;
+            obj.resnormthreshold = 200;
             disp('Initialized Cfit object!')
         end % End constructor
         %+++++:Begin fitting and calcuations.-------------------------------
@@ -141,44 +141,21 @@ classdef Cfit < handle
        
         function genFknee(obj,kidn,Pindex,nT)
             %genFknee method finds the Fknee based on the fits.
-            %p = obj.findp(kidn,Pindex);
-            % Analytic 
-            
-%             obj.Fknee{kidn,Pindex,nT} = power(10,log10(obj.CBfit.Cgr{kidn,Pindex,nT}/obj.TLSfit.Ctls{kidn,Pindex,nT})/(-1*obj.TLSfit.gamma{kidn,Pindex,nT}));
-            
-            if (obj.CBfit.resnorm{kidn,Pindex,nT} < obj.resnormthreshold
+            % This is done such that fits that are bad are rejected. Also
+            % Also if Fknee is greater than rolloff of Tau qp it is
+            % rejected as Fknee.
+            if obj.CBfit.resnorm{kidn,Pindex,nT} < obj.resnormthreshold
             obj.Fknee{kidn,Pindex,nT} = power(obj.TLSfit.Ctls{kidn,Pindex,nT}/obj.CBfit.Cgr{kidn,Pindex,nT},(1/obj.TLSfit.gamma{kidn,Pindex,nT}));
             obj.Sknee{kidn,Pindex,nT} = obj.CBfit.Cgr{kidn,Pindex,nT};
-            if obj.Fknee{kidn,Pindex,nT}> (1/(2*pi*obj.CBfit.Tauqp{kidn,Pindex,nT}))
-            obj.Fknee{kidn,Pindex,nT} = NaN;
-            obj.Sknee{kidn,Pindex,nT} = NaN;
-            end
+                if obj.Fknee{kidn,Pindex,nT}> (1/(2*pi*obj.CBfit.Tauqp{kidn,Pindex,nT}))
+                obj.Fknee{kidn,Pindex,nT} = NaN;
+                obj.Sknee{kidn,Pindex,nT} = NaN;
+                obj.Goodfit = 0;
+                end
             else
             obj.Fknee{kidn,Pindex,nT} = NaN;
             obj.Sknee{kidn,Pindex,nT} = NaN;    
             end
-            
-            
-            
-%             UpA_filled(obj,kidn,Pindex,nT);
-%             try
-%             [obj.Fknee{kidn,Pindex,nT},obj.Sknee{kidn,Pindex,nT}] = findintersect_SdB2(obj.fTLS_filled,obj.fCB_filled,obj.fguess);
-%             catch e
-%             fprintf(1,'There was an error! The message was:\n%s',e.message);
-%             warning('Problem using function.  Skipping... Setting to NaN');
-%             obj.Fknee{kidn,Pindex,nT} = NaN;
-%             obj.Sknee{kidn,Pindex,nT} = NaN;
-%             figure
-%             axes()
-%             plot(linspace(obj.fguess(1),obj.fguess(2),1000),obj.fTLS_filled(linspace(obj.fguess(1),obj.fguess(2),1000))-obj.fCB_filled(linspace(obj.fguess(1),obj.fguess(2),1000)))
-%             figure
-%             axes('XScale','log','YScale','log')
-%             hold on
-%             plot(linspace(obj.fguess(1),obj.fguess(2),1000),obj.fTLS_filled(linspace(obj.fguess(1),obj.fguess(2),1000))-obj.fCB_filled(linspace(obj.fguess(1),obj.fguess(2),1000)))
-%             plot(linspace(obj.fguess(1),obj.fguess(2),1000),-obj.fTLS_filled(linspace(obj.fguess(1),obj.fguess(2),1000))+obj.fCB_filled(linspace(obj.fguess(1),obj.fguess(2),1000)))
-%             hold off
-%             end
-            
         end
         %-----:End fitting and calcuations.---------------------------------
         %>>>>>:Begin Plotting fuctions.-------------------------------------

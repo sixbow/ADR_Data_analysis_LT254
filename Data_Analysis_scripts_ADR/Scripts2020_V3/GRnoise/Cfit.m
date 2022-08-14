@@ -21,6 +21,7 @@ classdef Cfit < handle
         CBfit
         fguess
         resnormthreshold
+        Goodfit
         Fknee
         Sknee
         % Anonymous functions
@@ -147,13 +148,16 @@ classdef Cfit < handle
             if obj.CBfit.resnorm{kidn,Pindex,nT} < obj.resnormthreshold
             obj.Fknee{kidn,Pindex,nT} = power(obj.TLSfit.Ctls{kidn,Pindex,nT}/obj.CBfit.Cgr{kidn,Pindex,nT},(1/obj.TLSfit.gamma{kidn,Pindex,nT}));
             obj.Sknee{kidn,Pindex,nT} = obj.CBfit.Cgr{kidn,Pindex,nT};
+            obj.Goodfit{kidn,Pindex,nT} = 1;
                 if obj.Fknee{kidn,Pindex,nT}> (1/(2*pi*obj.CBfit.Tauqp{kidn,Pindex,nT}))
                 obj.Fknee{kidn,Pindex,nT} = NaN;
                 obj.Sknee{kidn,Pindex,nT} = NaN;
+                obj.Goodfit{kidn,Pindex,nT} = 0;
                 end
             else
             obj.Fknee{kidn,Pindex,nT} = NaN;
-            obj.Sknee{kidn,Pindex,nT} = NaN;    
+            obj.Sknee{kidn,Pindex,nT} = NaN;
+            obj.Goodfit{kidn,Pindex,nT} = 0;
             end
         end
         %-----:End fitting and calcuations.---------------------------------
