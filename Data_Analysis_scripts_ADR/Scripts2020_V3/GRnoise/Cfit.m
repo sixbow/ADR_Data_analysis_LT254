@@ -111,7 +111,7 @@ classdef Cfit < handle
             obj.CBfit.Cgr{kidn,Pindex,nT} = obj.CBfit.C{kidn,Pindex,nT}(1);
             obj.CBfit.Tauqp{kidn,Pindex,nT} = obj.CBfit.C{kidn,Pindex,nT}(2);
             
-            disp('Fitted GR!')    
+            %disp('Fitted GR!')    
             
             
             
@@ -146,7 +146,7 @@ classdef Cfit < handle
 %             obj.Fknee{kidn,Pindex,nT} = power(10,log10(obj.CBfit.Cgr{kidn,Pindex,nT}/obj.TLSfit.Ctls{kidn,Pindex,nT})/(-1*obj.TLSfit.gamma{kidn,Pindex,nT}));
             obj.Fknee{kidn,Pindex,nT} = power(obj.TLSfit.Ctls{kidn,Pindex,nT}/obj.CBfit.Cgr{kidn,Pindex,nT},(1/obj.TLSfit.gamma{kidn,Pindex,nT}));
 
-            obj.Sknee{kidn,Pindex,nT} = obj.CBfit.Cgr{kidn,Pindex,nT}
+            obj.Sknee{kidn,Pindex,nT} = obj.CBfit.Cgr{kidn,Pindex,nT};
             
             
             
@@ -191,7 +191,7 @@ classdef Cfit < handle
         
         
         
-        function [figh_out,axh_out] = plotsingle(obj,fig_n,ax_n,kidn,Pindex,nT,SW,marker,Colorv)
+        function [figh_out,axh_out] = plotsingle(obj,fig_n,ax_n,kidn,Pindex,nT,SW,marker,Colorcell,handleVisible)
             %plots to figure currently in focus.
             p = obj.findp(kidn,Pindex);
             UpA(obj,kidn,Pindex,nT)
@@ -199,10 +199,10 @@ classdef Cfit < handle
             toplot = obj.Sff{kidn,Pindex,nT} > 0;
             figure(obj.fig(fig_n))
             if SW.plotdata
-            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.Sff{kidn,Pindex,nT}(toplot)));
+            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.Sff{kidn,Pindex,nT}(toplot)),'-o','MarkerFaceColor',Colorcell{1},'MarkerSize',2,'Color',Colorcell{1},'HandleVisibility',handleVisible{1});
             end
             %plot()
-            xlabel('F [Hz]');ylabel('S_F/F^2 [dBc/Hz]')
+            xlabel('f [Hz]','Interpreter','latex');ylabel('$S_{F}/F^{2} [dBc/Hz]$','Interpreter','latex')
             %Old: %xlim([0.5,1e5]);grid on;ylim([-220,-140])
             xlim([0.1,5e5]);grid on;ylim([-220,-140])
             %title(append('KID#',string(obj.NOISE(p).KIDnumber)," |Power ",string(obj.NOISE(p).ReadPower),"dBm")); 
@@ -210,23 +210,25 @@ classdef Cfit < handle
             if SW.plottls
             %disp(string(size(obj.TLSfit.C)))
             %disp(string(obj.TLSfit.C{kidn,Pindex,nT}(1)))
-            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fTLS(obj.TLSfit.C{kidn,Pindex,nT},obj.freq(toplot))),'-.','Color','black');
+            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fTLS(obj.TLSfit.C{kidn,Pindex,nT},obj.freq(toplot))),'-.','Color','black','HandleVisibility',handleVisible{2});
             end
             %-------/End:Add TLS line--------------------------------------
             %+++++|Begin:Plot CB fit---------------------------------------
 			if SW.plotgr
-            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fCB(obj.CBfit.C{kidn,Pindex,nT},obj.freq(toplot))),':','Color','black','LineWidth',1.5)
+            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fCB(obj.CBfit.C{kidn,Pindex,nT},obj.freq(toplot))),':','Color',Colorcell{3},'LineWidth',1.5,'HandleVisibility',handleVisible{3})
             end
+            disp('De kleur is:')
+            disp(Colorcell{3});
             %-------/End:Plot CB fit---------------------------------------
             %+++++|Begin:Total line----------------------------------------
 			if SW.plotTotal
-            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fTotal(obj.TLSfit.C{kidn,Pindex,nT},obj.CBfit.C{kidn,Pindex,nT},obj.freq(toplot))),'--','LineWidth',2)
+            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fTotal(obj.TLSfit.C{kidn,Pindex,nT},obj.CBfit.C{kidn,Pindex,nT},obj.freq(toplot))),'--','LineWidth',2,'Color',Colorcell{4},'HandleVisibility',handleVisible{4})
             end
             %-------/End:Total line----------------------------------------
 
             %+++++|Begin:Visualize Fknee-----------------------------------
 			if SW.plotFknee
-            plot(obj.ax(ax_n),obj.Fknee{kidn,Pindex,nT},lintodb(obj.Sknee{kidn,Pindex,nT}),marker,'Color',Colorv,'LineWidth',2)
+            plot(obj.ax(ax_n),obj.Fknee{kidn,Pindex,nT},lintodb(obj.Sknee{kidn,Pindex,nT}),marker,'Color',Colorcell{5},'LineWidth',2,'HandleVisibility',handleVisible{5})
             end
             %-------/End:Visualize Fknee-----------------------------------
             figh_out = obj.fig(fig_n)

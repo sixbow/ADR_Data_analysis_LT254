@@ -33,42 +33,54 @@ for kidn = kidn_iter
 for Pindex= P_iter
 for Tindex= T_iter
 [CTLS,gamma]= o.genfitsingle(kidn,Pindex,Tindex);
-o.genFknee(kidn,Pindex,Tindex)
+o.genFknee(kidn,Pindex,Tindex);
 end
 end 
 end
 
 %% Temperature variation single plots
 o = o.init_figax(fignum,axnum,'loglin');
+set(gca, 'FontName', 'Arial')
 kidn_iter = 1;
 P_iter = 7; 
-T_iter = 13;
+T_iter = [1 6 10 14];
+Tcolors = colormapJetJB(14);
+Pcolors = colormapcoolSdB(7);
 %-------
 SW.plotdata = 1;
 SW.plottls = 1;
 SW.plotgr = 1;
 SW.plotFknee = 1;
 SW.plotTotal = 1;
+handleVisible = [{'on'},{'on'},{'on'},{'on'},{'on'}];
 for kidn = kidn_iter
 for Pindex= P_iter
 for Tindex= T_iter
-[f1,ax1] = o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'o','black');
+Colorcell = genColorcell(T_iter,Tindex,Tcolors,P_iter,Pindex,Pcolors);
+[f1,ax1] = o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'o',Colorcell,handleVisible);
+%legendstr = ['']
 end
 end 
 end
-legend('Data','TLS fit','GR + sys noise','Combined')
-
-
-
+legend('Data','TLS fit','GR + sys noise','Combined','$F_{knee}$','Interpreter','latex')
+title('Hoi','Interpreter','latex')
+set(gca,'TickLabelInterpreter', 'latex')
+set(gcf,'units','centimeters','position',[20,1,20,0.65*20])
+filename = '4Temp';
+saveas(gca,[figurepath  filename '.fig' ])
+exportgraphics(gca,[figurepath  filename '.png' ]) 
+exportgraphics(gca,[figurepath filename '.pdf' ])
 
 %% (2) Fknee compare G3,G4 - Temperature
+kidn_iter = 1;
 P_iter = 7; 
-T_iter = 1:14;
+T_iter = 1:2:14;
 %-------
 SW.plotdata = 0;
 SW.plottls = 0;
 SW.plotgr = 0;
 SW.plotFknee = 1;
+SW.plotTotal = 0;
 %-------
 fignum=2;
 axnum = fignum;
@@ -76,8 +88,9 @@ Tcolors = colormapJetJB(14);
 o = o.init_figax(fignum,axnum,'loglin');
 for kidn = 1:3 % G3
 for Pindex= P_iter
-for Tindex= T_iter
-[f2,ax2] = o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'x',Tcolors(Tindex,:));
+for Tindex= T_iter  
+Colorcell = genColorcell(T_iter,Tindex,Tcolors,P_iter,Pindex,Pcolors);
+[f2,ax2] = o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'x',Colorcell);
 end
 end
 end
@@ -85,7 +98,8 @@ end
 for kidn = 4:6 %G4
 for Pindex= P_iter
 for Tindex= T_iter
-o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'o',Tcolors(Tindex,:))
+Colorcell = genColorcell(T_iter,Tindex,Tcolors,P_iter,Pindex,Pcolors);
+o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'o',Colorcell)
 end
 end
 end
@@ -101,6 +115,7 @@ exportgraphics(gca,[figurepath filename '.pdf' ])
 
 
 %% (2) Fknee compare G3,G4 - Power
+kidn_iter = 1;
 P_iter = 1:7; 
 T_iter = 3;
 %-------
@@ -108,6 +123,7 @@ SW.plotdata = 0;
 SW.plottls = 0;
 SW.plotgr = 0;
 SW.plotFknee = 1;
+SW.plotTotal = 0;
 %-------
 fignum=3;
 axnum = fignum;
@@ -116,7 +132,8 @@ o = o.init_figax(fignum,axnum,'loglin');
 for kidn = 1:3 % G3
 for Pindex= P_iter
 for Tindex= T_iter
-[f3,ax3] = o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'x',Pcolors(Pindex,:));
+Colorcell = genColorcell(T_iter,Tindex,Tcolors,P_iter,Pindex,Pcolors);
+[f3,ax3] = o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'x',Colorcell);
 end
 end
 end
@@ -124,7 +141,8 @@ end
 for kidn = 4:6 %G4
 for Pindex= P_iter
 for Tindex= T_iter
-o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'o',Pcolors(Pindex,:))
+Colorcell = genColorcell(T_iter,Tindex,Tcolors,P_iter,Pindex,Pcolors);
+o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'o',Colorcell)
 end
 end
 end

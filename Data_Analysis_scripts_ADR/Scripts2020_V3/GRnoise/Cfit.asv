@@ -111,7 +111,7 @@ classdef Cfit < handle
             obj.CBfit.Cgr{kidn,Pindex,nT} = obj.CBfit.C{kidn,Pindex,nT}(1);
             obj.CBfit.Tauqp{kidn,Pindex,nT} = obj.CBfit.C{kidn,Pindex,nT}(2);
             
-            disp('Fitted GR!')    
+            %disp('Fitted GR!')    
             
             
             
@@ -146,7 +146,7 @@ classdef Cfit < handle
 %             obj.Fknee{kidn,Pindex,nT} = power(10,log10(obj.CBfit.Cgr{kidn,Pindex,nT}/obj.TLSfit.Ctls{kidn,Pindex,nT})/(-1*obj.TLSfit.gamma{kidn,Pindex,nT}));
             obj.Fknee{kidn,Pindex,nT} = power(obj.TLSfit.Ctls{kidn,Pindex,nT}/obj.CBfit.Cgr{kidn,Pindex,nT},(1/obj.TLSfit.gamma{kidn,Pindex,nT}));
 
-            obj.Sknee{kidn,Pindex,nT} = obj.CBfit.Cgr{kidn,Pindex,nT}
+            obj.Sknee{kidn,Pindex,nT} = obj.CBfit.Cgr{kidn,Pindex,nT};
             
             
             
@@ -191,7 +191,7 @@ classdef Cfit < handle
         
         
         
-        function [figh_out,axh_out] = plotsingle(obj,fig_n,ax_n,kidn,Pindex,nT,SW,marker,Colorv)
+        function [figh_out,axh_out] = plotsingle(obj,fig_n,ax_n,kidn,Pindex,nT,SW,marker,Colorcell,handleVisible)
             %plots to figure currently in focus.
             p = obj.findp(kidn,Pindex);
             UpA(obj,kidn,Pindex,nT)
@@ -199,7 +199,7 @@ classdef Cfit < handle
             toplot = obj.Sff{kidn,Pindex,nT} > 0;
             figure(obj.fig(fig_n))
             if SW.plotdata
-            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.Sff{kidn,Pindex,nT}(toplot)));
+            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.Sff{kidn,Pindex,nT}(toplot)),'-o','MarkerFaceColor',Colorcell{1},'MarkerSize',2,'Color',Colorcell{1},'HandleVisibility',handleVisible);
             end
             %plot()
             xlabel('F [Hz]');ylabel('S_F/F^2 [dBc/Hz]')
@@ -215,18 +215,20 @@ classdef Cfit < handle
             %-------/End:Add TLS line--------------------------------------
             %+++++|Begin:Plot CB fit---------------------------------------
 			if SW.plotgr
-            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fCB(obj.CBfit.C{kidn,Pindex,nT},obj.freq(toplot))),':','Color','black','LineWidth',1.5)
+            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fCB(obj.CBfit.C{kidn,Pindex,nT},obj.freq(toplot))),':','Color',Colorcell{3},'LineWidth',1.5)
             end
+            disp('De kleur is:')
+            disp(Colorcell{3});
             %-------/End:Plot CB fit---------------------------------------
             %+++++|Begin:Total line----------------------------------------
 			if SW.plotTotal
-            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fTotal(obj.TLSfit.C{kidn,Pindex,nT},obj.CBfit.C{kidn,Pindex,nT},obj.freq(toplot))),'--','LineWidth',2)
+            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fTotal(obj.TLSfit.C{kidn,Pindex,nT},obj.CBfit.C{kidn,Pindex,nT},obj.freq(toplot))),'--','LineWidth',2,'Color',Colorcell{4})
             end
             %-------/End:Total line----------------------------------------
 
             %+++++|Begin:Visualize Fknee-----------------------------------
 			if SW.plotFknee
-            plot(obj.ax(ax_n),obj.Fknee{kidn,Pindex,nT},lintodb(obj.Sknee{kidn,Pindex,nT}),marker,'Color',Colorv,'LineWidth',2)
+            plot(obj.ax(ax_n),obj.Fknee{kidn,Pindex,nT},lintodb(obj.Sknee{kidn,Pindex,nT}),marker,'Color',Colorcell{5},'LineWidth',2)
             end
             %-------/End:Visualize Fknee-----------------------------------
             figh_out = obj.fig(fig_n)
@@ -259,9 +261,13 @@ classdef Cfit < handle
             p = findp(kidn,Pindex);
             Temp = obj.NOISE(p).Temperature(nT);
         end
-        function Pread = getPread(obj,kidn,Pindex,nT)
+        function Pread = getPread(obj,kidn,Pindex,~)
             p = findp(kidn,Pindex);
-            Temp = obj.NOISE(p).ReadPower;
+            Pread = obj.NOISE(p).ReadPower;
+        end
+        function Pread = getFread(obj,kidn,Pindex,~)
+            p = findp(kidn,Pindex);
+            Pread = obj.NOISE(p).Fread;
         end
         function Pint = getPint(obj,kidn,Pindex,nT)
             p = findp(kidn,Pindex);
@@ -279,9 +285,13 @@ classdef Cfit < handle
             p = findp(kidn,Pindex);
             out = obj.NOISE(p).Fres(nT);
         end
-        function out = getFread(obj,kidn,Pindex,nT)
+        function out = getTauRes(obj,kidn,Pindex,nT)
             p = findp(kidn,Pindex);
-            out = obj.NOISE(p).Fread(nT);
+            out = obj.NOISE(p).TauRes(nT);
+        end
+        function out = getS21min(obj,kidn,Pindex,nT)
+            p = findp(kidn,Pindex);
+            out = obj.NOISE(p).S21min(nT);
         end
 		%-------/End:Getters-----------------------------------------------
 		
