@@ -1,4 +1,4 @@
-function [coof,resnorm] = LLS_CB_SdB(XDATA,YDATA,func,coof0,lb,ub)
+function coof = LLS_CB_SdB(XDATA,YDATA,func,coof0,lb,ub)
 %nonlinfitSdB <strong>nonlinfitSdB(XDATA,YDATA,func,coof0)</strong>
 % This version normalizes the YDATA to make it stable because it uses trust
 % region standard. This needs to be adapted for the problem at hand. 
@@ -11,6 +11,5 @@ ub(1) = ub(1)/n_num;% Normalizing everything..
 [x,resnorm,~,~,~] = lsqcurvefit(func,coof0,XDATA,YDATA_N,lb,ub);%[],[],options);
 coof(1) = x(1).*n_num ;
 coof(2)= x(2);
-resnorm = resnorm*power(resnorm,2);
-
+resnorm
 end

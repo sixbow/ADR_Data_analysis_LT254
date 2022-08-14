@@ -20,6 +20,7 @@ classdef Cfit < handle
         TLSfit
         CBfit
         fguess
+        resnormthreshold
         Fknee
         Sknee
         % Anonymous functions
@@ -68,7 +69,7 @@ classdef Cfit < handle
             obj.CBfit.ub = [10^-15 (1/(2*pi*obj.CBfit.min))];
             obj.fguess = [1 100000]; % [Hz] initial guess for the intersection point of the TLS and GR noise. 
 			%-------/End:Combined fitting parameters (Default!)------------
-            obj.test = 3.14;
+            obj.resnormthreshold = 200;
             disp('Initialized Cfit object!')
         end % End constructor
         %+++++:Begin fitting and calcuations.-------------------------------
@@ -107,10 +108,10 @@ classdef Cfit < handle
             obj.Sff_minusTLS{kidn,Pindex,nT} = obj.Sff{kidn,Pindex,nT}-obj.fTLS(obj.TLSfit.C{kidn,Pindex,nT},obj.freq); % subtract the TLS line..
             
             %Fitting GR noise spectrum 
-            obj.CBfit.C{kidn,Pindex,nT} = LLS_CB_SdB(obj.freq(obj.CBfit.mini:obj.CBfit.maxi),obj.Sff_minusTLS{kidn,Pindex,nT}(obj.CBfit.mini:obj.CBfit.maxi),obj.fCB,obj.CBfit.C0,obj.CBfit.lb,obj.CBfit.ub);
+            [obj.CBfit.C{kidn,Pindex,nT},obj.CBfit.resnorm{kidn,Pindex,nT}] = LLS_CB_SdB(obj.freq(obj.CBfit.mini:obj.CBfit.maxi),obj.Sff_minusTLS{kidn,Pindex,nT}(obj.CBfit.mini:obj.CBfit.maxi),obj.fCB,obj.CBfit.C0,obj.CBfit.lb,obj.CBfit.ub);
             obj.CBfit.Cgr{kidn,Pindex,nT} = obj.CBfit.C{kidn,Pindex,nT}(1);
             obj.CBfit.Tauqp{kidn,Pindex,nT} = obj.CBfit.C{kidn,Pindex,nT}(2);
-            
+            disp(fprintf('genfitsingle - ID(%i,%i,%i): resnorm=%2.4e',kidn,Pindex,nT,obj.CBfit.resnorm{kidn,Pindex,nT}));
             %disp('Fitted GR!')    
             
             
@@ -140,35 +141,20 @@ classdef Cfit < handle
        
         function genFknee(obj,kidn,Pindex,nT)
             %genFknee method finds the Fknee based on the fits.
-            %p = obj.findp(kidn,Pindex);
-            % Analytic 
-            
-%             obj.Fknee{kidn,Pindex,nT} = power(10,log10(obj.CBfit.Cgr{kidn,Pindex,nT}/obj.TLSfit.Ctls{kidn,Pindex,nT})/(-1*obj.TLSfit.gamma{kidn,Pindex,nT}));
+            % This is done such that fits that are bad are rejected. Also
+            % Also if Fknee is greater than rolloff of Tau qp it is
+            % rejected as Fknee.
+            if obj.CBfit.resnorm{kidn,Pindex,nT} < obj.resnormthreshold
             obj.Fknee{kidn,Pindex,nT} = power(obj.TLSfit.Ctls{kidn,Pindex,nT}/obj.CBfit.Cgr{kidn,Pindex,nT},(1/obj.TLSfit.gamma{kidn,Pindex,nT}));
-
             obj.Sknee{kidn,Pindex,nT} = obj.CBfit.Cgr{kidn,Pindex,nT};
-            
-            
-            
-%             UpA_filled(obj,kidn,Pindex,nT);
-%             try
-%             [obj.Fknee{kidn,Pindex,nT},obj.Sknee{kidn,Pindex,nT}] = findintersect_SdB2(obj.fTLS_filled,obj.fCB_filled,obj.fguess);
-%             catch e
-%             fprintf(1,'There was an error! The message was:\n%s',e.message);
-%             warning('Problem using function.  Skipping... Setting to NaN');
-%             obj.Fknee{kidn,Pindex,nT} = NaN;
-%             obj.Sknee{kidn,Pindex,nT} = NaN;
-%             figure
-%             axes()
-%             plot(linspace(obj.fguess(1),obj.fguess(2),1000),obj.fTLS_filled(linspace(obj.fguess(1),obj.fguess(2),1000))-obj.fCB_filled(linspace(obj.fguess(1),obj.fguess(2),1000)))
-%             figure
-%             axes('XScale','log','YScale','log')
-%             hold on
-%             plot(linspace(obj.fguess(1),obj.fguess(2),1000),obj.fTLS_filled(linspace(obj.fguess(1),obj.fguess(2),1000))-obj.fCB_filled(linspace(obj.fguess(1),obj.fguess(2),1000)))
-%             plot(linspace(obj.fguess(1),obj.fguess(2),1000),-obj.fTLS_filled(linspace(obj.fguess(1),obj.fguess(2),1000))+obj.fCB_filled(linspace(obj.fguess(1),obj.fguess(2),1000)))
-%             hold off
-%             end
-            
+                if obj.Fknee{kidn,Pindex,nT}> (1/(2*pi*obj.CBfit.Tauqp{kidn,Pindex,nT}))
+                obj.Fknee{kidn,Pindex,nT} = NaN;
+                obj.Sknee{kidn,Pindex,nT} = NaN;
+                end
+            else
+            obj.Fknee{kidn,Pindex,nT} = NaN;
+            obj.Sknee{kidn,Pindex,nT} = NaN;    
+            end
         end
         %-----:End fitting and calcuations.---------------------------------
         %>>>>>:Begin Plotting fuctions.-------------------------------------
@@ -196,6 +182,8 @@ classdef Cfit < handle
             p = obj.findp(kidn,Pindex);
             UpA(obj,kidn,Pindex,nT)
             obj.Sff{kidn,Pindex,nT} = obj.NOISE(p).FFTnoise{nT}(:,4);
+            disp(fprintf('plotsingle:Plotting data with p=%i and nT=%i',p,nT));
+            disp(fprintf('genfitsingle - ID(%i,%i,%i): resnorm=%2.4e',kidn,Pindex,nT,obj.CBfit.resnorm{kidn,Pindex,nT}));
             toplot = obj.Sff{kidn,Pindex,nT} > 0;
             figure(obj.fig(fig_n))
             if SW.plotdata

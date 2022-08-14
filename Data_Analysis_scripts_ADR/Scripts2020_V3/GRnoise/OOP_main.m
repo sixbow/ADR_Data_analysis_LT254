@@ -41,9 +41,9 @@ end
 %% Temperature variation single plots
 o = o.init_figax(fignum,axnum,'loglin');
 set(gca, 'FontName', 'Arial')
-kidn_iter = 1;
+kidn_iter = 6;
 P_iter = 7; 
-T_iter = 1;
+T_iter = 1:2:14;
 Tcolors = colormapJetJB(14);
 Pcolors = colormapcoolSdB(7);
 %-------
@@ -59,7 +59,7 @@ for Tindex= T_iter
 Colorcell = genColorcell(T_iter,Tindex,Tcolors,P_iter,Pindex,Pcolors);
 [f1,ax1] = o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'o',Colorcell,handleVisible);
 disp(Pindex)
-title(sprintf('$KID_{N}$: %i | Power: %3.0f dBc | $$T_{bath}$$ =%1.3f K',kidn,o.getPread(kidn,Pindex,Tindex),o.getT(kidn,Pindex,Tindex)),'Interpreter','latex')
+title(sprintf('$KID_{N}$: %i | Power: %3.0f dBc | $$T_{bath}$$ =%1.3f K | ID:(%i,%i,%i)',kidn,o.getPread(kidn,Pindex,Tindex),o.getT(kidn,Pindex,Tindex),kidn,Pindex,Tindex),'Interpreter','latex')
 %legendstr = ['']
 end
 end 
@@ -75,11 +75,11 @@ exportgraphics(gca,[figurepath filename '.pdf' ])
 
 
 %% Temperature variation single plots - Loop over all for 1 time - Last run: 14-08 17:52
-figurepath = ['..' filesep '..' filesep '..' filesep 'Export_Figures_noGit\OOP\automatisch\single_plot_loop_all\' filesep ];
+figurepath = ['..' filesep '..' filesep '..' filesep 'Export_Figures_noGit\OOP\automatisch\single_plot_loop_all_rejection\' filesep ];
 if Single_plot_loop_all 
 
-kidn_iter = 1:6;
-P_iter = 1:7; 
+kidn_iter = 6;
+P_iter = 7; 
 T_iter = 1:14;
 Tcolors = colormapJetJB(14);
 Pcolors = colormapcoolSdB(7);
@@ -163,12 +163,13 @@ SW.plotTotal = 0;
 fignum=2;
 axnum = fignum;
 Tcolors = colormapJetJB(14);
+handleVisible = [{'on'},{'on'},{'on'},{'on'},{'on'}];
 o = o.init_figax(fignum,axnum,'loglin');
 for kidn = 1:3 % G3
 for Pindex= P_iter
 for Tindex= T_iter  
 Colorcell = genColorcell(T_iter,Tindex,Tcolors,P_iter,Pindex,Pcolors);
-[f2,ax2] = o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'x',Colorcell);
+[f2,ax2] = o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'x',Colorcell,handleVisible);
 end
 end
 end
@@ -177,7 +178,7 @@ for kidn = 4:6 %G4
 for Pindex= P_iter
 for Tindex= T_iter
 Colorcell = genColorcell(T_iter,Tindex,Tcolors,P_iter,Pindex,Pcolors);
-o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'o',Colorcell)
+o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'o',Colorcell,handleVisible)
 end
 end
 end
@@ -206,12 +207,13 @@ SW.plotTotal = 0;
 fignum=3;
 axnum = fignum;
 Pcolors = colormapcoolSdB(7);
+handleVisible = [{'on'},{'on'},{'on'},{'on'},{'on'}];
 o = o.init_figax(fignum,axnum,'loglin');
 for kidn = 1:3 % G3
 for Pindex= P_iter
 for Tindex= T_iter
 Colorcell = genColorcell(T_iter,Tindex,Tcolors,P_iter,Pindex,Pcolors);
-[f3,ax3] = o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'x',Colorcell);
+[f3,ax3] = o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'x',Colorcell,handleVisible);
 end
 end
 end
@@ -220,7 +222,7 @@ for kidn = 4:6 %G4
 for Pindex= P_iter
 for Tindex= T_iter
 Colorcell = genColorcell(T_iter,Tindex,Tcolors,P_iter,Pindex,Pcolors);
-o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'o',Colorcell)
+o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'o',Colorcell,handleVisible)
 end
 end
 end
