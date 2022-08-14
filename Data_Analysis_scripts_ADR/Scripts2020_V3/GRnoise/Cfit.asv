@@ -107,6 +107,9 @@ classdef Cfit < handle
             
             %Fitting GR noise spectrum 
             obj.CBfit.C{kidn,Pindex,nT} = LLS_CB_SdB(obj.freq(obj.CBfit.mini:obj.CBfit.maxi),obj.Sff_minusTLS{kidn,Pindex,nT}(obj.CBfit.mini:obj.CBfit.maxi),obj.fCB,obj.CBfit.C0,obj.CBfit.lb,obj.CBfit.ub);
+            obj.CBfit.Cgr{kidn,Pindex,nT} = obj.CBfit.C{kidn,Pindex,nT}(1);
+            obj.CBfit.Tauqp{kidn,Pindex,nT} = obj.CBfit.C{kidn,Pindex,nT}(2);
+            
             disp('Fitted GR!')    
             
             
@@ -135,19 +138,35 @@ classdef Cfit < handle
        
         function genFknee(obj,kidn,Pindex,nT)
             %genFknee method finds the Fknee based on the fits.
-            p = obj.findp(kidn,Pindex);
-            UpA_filled(obj,kidn,Pindex,nT);
-            try
-            [obj.Fknee{kidn,Pindex,nT},obj.Sknee{kidn,Pindex,nT}] = findintersect_SdB2(obj.fTLS_filled,obj.fCB_filled,obj.fguess);
-            catch e
-            fprintf(1,'There was an error! The message was:\n%s',e.message);
-            warning('Problem using function.  Skipping... Setting to NaN');
-            obj.Fknee{kidn,Pindex,nT} = NaN;
-            obj.Sknee{kidn,Pindex,nT} = NaN;
-            figure
-            axes()
-            plot()
-            end
+            %p = obj.findp(kidn,Pindex);
+            % Analytic 
+            
+            obj.Fknee{kidn,Pindex,nT} = power(10,log10(obj.CBfit.Cgr{kidn,Pindex,nT}/obj.TLSfit.Ctls{kidn,Pindex,nT})/(-1*obj.TLSfit.gamma{kidn,Pindex,nT}));
+%             disp(string(size(obj.Fknee{kidn,Pindex,nT})))
+%             disp(string(obj.Fknee{kidn,Pindex,nT}))
+%             disp('Jeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeej')
+            obj.Sknee{kidn,Pindex,nT} = obj.CBfit.Cgr{kidn,Pindex,nT}
+            
+            
+            
+%             UpA_filled(obj,kidn,Pindex,nT);
+%             try
+%             [obj.Fknee{kidn,Pindex,nT},obj.Sknee{kidn,Pindex,nT}] = findintersect_SdB2(obj.fTLS_filled,obj.fCB_filled,obj.fguess);
+%             catch e
+%             fprintf(1,'There was an error! The message was:\n%s',e.message);
+%             warning('Problem using function.  Skipping... Setting to NaN');
+%             obj.Fknee{kidn,Pindex,nT} = NaN;
+%             obj.Sknee{kidn,Pindex,nT} = NaN;
+%             figure
+%             axes()
+%             plot(linspace(obj.fguess(1),obj.fguess(2),1000),obj.fTLS_filled(linspace(obj.fguess(1),obj.fguess(2),1000))-obj.fCB_filled(linspace(obj.fguess(1),obj.fguess(2),1000)))
+%             figure
+%             axes('XScale','log','YScale','log')
+%             hold on
+%             plot(linspace(obj.fguess(1),obj.fguess(2),1000),obj.fTLS_filled(linspace(obj.fguess(1),obj.fguess(2),1000))-obj.fCB_filled(linspace(obj.fguess(1),obj.fguess(2),1000)))
+%             plot(linspace(obj.fguess(1),obj.fguess(2),1000),-obj.fTLS_filled(linspace(obj.fguess(1),obj.fguess(2),1000))+obj.fCB_filled(linspace(obj.fguess(1),obj.fguess(2),1000)))
+%             hold off
+%             end
             
         end
         %-----:End fitting and calcuations.---------------------------------
@@ -175,14 +194,16 @@ classdef Cfit < handle
         end
         
         
-        function plotsingle(obj,fig_n,ax_n,kidn,Pindex,nT,SW)
+        function plotsingle(obj,fig_n,ax_n,kidn,Pindex,nT,SW,marker,Colorv)
             %plots to figure currently in focus.
             p = obj.findp(kidn,Pindex);
             UpA(obj,kidn,Pindex,nT)
             obj.Sff{kidn,Pindex,nT} = obj.NOISE(p).FFTnoise{nT}(:,4);
             toplot = obj.Sff{kidn,Pindex,nT} > 0;
             figure(obj.fig(fig_n))
+            if SW.plotdata
             plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.Sff{kidn,Pindex,nT}(toplot)));
+            end
             %plot()
             xlabel('F [Hz]');ylabel('S_F/F^2 [dBc/Hz]')
             %Old: %xlim([0.5,1e5]);grid on;ylim([-220,-140])
@@ -192,17 +213,17 @@ classdef Cfit < handle
             if SW.plottls
             %disp(string(size(obj.TLSfit.C)))
             %disp(string(obj.TLSfit.C{kidn,Pindex,nT}(1)))
-            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fTLS(obj.TLSfit.C{kidn,Pindex,nT},obj.freq(toplot))),'Color','black')
+            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fTLS(obj.TLSfit.C{kidn,Pindex,nT},obj.freq(toplot))),''-.','Color','black')
             end
             %-------/End:Add TLS line--------------------------------------
             %+++++|Begin:Plot CB fit---------------------------------------
 			if SW.plotgr
-            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fCB(obj.CBfit.C{kidn,Pindex,nT},obj.freq(toplot))),'Color','black')
+            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fCB(obj.CBfit.C{kidn,Pindex,nT},obj.freq(toplot))),':','Color','black')
             end
             %-------/End:Plot CB fit---------------------------------------
 			%+++++|Begin:Visualize Fknee-----------------------------------
 			if SW.plotFknee
-            plot(obj.ax(ax_n),obj.Fknee{kidn,Pindex,nT},lintodb(obj.Sknee{kidn,Pindex,nT}),'o','LineWidth',2)
+            plot(obj.ax(ax_n),obj.Fknee{kidn,Pindex,nT},lintodb(obj.Sknee{kidn,Pindex,nT}),marker,'Color',Colorv,'LineWidth',2)
             end
             %-------/End:Visualize Fknee-----------------------------------
 

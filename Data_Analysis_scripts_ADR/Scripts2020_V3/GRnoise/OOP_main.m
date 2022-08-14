@@ -4,9 +4,9 @@ close all
 
 %% (1) Single plots
 FFTsubsubdir=['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D'];% This is where the
-
+addpath('..\subroutines')
 %% Plotting: single plot!
-SW_simsome = 1;
+SW_simsome = 0;
 if SW_simsome
 kidn_iter = 1;
 P_iter = 6; 
@@ -20,8 +20,9 @@ end
 fignum=1;
 axnum = fignum;
 %-------
-SW.plottls = 1;
-SW.plotgr = 1;
+SW.plotdata = 0;
+SW.plottls = 0;
+SW.plotgr = 0;
 SW.plotFknee = 1;
 
 o = Cfit(FFTsubsubdir,'NOISE_2D.mat')
@@ -35,16 +36,49 @@ o.genFknee(kidn,Pindex,Tindex)
 end
 end 
 end
+
+%% Temperature variation single plots
 o = o.init_figax(fignum,axnum,'loglin');
+kidn_iter = 1;
+P_iter = 7; 
+T_iter = 13;
+%-------
+SW.plotdata = 1;
+SW.plottls = 1;
+SW.plotgr = 1;
+SW.plotFknee = 1;
 for kidn = kidn_iter
 for Pindex= P_iter
 for Tindex= T_iter
-o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW)
+o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'o','black')
 end
 end 
 end
+legend('Data','TLS fit','GR + sys noise','Combined')
 
 
+
+
+%% Fknee compare G3,G4
+fignum=2;
+axnum = fignum;
+Tcolors = colormapJetJB(14);
+o = o.init_figax(fignum,axnum,'loglin');
+for kidn = 1:3 % G3
+for Pindex= P_iter
+for Tindex= T_iter
+o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'x',Tcolors(Tindex,:))
+end
+end
+end
+
+for kidn = 4:6 %G4
+for Pindex= P_iter
+for Tindex= T_iter
+o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'o',Tcolors(Tindex,:))
+end
+end
+end
 
 
 
