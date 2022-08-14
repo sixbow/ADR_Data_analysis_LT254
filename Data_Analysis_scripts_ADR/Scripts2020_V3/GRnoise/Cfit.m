@@ -202,7 +202,7 @@ classdef Cfit < handle
             plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.Sff{kidn,Pindex,nT}(toplot)),'-o','MarkerFaceColor',Colorcell{1},'MarkerSize',2,'Color',Colorcell{1},'HandleVisibility',handleVisible{1});
             end
             %plot()
-            xlabel('f [Hz]','Interpreter','latex');ylabel('$S_{F}/F^{2} [dBc/Hz]$','Interpreter','latex')
+            xlabel('f[Hz]','Interpreter','latex');ylabel('$S_{F}/F^{2} [dBc/Hz]$','Interpreter','latex')
             %Old: %xlim([0.5,1e5]);grid on;ylim([-220,-140])
             xlim([0.1,5e5]);grid on;ylim([-220,-140])
             %title(append('KID#',string(obj.NOISE(p).KIDnumber)," |Power ",string(obj.NOISE(p).ReadPower),"dBm")); 
@@ -258,39 +258,39 @@ classdef Cfit < handle
 		
         %+++++|Begin:Getters-----------------------------------------------
         function Temp = getT(obj,kidn,Pindex,nT)
-            p = findp(kidn,Pindex);
+            p = obj.findp(kidn,Pindex);
             Temp = obj.NOISE(p).Temperature(nT);
         end
         function Pread = getPread(obj,kidn,Pindex,~)
-            p = findp(kidn,Pindex);
+            p = obj.findp(kidn,Pindex);
             Pread = obj.NOISE(p).ReadPower;
         end
         function Pread = getFread(obj,kidn,Pindex,~)
-            p = findp(kidn,Pindex);
+            p = obj.findp(kidn,Pindex);
             Pread = obj.NOISE(p).Fread;
         end
         function Pint = getPint(obj,kidn,Pindex,nT)
-            p = findp(kidn,Pindex);
+            p = obj.findp(kidn,Pindex);
             Pint = obj.NOISE(p).InternalPower(nT);
         end
         function out = getQi(obj,kidn,Pindex,nT)
-            p = findp(kidn,Pindex);
+            p = obj.findp(kidn,Pindex);
             out = obj.NOISE(p).Qi(nT);
         end
         function out = getQc(obj,kidn,Pindex,nT)
-            p = findp(kidn,Pindex);
+            p = obj.findp(kidn,Pindex);
             out = obj.NOISE(p).Qc(nT);
         end
         function out = getFres(obj,kidn,Pindex,nT)
-            p = findp(kidn,Pindex);
+            p = obj.findp(kidn,Pindex);
             out = obj.NOISE(p).Fres(nT);
         end
         function out = getTauRes(obj,kidn,Pindex,nT)
-            p = findp(kidn,Pindex);
+            p = obj.findp(kidn,Pindex);
             out = obj.NOISE(p).TauRes(nT);
         end
         function out = getS21min(obj,kidn,Pindex,nT)
-            p = findp(kidn,Pindex);
+            p = obj.findp(kidn,Pindex);
             out = obj.NOISE(p).S21min(nT);
         end
 		%-------/End:Getters-----------------------------------------------
