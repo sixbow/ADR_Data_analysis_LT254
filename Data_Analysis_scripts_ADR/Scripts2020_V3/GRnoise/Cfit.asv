@@ -135,7 +135,7 @@ classdef Cfit < handle
             [~,Snoise_i] = min(abs(obj.freq-setup_noise_eval_freq)); % "
             obj.Sff_sys_noise{kidn,Pindex,nT} = obj.NOISE(p).FFTnoise{nT}(Snoise_i,4); % This is the setup noise level evaluated at 350000Hz
             %Updating and Setting anonymous functions
-            obj.UpA(kidn,Pindex,nT)
+            obj.UpCross(kidn,Pindex,nT)
             %disp('hoi')
 			%+++++|Begin:TLS fitting---------------------------------------
             dBlogDataX = log10(obj.freq);
@@ -160,10 +160,20 @@ classdef Cfit < handle
             obj.Sff_minusTLS{kidn,Pindex,nT} = obj.Sff{kidn,Pindex,nT}-obj.fTLS(obj.TLSfit.C{kidn,Pindex,nT},obj.freq); % subtract the TLS line..
             
             %Fitting GR noise spectrum 
-            [obj.CBfit.C{kidn,Pindex,nT},obj.CBfit.resnorm{kidn,Pindex,nT}] = LLS_CB_SdB(obj.freq(obj.CBfit.mini:obj.CBfit.maxi),obj.Sff_minusTLS{kidn,Pindex,nT}(obj.CBfit.mini:obj.CBfit.maxi),obj.fCB,obj.CBfit.C0,obj.CBfit.lb,obj.CBfit.ub);
+            try
+            [obj.CBfit.C{kidn,Pindex,nT},obj.CBfit.resnorm{kidn,Pindex,nT}] = LLS_CB_SdB_single(obj.freq(obj.CBfit.mini:obj.CBfit.maxi),obj.Sff_minusTLS{kidn,Pindex,nT}(obj.CBfit.mini:obj.CBfit.maxi),obj.fCB,obj.CBfit.C0(1),obj.CBfit.lb(1),obj.CBfit.ub(1));
             obj.CBfit.Cgr{kidn,Pindex,nT} = obj.CBfit.C{kidn,Pindex,nT}(1);
-            obj.CBfit.Tauqp{kidn,Pindex,nT} = obj.CBfit.C{kidn,Pindex,nT}(2);
+            obj.CBfit.Tauqp{kidn,Pindex,nT} = obj.Cross_tau{kidn,Pindex,nT};
             disp(fprintf('genfitsingle - ID(%i,%i,%i): resnorm=%2.4e',kidn,Pindex,nT,obj.CBfit.resnorm{kidn,Pindex,nT}));
+            catch e
+                fprintf(1,'Fit waarschijnlijk onmogelijk want Tau = Nan -> Setting result to NaN also Message was:\n%s',e.message);
+                obj.CBfit.C{kidn,Pindex,nT} = NaN;
+                obj.CBfit.resnorm{kidn,Pindex,nT} = NaN;
+                obj.CBfit.Cgr{kidn,Pindex,nT} = NaN;
+                obj.CBfit.Tauqp{kidn,Pindex,nT} = NaN;
+            end
+            
+            
             %disp('Fitted GR!')    
             
             
@@ -180,9 +190,9 @@ classdef Cfit < handle
             obj.fline = @(C_v,xdata)C_v(1).*xdata+C_v(2);
             obj.fTotal = @(C_v_TLS,C_v_CB,fdata)obj.fTLS(C_v_TLS,fdata)+obj.fCB(C_v_CB,fdata);
         end
-        function UpCross(obj,kidn,Pindex,nT)
+        function UpCross(obj,kidn,Pindex,Tindex)% This uses the data from the cross script.
             obj.fTLS = @(C_v,fdata)C_v(1).*power(fdata,-1*C_v(2)); %Model we use to fit C_v is the constants vector that we are trying to find.
-            obj.fCB  = @(C_v,fdata) C_v(1)./((1+power((2.*pi.*fdata.*obj.Cross_tau{kidn,Pindex,Tindex}),2)))+ obj.Sff_sys_noise{kidn,Pindex,nT};
+            obj.fCB  = @(C_v,fdata) C_v(1)./((1+power((2.*pi.*fdata.*obj.Cross_tau{kidn,Pindex,Tindex}),2)))+ obj.Sff_sys_noise{kidn,Pindex,Tindex};
             obj.fline = @(C_v,xdata)C_v(1).*xdata+C_v(2);
             obj.fTotal = @(C_v_TLS,C_v_CB,fdata)obj.fTLS(C_v_TLS,fdata)+obj.fCB(C_v_CB,fdata);
         end
@@ -252,7 +262,11 @@ classdef Cfit < handle
         function [figh_out,axh_out] = plotsingle(obj,fig_n,ax_n,kidn,Pindex,nT,SW,marker,Colorcell,handleVisible)
             %plots to figure currently in focus.
             p = obj.findp(kidn,Pindex);
+            if SW.CrossTau
+                UpCross(obj,kidn,Pindex,nT)
+            else
             UpA(obj,kidn,Pindex,nT)
+            
             obj.Sff{kidn,Pindex,nT} = obj.NOISE(p).FFTnoise{nT}(:,4);
             disp(fprintf('plotsingle:Plotting data with p=%i and nT=%i',p,nT));
             disp(fprintf('genfitsingle - ID(%i,%i,%i): resnorm=%2.4e',kidn,Pindex,nT,obj.CBfit.resnorm{kidn,Pindex,nT}));

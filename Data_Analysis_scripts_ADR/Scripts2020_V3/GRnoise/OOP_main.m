@@ -50,7 +50,7 @@ o = o.init_figax(fignum,axnum,'loglin');
 set(gca, 'FontName', 'Arial')
 kidn_iter = 6;
 P_iter = 7; 
-T_iter = 1:2:14;
+T_iter = 13;
 Tcolors = colormapJetJB(14);
 Pcolors = colormapcoolSdB(7);
 %-------
@@ -59,6 +59,8 @@ SW.plottls = 1;
 SW.plotgr = 1;
 SW.plotFknee = 1;
 SW.plotTotal = 1;
+SW.cyanfit = 1;
+SW.magentafit = 1;
 handleVisible = [{'on'},{'on'},{'on'},{'on'},{'on'}];
 for kidn = kidn_iter
 for Pindex= P_iter
@@ -66,7 +68,7 @@ for Tindex= T_iter
 Colorcell = genColorcell(T_iter,Tindex,Tcolors,P_iter,Pindex,Pcolors);
 [f1,ax1] = o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'o',Colorcell,handleVisible);
 disp(Pindex)
-title(sprintf('$KID_{N}$: %i | P_{read}: %3.0f dBm | $$T_{bath}$$ =%1.3f K | ID:(%i,%i,%i)',kidn,o.getPread(kidn,Pindex,Tindex),o.getT(kidn,Pindex,Tindex),kidn,Pindex,Tindex),'Interpreter','latex')
+title(sprintf('$KID_{N}$: %i | $P_{read}$: %3.0f dBm | $$T_{bath}$$ =%1.3f K | ID:(%i,%i,%i)',kidn,o.getPread(kidn,Pindex,Tindex),o.getT(kidn,Pindex,Tindex),kidn,Pindex,Tindex),'Interpreter','latex')
 %legendstr = ['']
 end
 end 

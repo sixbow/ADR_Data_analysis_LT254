@@ -160,10 +160,20 @@ classdef Cfit < handle
             obj.Sff_minusTLS{kidn,Pindex,nT} = obj.Sff{kidn,Pindex,nT}-obj.fTLS(obj.TLSfit.C{kidn,Pindex,nT},obj.freq); % subtract the TLS line..
             
             %Fitting GR noise spectrum 
-            [obj.CBfit.C{kidn,Pindex,nT},obj.CBfit.resnorm{kidn,Pindex,nT}] = LLS_CB_SdB(obj.freq(obj.CBfit.mini:obj.CBfit.maxi),obj.Sff_minusTLS{kidn,Pindex,nT}(obj.CBfit.mini:obj.CBfit.maxi),obj.fCB,obj.CBfit.C0(1),obj.CBfit.lb(1),obj.CBfit.ub(1));
+            try
+            [obj.CBfit.C{kidn,Pindex,nT},obj.CBfit.resnorm{kidn,Pindex,nT}] = LLS_CB_SdB_single(obj.freq(obj.CBfit.mini:obj.CBfit.maxi),obj.Sff_minusTLS{kidn,Pindex,nT}(obj.CBfit.mini:obj.CBfit.maxi),obj.fCB,obj.CBfit.C0(1),obj.CBfit.lb(1),obj.CBfit.ub(1));
             obj.CBfit.Cgr{kidn,Pindex,nT} = obj.CBfit.C{kidn,Pindex,nT}(1);
-            obj.CBfit.Tauqp{kidn,Pindex,nT} = obj.Cross_tau{kidn,Pindex,Tindex};
+            obj.CBfit.Tauqp{kidn,Pindex,nT} = obj.Cross_tau{kidn,Pindex,nT};
             disp(fprintf('genfitsingle - ID(%i,%i,%i): resnorm=%2.4e',kidn,Pindex,nT,obj.CBfit.resnorm{kidn,Pindex,nT}));
+            catch e
+                fprintf(1,'Fit waarschijnlijk onmogelijk want Tau = Nan -> Setting result to NaN also Message was:\n%s',e.message);
+                obj.CBfit.C{kidn,Pindex,nT} = NaN;
+                obj.CBfit.resnorm{kidn,Pindex,nT} = NaN;
+                obj.CBfit.Cgr{kidn,Pindex,nT} = NaN;
+                obj.CBfit.Tauqp{kidn,Pindex,nT} = NaN;
+            end
+            
+            
             %disp('Fitted GR!')    
             
             
@@ -252,7 +262,11 @@ classdef Cfit < handle
         function [figh_out,axh_out] = plotsingle(obj,fig_n,ax_n,kidn,Pindex,nT,SW,marker,Colorcell,handleVisible)
             %plots to figure currently in focus.
             p = obj.findp(kidn,Pindex);
-            UpA(obj,kidn,Pindex,nT)
+            if SW.CrossTau
+                UpCross(obj,kidn,Pindex,nT)
+            else
+                UpA(obj,kidn,Pindex,nT)
+            end
             obj.Sff{kidn,Pindex,nT} = obj.NOISE(p).FFTnoise{nT}(:,4);
             disp(fprintf('plotsingle:Plotting data with p=%i and nT=%i',p,nT));
             disp(fprintf('genfitsingle - ID(%i,%i,%i): resnorm=%2.4e',kidn,Pindex,nT,obj.CBfit.resnorm{kidn,Pindex,nT}));
