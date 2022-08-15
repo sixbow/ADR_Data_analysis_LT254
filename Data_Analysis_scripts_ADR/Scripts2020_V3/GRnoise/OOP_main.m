@@ -7,7 +7,7 @@ close all
 figurepath = ['..' filesep '..' filesep '..' filesep 'Export_Figures_noGit\OOP\automatisch' filesep ];
 FFTsubsubdir=['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D'];% This is where the
 addpath('..\subroutines')
-%% Plotting: single plot!
+%% Analysis
 SW_simsome = 0;
 if SW_simsome
 kidn_iter = 1;
@@ -214,14 +214,69 @@ exportgraphics(gca,[figurepath  filename '.png' ])
 exportgraphics(gca,[figurepath filename '.pdf' ]) 
 
 
+%% Fknee vs T
+Pindex = 7;
+%--------
+fignum=2;
+axnum = fignum;
+o = o.init_figax(fignum,axnum,'linlog');
+for kidn=1:6
+o.plottempfknee(fignum,axnum,kidn,Pindex)
+end
+grid on
+legend('KID:1','KID:2','KID:3','KID:4','KID:5','KID:6')
+title('$T_{bath}$ vs $f_{knee} $@$P_{read}=$Max','Interpreter','latex')
+xlabel('$T_{bath}$ [K]','Interpreter','latex')
+ylabel('$f_{knee}$ [Hz]','Interpreter','latex')
+filename = sprintf('FkneevsTKID%i',kidn);
+saveas(gca,[figurepath  filename '.fig' ])
+exportgraphics(gca,[figurepath  filename '.png' ]) 
+exportgraphics(gca,[figurepath filename '.pdf' ]) 
 
 
 
 
 
+%% Fknee vs Qi
 
 
+Pindex = 7;
+%--------
+fignum=3;
+axnum = fignum;
+o = o.init_figax(fignum,axnum,'loglog');
+for kidn=1:6
+o.plotQifknee(fignum,axnum,kidn,Pindex)
+end
+grid on
+legend('KID:1','KID:2','KID:3','KID:4','KID:5','KID:6')
+title('$Q_{i}$ vs $f_{knee}$ @$P_{read}=$Max','Interpreter','latex')
+xlabel('$Q_{i}$','Interpreter','latex')
+ylabel('$f_{knee}$ [Hz]','Interpreter','latex')
+filename = sprintf('FkneevsQiKID%i',kidn);
+saveas(gca,[figurepath  filename '.fig' ])
+exportgraphics(gca,[figurepath  filename '.png' ]) 
+exportgraphics(gca,[figurepath filename '.pdf' ]) 
 
+%% Tau vs Temp
+for kidn = 1:6
+Pindex = 7
+%kidn = 6
+fignum=4;
+axnum = fignum;
+o = o.init_figax(fignum,axnum,'linlog');
+
+o.plottautemp(fignum,axnum,kidn,Pindex,Tcolors)
+grid on
+title(sprintf('$KID_{N}$ %i | T vs $\\tau_{qp}$ @ $P_{read} =$ Max',kidn),'Interpreter','latex')
+xlabel('$T_{bath} [K]$','Interpreter','latex')
+ylabel('$\tau_{qp}$ [msec]','Interpreter','latex')
+
+filename = sprintf('TauvsTempKID%i',kidn);
+saveas(gca,[figurepath  filename '.fig' ])
+exportgraphics(gca,[figurepath  filename '.png' ]) 
+exportgraphics(gca,[figurepath filename '.pdf' ])
+end
 
 
 %% (2) Fknee compare G3,G4 - Power

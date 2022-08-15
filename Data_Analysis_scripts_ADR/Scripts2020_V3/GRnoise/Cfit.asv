@@ -258,13 +258,13 @@ classdef Cfit < handle
         plot(obj.ax(ax_n),Qivec,Fknee,'LineWidth',2)
         end
         
-        function plottautemp(obj,fig_n,ax_n,kidn,Pindex,Tcolors)
+        function plottautemp(obj,fig_n,ax_n,kidn,Pindex)
         figure(obj.fig(fig_n))
             for Tindex = 1:14
             Tvec(Tindex) = obj.getT(kidn,Pindex,Tindex);
-            tauvec(Tindex) = (obj.CBfit.Tauqp{kidn,Pindex,Tindex}*1000);
-            plot(obj.ax(ax_n),Tvec(Tindex),tauvec(Tindex),'o','LineWidth',2,'MarkerFaceColor',Tcolors(Tindex,:),'MarkerSize',4,'Color',Tcolors(Tindex,:))
+            tauvec(Tindex) = obj.CBfit.Tauqp{kidn,Pindex,Tindex};
             end
+        plot(obj.ax(ax_n),Tvec,tauvec,'o','LineWidth',2,'MarkerFaceColor',Colorcell,'MarkerSize',2,'Color',Colorcell)
         end
        
         function plotcomptau(obj)
