@@ -27,7 +27,7 @@ SW.plottls = 0;
 SW.plotgr = 0;
 SW.plotFknee = 1;
 Single_plot_loop_all = 0;
-o = Cfit(FFTsubsubdir,'NOISE_2D.mat');
+o = Cfit(FFTsubsubdir,'NOISE_2D.mat','CrossPSDFit_2D.mat');
 
 %-------Do all analysis..
 for kidn = kidn_iter
@@ -38,6 +38,7 @@ o.genFknee(kidn,Pindex,Tindex);
 end
 end 
 end
+o.genCross_tau(kidn_iter,P_iter,T_iter)  % generates the nessesary entries for the cross PSD fitted tau. 
 
 %% Temperature variation single plots
 o = o.init_figax(fignum,axnum,'loglin');
@@ -215,6 +216,7 @@ exportgraphics(gca,[figurepath filename '.pdf' ])
 
 
 %% Fknee vs T
+
 Pindex = 7;
 %--------
 fignum=2;
@@ -259,14 +261,16 @@ exportgraphics(gca,[figurepath  filename '.png' ])
 exportgraphics(gca,[figurepath filename '.pdf' ]) 
 
 %% Tau vs Temp
+Tcolors = colormapJetJB(14);
 for kidn = 1:6
 Pindex = 7
+T_iter = 1:14
 %kidn = 6
 fignum=4;
 axnum = fignum;
 o = o.init_figax(fignum,axnum,'linlog');
 
-o.plottautemp(fignum,axnum,kidn,Pindex,Tcolors)
+o.plottautemp(fignum,axnum,kidn,Pindex,Tcolors,6)
 grid on
 title(sprintf('$KID_{N}$ %i | T vs $\\tau_{qp}$ @ $P_{read} =$ Max',kidn),'Interpreter','latex')
 xlabel('$T_{bath} [K]$','Interpreter','latex')

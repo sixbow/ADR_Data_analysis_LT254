@@ -5,6 +5,10 @@ classdef Cfit < handle
     properties
         %Data vars
         NOISE
+        CrossPSDFit
+        Cross_tau
+        Cross_taumin
+        Cross_taumax
         IndexPsort
         IndexPopt
         freq
@@ -38,7 +42,7 @@ classdef Cfit < handle
     end
     
     methods
-        function obj = Cfit(FFTsubsubdir,filename)
+        function obj = Cfit(FFTsubsubdir,filename,filenameCPSDfit)
             %Cfit Construct an instance of this class
             % First argument gives the path of the data from 2 folders up. 
             % Second argument is the type of data that you want to load.
@@ -48,7 +52,7 @@ classdef Cfit < handle
             obj.NOISE = load([ChipInfo_path FFTsubsubdir filesep filename],'NOISE').NOISE;
             obj.IndexPsort = load([ChipInfo_path FFTsubsubdir filesep filename],'IndexPsort').IndexPsort;
             obj.IndexPopt = load([ChipInfo_path FFTsubsubdir filesep filename],'IndexPopt').IndexPopt;
-            
+            obj.CrossPSDFit = load([ChipInfo_path FFTsubsubdir filesep filenameCPSDfit],'CrossPSDFit').CrossPSDFit;
             obj.freq = obj.NOISE(1).FFTnoise{1,1}(:,1);
             obj.kidn_iter = 1:6; % Default value
             obj.power_iter = obj.IndexPsort{obj.kidn_iter,1};
@@ -138,7 +142,18 @@ classdef Cfit < handle
             obj.fTLS_filled = @(fdata)a.*power(abs(fdata),-1*b);
             obj.fCB_filled = @(fdata)c./((1+power((2.*pi.*fdata.*d),2)))+ obj.Sff_sys_noise{kidn,Pindex,nT};
         end
-    
+        function genCross_tau(obj,kidn_iter,Pindex_iter,T_iter) % With this you can generate the entries as needed
+            for kidn=kidn_iter
+                for Pindex = Pindex_iter
+                    for Tindex = T_iter
+                        p = obj.findp(kidn,Pindex);
+                        obj.Cross_tau{kidn,Pindex,Tindex} = obj.CrossPSDFit(p).tau(Tindex);
+                        obj.Cross_taumin{kidn,Pindex,Tindex} = obj.CrossPSDFit(p).taumin(Tindex);
+                        obj.Cross_taumax{kidn,Pindex,Tindex}  = obj.CrossPSDFit(p).taumax(Tindex);
+                    end
+                end
+            end 
+        end
        
         function genFknee(obj,kidn,Pindex,nT)
             %genFknee method finds the Fknee based on the fits.
@@ -258,12 +273,18 @@ classdef Cfit < handle
         plot(obj.ax(ax_n),Qivec,Fknee,'LineWidth',2)
         end
         
-        function plottautemp(obj,fig_n,ax_n,kidn,Pindex,Tcolors)
+        function plottautemp(obj,fig_n,ax_n,kidn,Pindex,Tcolors,markersize)
         figure(obj.fig(fig_n))
-            for Tindex = 1:14
+            for Tindex = 1:14 
             Tvec(Tindex) = obj.getT(kidn,Pindex,Tindex);
-            tauvec(Tindex) = (obj.CBfit.Tauqp{kidn,Pindex,Tindex}*1000);
-            plot(obj.ax(ax_n),Tvec(Tindex),tauvec(Tindex),'o','LineWidth',2,'MarkerFaceColor',Tcolors(Tindex,:),'MarkerSize',4,'Color',Tcolors(Tindex,:))
+            Crosstauvec(Tindex) =  (obj.Cross_tau{kidn,Pindex,Tindex}*1000);
+            Crosstauminvec(Tindex) =  (obj.Cross_taumin{kidn,Pindex,Tindex}*1000);
+            Crosstaumaxvec(Tindex) =  (obj.Cross_taumax{kidn,Pindex,Tindex}*1000);
+            tauvec_own(Tindex) = (obj.CBfit.Tauqp{kidn,Pindex,Tindex}*1000);% to convert to milliseconds.
+            plot(obj.ax(ax_n),Tvec(Tindex),tauvec_own(Tindex),'x','LineWidth',1,'MarkerFaceColor',Tcolors(Tindex,:),'MarkerSize',markersize,'Color',Tcolors(Tindex,:))
+            plot(obj.ax(ax_n),Tvec(Tindex),Crosstauvec(Tindex),'o','LineWidth',1,'MarkerFaceColor',Tcolors(Tindex,:),'MarkerSize',markersize,'Color',Tcolors(Tindex,:))
+            plot(obj.ax(ax_n),Tvec(Tindex),Crosstauminvec(Tindex),'o','LineWidth',1,'MarkerSize',markersize,'Color',Tcolors(Tindex,:))
+            plot(obj.ax(ax_n),Tvec(Tindex),Crosstaumaxvec(Tindex),'o','LineWidth',1,'MarkerSize',markersize,'Color',Tcolors(Tindex,:))
             end
         end
        

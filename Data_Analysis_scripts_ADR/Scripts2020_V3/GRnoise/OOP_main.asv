@@ -39,6 +39,7 @@ end
 end 
 end
 
+
 %% Temperature variation single plots
 o = o.init_figax(fignum,axnum,'loglin');
 set(gca, 'FontName', 'Arial')
@@ -259,19 +260,26 @@ exportgraphics(gca,[figurepath  filename '.png' ])
 exportgraphics(gca,[figurepath filename '.pdf' ]) 
 
 %% Tau vs Temp
+for kidn = 1:6
 Pindex = 7
-kidn = 1
+T_iter = 1:14
+%kidn = 6
 fignum=4;
 axnum = fignum;
+genCross_tau(kidn,Pindex,T_iter)
 o = o.init_figax(fignum,axnum,'linlog');
 
 o.plottautemp(fignum,axnum,kidn,Pindex,Tcolors)
 grid on
-title('Tau vs T')
+title(sprintf('$KID_{N}$ %i | T vs $\\tau_{qp}$ @ $P_{read} =$ Max',kidn),'Interpreter','latex')
+xlabel('$T_{bath} [K]$','Interpreter','latex')
+ylabel('$\tau_{qp}$ [msec]','Interpreter','latex')
 
-
-
-
+filename = sprintf('TauvsTempKID%i',kidn);
+saveas(gca,[figurepath  filename '.fig' ])
+exportgraphics(gca,[figurepath  filename '.png' ]) 
+exportgraphics(gca,[figurepath filename '.pdf' ])
+end
 
 
 %% (2) Fknee compare G3,G4 - Power
