@@ -27,18 +27,23 @@ SW.plottls = 0;
 SW.plotgr = 0;
 SW.plotFknee = 1;
 Single_plot_loop_all = 0;
+SW.CrossTau =1 ; %1 Uses JBfitted Crosstau_qp, 0 Fits from frac freq PSD.
 o = Cfit(FFTsubsubdir,'NOISE_2D.mat','CrossPSDFit_2D.mat');
-
+o.genCross_tau(kidn_iter,P_iter,T_iter)  % generates the nessesary entries for the cross PSD fitted tau. 
 %-------Do all analysis..
 for kidn = kidn_iter
 for Pindex= P_iter
 for Tindex= T_iter
+if SW.CrossTau 
+[CTLS,gamma]= o.genfitCrosssingle(kidn,Pindex,Tindex);
+else
 [CTLS,gamma]= o.genfitsingle(kidn,Pindex,Tindex);
+end
 o.genFknee(kidn,Pindex,Tindex);
 end
 end 
 end
-o.genCross_tau(kidn_iter,P_iter,T_iter)  % generates the nessesary entries for the cross PSD fitted tau. 
+
 
 %% Temperature variation single plots
 o = o.init_figax(fignum,axnum,'loglin');

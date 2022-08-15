@@ -127,9 +127,62 @@ classdef Cfit < handle
             %-------/End:Combined fitting---------------------------------- 
         end% End genfitsingle
         
+        function  [Ctls,gamma]= genfitCrosssingle(obj,kidn,Pindex,nT)
+            %genfit method fits the TLS fit and the GR fits 
+            p = obj.findp(kidn,Pindex);
+            obj.Sff{kidn,Pindex,nT} = obj.NOISE(p).FFTnoise{nT}(:,4);
+            setup_noise_eval_freq = 350000;% [Hz]
+            [~,Snoise_i] = min(abs(obj.freq-setup_noise_eval_freq)); % "
+            obj.Sff_sys_noise{kidn,Pindex,nT} = obj.NOISE(p).FFTnoise{nT}(Snoise_i,4); % This is the setup noise level evaluated at 350000Hz
+            %Updating and Setting anonymous functions
+            obj.UpA(kidn,Pindex,nT)
+            %disp('hoi')
+			%+++++|Begin:TLS fitting---------------------------------------
+            dBlogDataX = log10(obj.freq);
+            dBlogDataY = 10.*log10(obj.NOISE(p).FFTnoise{nT}(:,4));
+            TLS_coof_dBlog{kidn,Pindex,nT} = polyfit(dBlogDataX(obj.TLSfit.mini:obj.TLSfit.maxi),dBlogDataY(obj.TLSfit.mini:obj.TLSfit.maxi),1);
+            obj.TLSfit.Ctls{kidn,Pindex,nT} =  power(10,(TLS_coof_dBlog{kidn,Pindex,nT}(2)/10));
+            obj.TLSfit.gamma{kidn,Pindex,nT} = -(TLS_coof_dBlog{kidn,Pindex,nT}(1)/10);
+            obj.TLSfit.C{kidn,Pindex,nT} = [obj.TLSfit.Ctls{kidn,Pindex,nT} obj.TLSfit.gamma{kidn,Pindex,nT}];
+            %disp(string(obj.TLSfit.C{kidn,Pindex,nT}(1)))
+            Ctls = obj.TLSfit.Ctls;% Output to user
+            gamma = obj.TLSfit.gamma;% Output to user
+            
+            %disp('doei')
+			%-------/End:TLS fitting---------------------------------------
+         
+			%+++++|Begin:Combined fitting----------------------------------
+			% Fit GR-noise + TLS ~400Hz - 100KHz
+            %disp(string(obj.TLSfit.C{kidn,Pindex,nT}(1)))
+            
+            %disp(string(obj.TLSfit.C{kidn,Pindex,nT}(2)))
+            %disp(obj.fTLS)
+            obj.Sff_minusTLS{kidn,Pindex,nT} = obj.Sff{kidn,Pindex,nT}-obj.fTLS(obj.TLSfit.C{kidn,Pindex,nT},obj.freq); % subtract the TLS line..
+            
+            %Fitting GR noise spectrum 
+            [obj.CBfit.C{kidn,Pindex,nT},obj.CBfit.resnorm{kidn,Pindex,nT}] = LLS_CB_SdB(obj.freq(obj.CBfit.mini:obj.CBfit.maxi),obj.Sff_minusTLS{kidn,Pindex,nT}(obj.CBfit.mini:obj.CBfit.maxi),obj.fCB,obj.CBfit.C0,obj.CBfit.lb,obj.CBfit.ub);
+            obj.CBfit.Cgr{kidn,Pindex,nT} = obj.CBfit.C{kidn,Pindex,nT}(1);
+            obj.CBfit.Tauqp{kidn,Pindex,nT} = obj.CBfit.C{kidn,Pindex,nT}(2);
+            disp(fprintf('genfitsingle - ID(%i,%i,%i): resnorm=%2.4e',kidn,Pindex,nT,obj.CBfit.resnorm{kidn,Pindex,nT}));
+            %disp('Fitted GR!')    
+            
+            
+            
+            
+            
+            
+            %-------/End:Combined fitting---------------------------------- 
+        end% End genfitCrosssingle
+        
         function UpA(obj,kidn,Pindex,nT)
             obj.fTLS = @(C_v,fdata)C_v(1).*power(fdata,-1*C_v(2)); %Model we use to fit C_v is the constants vector that we are trying to find.
             obj.fCB  = @(C_v,fdata) C_v(1)./((1+power((2.*pi.*fdata.*C_v(2)),2)))+ obj.Sff_sys_noise{kidn,Pindex,nT};
+            obj.fline = @(C_v,xdata)C_v(1).*xdata+C_v(2);
+            obj.fTotal = @(C_v_TLS,C_v_CB,fdata)obj.fTLS(C_v_TLS,fdata)+obj.fCB(C_v_CB,fdata);
+        end
+        function UpCross(obj,kidn,Pindex,nT)
+            obj.fTLS = @(C_v,fdata)C_v(1).*power(fdata,-1*C_v(2)); %Model we use to fit C_v is the constants vector that we are trying to find.
+            obj.fCB  = @(C_v,fdata) C_v(1)./((1+power((2.*pi.*fdata.*obj.Cross_tau{kidn,Pindex,Tindex}),2)))+ obj.Sff_sys_noise{kidn,Pindex,nT};
             obj.fline = @(C_v,xdata)C_v(1).*xdata+C_v(2);
             obj.fTotal = @(C_v_TLS,C_v_CB,fdata)obj.fTLS(C_v_TLS,fdata)+obj.fCB(C_v_CB,fdata);
         end
@@ -273,15 +326,18 @@ classdef Cfit < handle
         plot(obj.ax(ax_n),Qivec,Fknee,'LineWidth',2)
         end
         
-        function plottautemp(obj,fig_n,ax_n,kidn,Pindex,Tcolors)
+        function plottautemp(obj,fig_n,ax_n,kidn,Pindex,Tcolors,markersize)
         figure(obj.fig(fig_n))
             for Tindex = 1:14 
             Tvec(Tindex) = obj.getT(kidn,Pindex,Tindex);
-            Crosstauvec(Tindex) =  (obj.Cross_tau{kidn,Pindex,Tindex})
-            
-            
+            Crosstauvec(Tindex) =  (obj.Cross_tau{kidn,Pindex,Tindex}*1000);
+            Crosstauminvec(Tindex) =  (obj.Cross_taumin{kidn,Pindex,Tindex}*1000);
+            Crosstaumaxvec(Tindex) =  (obj.Cross_taumax{kidn,Pindex,Tindex}*1000);
             tauvec_own(Tindex) = (obj.CBfit.Tauqp{kidn,Pindex,Tindex}*1000);% to convert to milliseconds.
-            plot(obj.ax(ax_n),Tvec(Tindex),tauvec_own(Tindex),'o','LineWidth',2,'MarkerFaceColor',Tcolors(Tindex,:),'MarkerSize',4,'Color',Tcolors(Tindex,:))
+            plot(obj.ax(ax_n),Tvec(Tindex),tauvec_own(Tindex),'x','LineWidth',1,'MarkerFaceColor',Tcolors(Tindex,:),'MarkerSize',markersize,'Color',Tcolors(Tindex,:))
+            plot(obj.ax(ax_n),Tvec(Tindex),Crosstauvec(Tindex),'o','LineWidth',1,'MarkerFaceColor',Tcolors(Tindex,:),'MarkerSize',markersize,'Color',Tcolors(Tindex,:))
+            plot(obj.ax(ax_n),Tvec(Tindex),Crosstauminvec(Tindex),'o','LineWidth',1,'MarkerSize',markersize,'Color',Tcolors(Tindex,:))
+            plot(obj.ax(ax_n),Tvec(Tindex),Crosstaumaxvec(Tindex),'o','LineWidth',1,'MarkerSize',markersize,'Color',Tcolors(Tindex,:))
             end
         end
        
