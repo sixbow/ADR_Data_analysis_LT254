@@ -229,10 +229,14 @@ classdef Cfit < handle
             
             
             %+++++|Begin:fitting ranges------------------------------------
+            if SW.cyanfit
 			xline(obj.freq(obj.TLSfit.mini),'--','Color','c','LineWidth',1,'HandleVisibility','off')
             xline(obj.freq(obj.TLSfit.maxi),'--','Color','c','LineWidth',1,'HandleVisibility','off')
+            end
+            if SW.magentafit
             xline(obj.freq(obj.CBfit.mini),'--','Color','m','LineWidth',1,'HandleVisibility','off')
             xline(obj.freq(obj.CBfit.maxi),'--','Color','m','LineWidth',1,'HandleVisibility','off')
+            end
             %-------/End:fitting ranges------------------------------------
 
             

@@ -20,7 +20,9 @@ elseif PT2Ddep == 1%Pdep
     FFTsubsubdir=['Noise 120mK' filesep 'FFT' filesep 'Power'];                   %FFTsubdir = [filesep 'Noise_Powers_165mK' filesep 'FFT' filesep 'Power'];     %
     TDsubsubdir=['Noise 120mK'  filesep 'TD_Power'];
 elseif PT2Ddep == 2
-    FFTsubsubdir=['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D_Popt'];                   %FFTsubdir = [filesep 'Noise_Powers_165mK' filesep 'FFT' filesep 'Power'];     %
+    %FFTsubsubdir=['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D_Popt'];                   %FFTsubdir = [filesep 'Noise_Powers_165mK' filesep 'FFT' filesep 'Power'];     %
+    FFTsubsubdir=['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D'];                   %FFTsubdir = [filesep 'Noise_Powers_165mK' filesep 'FFT' filesep 'Power'];     %
+    
     TDsubsubdir=['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'TD_2D'];
 else
     error('PT2Ddep not defined')
@@ -28,8 +30,8 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %WARNING: Set to 1 only if sure you have no data from previous analysis runs!!!%
-killpreviousrunsforsure = 1;          % disables checking if files are already there (i.e. CrossPSDNOISE killed)
-maakdeplots             = 0;            %1 makes plots, 0 disables plotting (2x faster almost)
+killpreviousrunsforsure = 0;          % disables checking if files are already there (i.e. CrossPSDNOISE killed)
+maakdeplots             = 1;            %1 makes plots, 0 disables plotting (2x faster almost)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 timemed = 64;       % duration of td data @ 50 ksample/sec; is varied so check the files, 40 is old default = 31MB. 128"= 100 mB.
 TDoption.nrsigma = 5;                 % 8 peaks>TDoption.nrsigma*sigma are rejected (based on filtered TD-stream) %6 seems to be really minimum, 8 good value also for smaller peaks
@@ -106,20 +108,20 @@ for kidn=1:length(KIDnumbers) % LOOP OVER ALL UNIQUE KIDS,
         IndexP_sub_opt{kidn} = kidn;
     end
     ID = num2str(NOISE(IndexPopt(kidn)).KIDnumber);
-    %for p=1:length(IndexP_sub_opt{kidn})% over Power
+    for p=1:length(IndexP_sub_opt{kidn})% over Power
         for nT=1:length(NOISE(kidn).Temperature) % over T
             % construct filename
-            %Sietse Insert to find popt.
-            % KiD: [1 2 3 4 5 6]
-            P_Opt_order = [-94 -90 -94 -87 -92 -87];
-            p = 1;
-            while ~(NOISE(IndexP_sub_opt{kidn}(p)).ReadPower == P_Opt_order(kidn))
-               p = p + 1; %What this does is it finds the right p for optimal power from the P_Opt_order list.
-            end
-            % Question how can i find index p such that
-            % NOISE(IndexP_sub_opt{kidn}(p)).ReadPower is at P_opt
-            % p should depend on kidn and nothing else
-            %/Sietse
+%             %Sietse Insert to find popt.
+%             % KiD: [1 2 3 4 5 6]
+%             P_Opt_order = [-94 -90 -94 -87 -92 -87];
+%             p = 1;
+%             while ~(NOISE(IndexP_sub_opt{kidn}(p)).ReadPower == P_Opt_order(kidn))
+%                p = p + 1; %What this does is it finds the right p for optimal power from the P_Opt_order list.
+%             end
+%             % Question how can i find index p such that
+%             % NOISE(IndexP_sub_opt{kidn}(p)).ReadPower is at P_opt
+%             % p should depend on kidn and nothing else
+%             %/Sietse
             Pr = num2str(-1*NOISE(IndexP_sub_opt{kidn}(p)).ReadPower);
             Tk = num2str(round(1e3*NOISE(IndexP_sub_opt{kidn}(p)).Temperature(nT)),'%.0f');
             fnmed = ['KID' ID '_' Pr 'dBm__TDmed_TmK' Tk '.bin' ];  %bin filename - 50ksample/sec
@@ -199,6 +201,6 @@ for kidn=1:length(KIDnumbers) % LOOP OVER ALL UNIQUE KIDS,
                 end
             end
         end
-    %end
+    end
     toc
 end

@@ -6,7 +6,7 @@ clear all
 % ChipInfo.path = [cd filesep '/..']; %root path where data is, one higher than the scripts
 ChipInfo.path = [cd filesep '..' filesep '..' filesep]; %root path where data is, one higher than the scripts
 %FFTsubdir = [filesep 'FFT' filesep 'Temp'];     %
-FFTsubdir = ['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D_temp_test_copy'];     %
+FFTsubdir = ['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D'];     %
 %Note: pwd is current matlab directory. Usually directory where this m-file
 %is located.
 %==========================================================================
@@ -17,7 +17,8 @@ global FITF0
 FITF0=0;          %Switch used to determine which method is used for determination of F0.
 %Please see the FitS21main5 routine for details. FITF0 = 0 is recommended due to the presence of overdriven
 %resonators in Power sweeps (it will only update Q, not F0. F0 mot very important here).
-SaveStuff = 1; 	%0 to not save files (faster) 1 to save
+SaveStuff = 0; 	%0 to not save files (faster) 1 to save
+SavedataStuff = 0;
 MaxnT = 30;     %max. #temperatures to be read.   
 %==========================================================================
 % Setting some routine default values.
@@ -437,6 +438,6 @@ clear PoptData Pcolors BWrange p PoptHeader kidn Chipinfo PoutData
 clear Figfile TempLegend Tcolors RootName maxnp minnp kidn  Fread 
 
 rmpath([pwd,filesep,'..',filesep,'subroutines']);
-if SaveStuff == 1
+if SavedataStuff == 1
     save([Noisepath,'Noise_T.mat'])
 end
