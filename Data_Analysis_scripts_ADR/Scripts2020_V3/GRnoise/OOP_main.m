@@ -48,9 +48,9 @@ end
 %% Temperature variation single plots
 o = o.init_figax(fignum,axnum,'loglin');
 set(gca, 'FontName', 'Arial')
-kidn_iter = 6;
+kidn_iter = 1;
 P_iter = 7; 
-T_iter = 13;
+T_iter = T_iter + 1 ;
 Tcolors = colormapJetJB(14);
 Pcolors = colormapcoolSdB(7);
 %-------
@@ -293,7 +293,7 @@ end
 %% (2) Fknee compare G3,G4 - Power
 kidn_iter = 1;
 P_iter = 1:7; 
-T_iter = 3;
+T_iter = 13;
 %-------
 SW.plotdata = 0;
 SW.plottls = 0;

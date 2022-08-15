@@ -74,7 +74,7 @@ classdef Cfit < handle
             obj.CBfit.ub = [10^-15 (1/(2*pi*obj.CBfit.min))];
             obj.fguess = [1 100000]; % [Hz] initial guess for the intersection point of the TLS and GR noise. 
 			%-------/End:Combined fitting parameters (Default!)------------
-            obj.resnormthreshold = 200;
+            obj.resnormthreshold = 500;
             disp('Initialized Cfit object!')
         end % End constructor
         %+++++:Begin fitting and calcuations.-------------------------------
@@ -158,21 +158,26 @@ classdef Cfit < handle
             %disp(string(obj.TLSfit.C{kidn,Pindex,nT}(2)))
             %disp(obj.fTLS)
             obj.Sff_minusTLS{kidn,Pindex,nT} = obj.Sff{kidn,Pindex,nT}-obj.fTLS(obj.TLSfit.C{kidn,Pindex,nT},obj.freq); % subtract the TLS line..
-            
+            fit=0;
+            fail = 0;
             %Fitting GR noise spectrum 
             try
             [obj.CBfit.C{kidn,Pindex,nT},obj.CBfit.resnorm{kidn,Pindex,nT}] = LLS_CB_SdB_single(obj.freq(obj.CBfit.mini:obj.CBfit.maxi),obj.Sff_minusTLS{kidn,Pindex,nT}(obj.CBfit.mini:obj.CBfit.maxi),obj.fCB,obj.CBfit.C0(1),obj.CBfit.lb(1),obj.CBfit.ub(1));
             obj.CBfit.Cgr{kidn,Pindex,nT} = obj.CBfit.C{kidn,Pindex,nT}(1);
             obj.CBfit.Tauqp{kidn,Pindex,nT} = obj.Cross_tau{kidn,Pindex,nT};
             disp(fprintf('genfitsingle - ID(%i,%i,%i): resnorm=%2.4e',kidn,Pindex,nT,obj.CBfit.resnorm{kidn,Pindex,nT}));
+            fit = fit+1;
             catch e
                 fprintf(1,'Fit waarschijnlijk onmogelijk want Tau = Nan -> Setting result to NaN also Message was:\n%s',e.message);
                 obj.CBfit.C{kidn,Pindex,nT} = NaN;
                 obj.CBfit.resnorm{kidn,Pindex,nT} = NaN;
                 obj.CBfit.Cgr{kidn,Pindex,nT} = NaN;
                 obj.CBfit.Tauqp{kidn,Pindex,nT} = NaN;
+            fail = fail +1;
             end
-            
+            disp(['fit :' string(fit)])
+            disp(['fail :' string(fail)])
+            disp(['fitfail ratio :' string(fit/(fail+fit))])
             
             %disp('Fitted GR!')    
             
