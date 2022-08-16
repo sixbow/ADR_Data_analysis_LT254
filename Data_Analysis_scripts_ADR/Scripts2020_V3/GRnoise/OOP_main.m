@@ -3,12 +3,12 @@ clc
 clear all
 close all
 
-%% (1) Single plots
+%%  Paths..
 figurepath = ['..' filesep '..' filesep '..' filesep 'Export_Figures_noGit\OOP\automatisch' filesep ];
 FFTsubsubdir=['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D'];% This is where the
 addpath('..\subroutines')
-%% Analysis
-SW_simsome = 0;
+%% (1) Analysis
+SW_simsome = 0;% Ability to choose some values.(Default:0)
 if SW_simsome
 kidn_iter = 1;
 P_iter = 6; 
@@ -47,8 +47,10 @@ end
 
 %% Temperature variation single plots
 o = o.init_figax(fignum,axnum,'loglin');
+SW.usePopt = 0;% Use the 120mK Popt value. 
 set(gca, 'FontName', 'Arial')
 kidn_iter = 1;
+% Write a fuction that creates Pindex = o.findPopt(kidn)
 P_iter = 7; 
 T_iter = T_iter + 1 ;
 Tcolors = colormapJetJB(14);
@@ -65,6 +67,7 @@ handleVisible = [{'on'},{'on'},{'on'},{'on'},{'on'}];
 for kidn = kidn_iter
 for Pindex= P_iter
 for Tindex= T_iter
+    
 Colorcell = genColorcell(T_iter,Tindex,Tcolors,P_iter,Pindex,Pcolors);
 [f1,ax1] = o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'o',Colorcell,handleVisible);
 disp(Pindex)
@@ -330,6 +333,41 @@ saveas(gca,[figurepath  filename '.fig' ])
 exportgraphics(gca,[figurepath  filename '.png' ]) 
 exportgraphics(gca,[figurepath filename '.pdf' ]) 
 
+%% Power variation 4 plot
+o = o.init_figax(fignum,axnum,'loglin');
+set(gca, 'FontName', 'Arial')
+kidn_iter = 1;
+P_iter = 1:7; 
+T_iter = 13;
+Tcolors = colormapJetJB(14);
+Pcolors = colormapcoolSdB(7);
+%-------
+SW.plotdata = 1;
+SW.plottls = 1;
+SW.plotgr = 1;
+SW.plotFknee = 1;
+SW.plotTotal = 1;
+SW.cyanfit = 1;
+SW.magentafit = 1;
+handleVisible = [{'on'},{'off'},{'off'},{'off'},{'off'}];
+legendTstr = [];
+for kidn = kidn_iter
+for Pindex= P_iter
+for Tindex= T_iter
+Colorcell = genColorcell(T_iter,Tindex,Tcolors,P_iter,Pindex,Pcolors);
+[f1,ax1] = o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'o',Colorcell,handleVisible);
+legendTstr = [legendTstr {append(sprintf('%1.3f',o.getPread(kidn,Pindex,Tindex)),' dBm')}];
+end
+end 
+end
+legend(legendTstr,'location','eastOutside');
+title(sprintf('$KID_{N}$: %i | $P_{read}$: %3.0f dBm',kidn,o.getPread(kidn,Pindex,Tindex)),'Interpreter','latex')
+set(gca,'TickLabelInterpreter', 'latex')
+set(gcf,'units','centimeters','position',[20,1,20,0.65*20])
+filename = '4Temp';
+saveas(gca,[figurepath  filename '.fig' ])
+exportgraphics(gca,[figurepath  filename '.png' ]) 
+exportgraphics(gca,[figurepath filename '.pdf' ])
 
 
 

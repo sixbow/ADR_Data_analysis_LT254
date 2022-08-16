@@ -328,7 +328,7 @@ load([ChipInfo_path FFT_power_subsubdir filesep 'NOISE_P.mat']) %
 freq = NOISE(1).FFTnoise{1,1}(:,1);
 clearvars legendPvalues;
 
-SliceFreq = 1000;% [Hz] Freq at which we will take a slice of the spectrum and plot this according to Gau.
+SliceFreq = 10;% [Hz] Freq at which we will take a slice of the spectrum and plot this according to Gau.
 [~,Slice_i] = min(abs(freq-SliceFreq)); % "
 
 
