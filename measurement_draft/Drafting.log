@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021/W32TeX) (preloaded format=pdflatex 2021.12.1)  17 AUG 2022 15:00
+This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021/W32TeX) (preloaded format=pdflatex 2021.12.1)  17 AUG 2022 20:24
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -449,17 +449,7 @@ Package: relsize 2013/03/29 ver 4.1
 )
 \l__twmk_indris_int=\count305
 \c@tw@hyphen@char@num=\count306
-) (./Drafting.aux
-
-LaTeX Warning: Label `tab:' multiply defined.
-
-
-LaTeX Warning: Label `fig:' multiply defined.
-
-
-LaTeX Warning: Label `fig:' multiply defined.
-
-)
+) (./Drafting.aux)
 \openout1 = `Drafting.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 18.
@@ -529,193 +519,25 @@ Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
  (c:/texlive/2021/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
-)) (./Measure.tex
+)) (./Measure2.tex
 Chapter 1.
-<figures/ch5_measurement/ADR_OverviewV1.jpg, id=29, 426.8748pt x 240.1773pt>
-File: figures/ch5_measurement/ADR_OverviewV1.jpg Graphic file (type jpg)
-<use figures/ch5_measurement/ADR_OverviewV1.jpg>
-Package pdftex.def Info: figures/ch5_measurement/ADR_OverviewV1.jpg  used on input line 8.
-(pdftex.def)             Requested size: 359.18063pt x 202.10304pt.
-<figures/ch5_measurement/Cryostat_scematicV2.jpg, id=30, 2601.72pt x 4026.04124pt>
-File: figures/ch5_measurement/Cryostat_scematicV2.jpg Graphic file (type jpg)
-<use figures/ch5_measurement/Cryostat_scematicV2.jpg>
-Package pdftex.def Info: figures/ch5_measurement/Cryostat_scematicV2.jpg  used on input line 19.
-(pdftex.def)             Requested size: 205.24384pt x 317.60532pt.
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
+) [1
 
 
-LaTeX Warning: Citation `devisserVisser2014Quasiparticle2014' on page 1 undefined on input line 24.
-
-
-LaTeX Warning: Citation `devisserVisser2014Quasiparticle2014' on page 1 undefined on input line 26.
-
-[1
-
-
-{c:/texlive/2021/texmf-var/fonts/map/pdftex/updmap/pdftex.map} <./figures/ch5_measurement/ADR_OverviewV1.jpg>]
-
-LaTeX Warning: Citation `devisserReadoutpowerHeatingHysteretic2010' on page 2 undefined on input line 31.
-
-LaTeX Font Info:    Trying to load font information for U+msa on input line 32.
-(c:/texlive/2021/texmf-dist/tex/latex/amsfonts/umsa.fd
-File: umsa.fd 2013/01/14 v3.01 AMS symbols A
-)
-LaTeX Font Info:    Trying to load font information for U+msb on input line 32.
- (c:/texlive/2021/texmf-dist/tex/latex/amsfonts/umsb.fd
-File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-)
-
-LaTeX Warning: Citation `devisserReadoutpowerHeatingHysteretic2010' on page 2 undefined on input line 38.
-
-<figures/ch5_measurement/KID1_0.12K_NOISE_Pdep2SietseCustom3.pdf, id=38, 483.8075pt x 394.47375pt>
-File: figures/ch5_measurement/KID1_0.12K_NOISE_Pdep2SietseCustom3.pdf Graphic file (type pdf)
-<use figures/ch5_measurement/KID1_0.12K_NOISE_Pdep2SietseCustom3.pdf>
-Package pdftex.def Info: figures/ch5_measurement/KID1_0.12K_NOISE_Pdep2SietseCustom3.pdf  used on input line 76.
-(pdftex.def)             Requested size: 410.49551pt x 334.71439pt.
-
-LaTeX Warning: Citation `devisserReadoutpowerHeatingHysteretic2010' on page 2 undefined on input line 77.
-
-
-LaTeX Warning: Citation `devisserReadoutpowerHeatingHysteretic2010' on page 2 undefined on input line 77.
-
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-[2 <./figures/ch5_measurement/Cryostat_scematicV2.jpg>] [3 <./figures/ch5_measurement/KID1_0.12K_NOISE_Pdep2SietseCustom3.pdf>]
-Underfull \hbox (badness 10000) in paragraph at lines 98--99
-
- []
-
-
-LaTeX Warning: Citation `devisserVisser2014Quasiparticle2014' on page 4 undefined on input line 106.
-
-
-LaTeX Warning: Citation `devisserVisser2014Quasiparticle2014' on page 4 undefined on input line 106.
-
-
-LaTeX Warning: Citation `couchDigitalAnalogCommunication2013' on page 4 undefined on input line 106.
-
-
-LaTeX Warning: Reference `' on page 4 undefined on input line 108.
-
-<figures/ch5_measurement/PSD_IQmixing_overview_Edit.jpg, id=143, 3791.16376pt x 1821.80624pt>
-File: figures/ch5_measurement/PSD_IQmixing_overview_Edit.jpg Graphic file (type jpg)
-<use figures/ch5_measurement/PSD_IQmixing_overview_Edit.jpg>
-Package pdftex.def Info: figures/ch5_measurement/PSD_IQmixing_overview_Edit.jpg  used on input line 112.
-(pdftex.def)             Requested size: 410.49551pt x 197.25807pt.
-[4 <./figures/ch5_measurement/PSD_IQmixing_overview_Edit.jpg>]
-
-LaTeX Warning: Reference `eq:ch2_Readout_noise' on page 5 undefined on input line 151.
-
-
-LaTeX Warning: Citation `devisserVisser2014Quasiparticle2014' on page 5 undefined on input line 152.
-
-<figures/ch5_measurement/KID1_127mK_P-86KID1_297mK_P-86KID1_314mK_P-86.pdf, id=147, 361.35pt x 216.81pt>
-File: figures/ch5_measurement/KID1_127mK_P-86KID1_297mK_P-86KID1_314mK_P-86.pdf Graphic file (type pdf)
-<use figures/ch5_measurement/KID1_127mK_P-86KID1_297mK_P-86KID1_314mK_P-86.pdf>
-Package pdftex.def Info: figures/ch5_measurement/KID1_127mK_P-86KID1_297mK_P-86KID1_314mK_P-86.pdf  used on input line 163.
-(pdftex.def)             Requested size: 487.46pt x 292.47905pt.
-[5 <./figures/ch5_measurement/KID1_127mK_P-86KID1_297mK_P-86KID1_314mK_P-86.pdf>]
-
-LaTeX Warning: Reference `' on page 6 undefined on input line 186.
-
-<figures/ch5_measurement/Overview_Process.jpg, id=221, 3840.3475pt x 1870.99pt>
-File: figures/ch5_measurement/Overview_Process.jpg Graphic file (type jpg)
-<use figures/ch5_measurement/Overview_Process.jpg>
-Package pdftex.def Info: figures/ch5_measurement/Overview_Process.jpg  used on input line 189.
-(pdftex.def)             Requested size: 410.49551pt x 199.98555pt.
-<figures/chA_Appendix/Popt_KID1.pdf, id=222, 731.73375pt x 146.5475pt>
-File: figures/chA_Appendix/Popt_KID1.pdf Graphic file (type pdf)
-<use figures/chA_Appendix/Popt_KID1.pdf>
-Package pdftex.def Info: figures/chA_Appendix/Popt_KID1.pdf  used on input line 220.
-(pdftex.def)             Requested size: 513.11745pt x 102.77037pt.
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-<figures/chA_Appendix/Popt_KID2.pdf, id=223, 730.73pt x 146.5475pt>
-File: figures/chA_Appendix/Popt_KID2.pdf Graphic file (type pdf)
-<use figures/chA_Appendix/Popt_KID2.pdf>
-Package pdftex.def Info: figures/chA_Appendix/Popt_KID2.pdf  used on input line 227.
-(pdftex.def)             Requested size: 513.11745pt x 102.909pt.
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-<figures/chA_Appendix/Popt_KID3.pdf, id=224, 731.73375pt x 146.5475pt>
-File: figures/chA_Appendix/Popt_KID3.pdf Graphic file (type pdf)
-<use figures/chA_Appendix/Popt_KID3.pdf>
-Package pdftex.def Info: figures/chA_Appendix/Popt_KID3.pdf  used on input line 234.
-(pdftex.def)             Requested size: 513.11745pt x 102.77037pt.
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-<figures/chA_Appendix/Popt_KID4.pdf, id=225, 731.73375pt x 147.55125pt>
-File: figures/chA_Appendix/Popt_KID4.pdf Graphic file (type pdf)
-<use figures/chA_Appendix/Popt_KID4.pdf>
-Package pdftex.def Info: figures/chA_Appendix/Popt_KID4.pdf  used on input line 241.
-(pdftex.def)             Requested size: 513.11745pt x 103.47427pt.
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-<figures/chA_Appendix/Popt_KID5.pdf, id=226, 731.73375pt x 146.5475pt>
-File: figures/chA_Appendix/Popt_KID5.pdf Graphic file (type pdf)
-<use figures/chA_Appendix/Popt_KID5.pdf>
-Package pdftex.def Info: figures/chA_Appendix/Popt_KID5.pdf  used on input line 248.
-(pdftex.def)             Requested size: 513.11745pt x 102.77037pt.
-<figures/chA_Appendix/Popt_KID6.pdf, id=227, 731.73375pt x 147.55125pt>
-File: figures/chA_Appendix/Popt_KID6.pdf Graphic file (type pdf)
-<use figures/chA_Appendix/Popt_KID6.pdf>
-Package pdftex.def Info: figures/chA_Appendix/Popt_KID6.pdf  used on input line 254.
-(pdftex.def)             Requested size: 513.11745pt x 103.47427pt.
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-[6 <./figures/ch5_measurement/Overview_Process.jpg>] [7 <./figures/chA_Appendix/Popt_KID1.pdf> <./figures/chA_Appendix/Popt_KID2.pdf> <./figures/chA_Appendix/Popt_KID3.pdf> <./figures/chA_Appendix/Popt_KID4.pdf> <./figures/chA_Appendix/Popt_KID5.pdf>] [8 <./figures/chA_Appendix/Popt_KID6.pdf>]
-
-LaTeX Warning: Citation `janssenEquivalenceOpticalElectrical2014' on page 9 undefined on input line 264.
-
-<figures/ch5_measurement/N_qp_funcT.pdf, id=636, 376.40625pt x 309.155pt>
-File: figures/ch5_measurement/N_qp_funcT.pdf Graphic file (type pdf)
-<use figures/ch5_measurement/N_qp_funcT.pdf>
-Package pdftex.def Info: figures/ch5_measurement/N_qp_funcT.pdf  used on input line 282.
-(pdftex.def)             Requested size: 513.11745pt x 421.4736pt.
-[9
-
- <./figures/ch5_measurement/N_qp_funcT.pdf>]
-<figures/ch5_measurement/Pieter_SupplementS2Fluctuations in the electron system of a superconductor exposed to a photon flux.png, id=736, 798.5835pt x 472.76625pt>
-File: figures/ch5_measurement/Pieter_SupplementS2Fluctuations in the electron system of a superconductor exposed to a photon flux.png Graphic file (type png)
-<use figures/ch5_measurement/Pieter_SupplementS2Fluctuations in the electron system of a superconductor exposed to a photon flux.png>
-Package pdftex.def Info: figures/ch5_measurement/Pieter_SupplementS2Fluctuations in the electron system of a superconductor exposed to a photon flux.png  used on input line 302.
-(pdftex.def)             Requested size: 461.80257pt x 273.38945pt.
-
-Overfull \hbox (2.93716pt too wide) in paragraph at lines 297--306
-\OT1/cmr/bx/n/10 How to re-move off-set \OT1/cmr/m/n/10 First we want to know the off-set from lets say 1Hz That is then the value for $\OML/cmm/m/it/10 C[]$\OT1/cmr/m/n/10 .
- []
-
-[10 <./figures/ch5_measurement/Pieter_SupplementS2Fluctuations in the electron system of a superconductor exposed to a photon flux.png>] [11] (./Drafting.aux)
-
-LaTeX Warning: There were undefined references.
-
-
-LaTeX Warning: There were multiply-defined labels.
-
- ) ) 
+{c:/texlive/2021/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] (./Drafting.aux) ) 
 Here is how much of TeX's memory you used:
- 17328 strings out of 478353
- 345467 string characters out of 5852101
- 637492 words of memory out of 5000000
- 35095 multiletter control sequences out of 15000+600000
- 412388 words of font info for 62 fonts, out of 8000000 for 9000
+ 17114 strings out of 478353
+ 338361 string characters out of 5852101
+ 625286 words of memory out of 5000000
+ 34923 multiletter control sequences out of 15000+600000
+ 404656 words of font info for 31 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 99i,11n,97p,900b,457s stack positions out of 5000i,500n,10000p,200000b,80000s
-<c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on Drafting.pdf (11 pages, 2410331 bytes).
+ 99i,5n,97p,645b,144s stack positions out of 5000i,500n,10000p,200000b,80000s
+<c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb>
+Output written on Drafting.pdf (1 page, 21462 bytes).
 PDF statistics:
- 811 PDF objects out of 1000 (max. 8388607)
- 650 compressed objects within 7 object streams
+ 45 PDF objects out of 1000 (max. 8388607)
+ 21 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 179 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 109 words of extra memory for PDF output out of 10000 (max. 10000000)
 

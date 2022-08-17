@@ -20,6 +20,7 @@ for kidn=1:6
     Qc(kidn,1) = NOISE(findp(kidn,Pindex,IndexPsort)).Qc;
     Qi(kidn,1) = NOISE(findp(kidn,Pindex,IndexPsort)).Qi;
     Ql(kidn,1) = NOISE(findp(kidn,Pindex,IndexPsort)).Ql;
+    f3dbres(kidn,1) = F0(kidn,1)*(10^9)/(2*Ql(kidn,1));
 end
 M = [KID_N F0 Qc Qi Ql]
 

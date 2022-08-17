@@ -16,6 +16,7 @@ classdef Cfit < handle
         Sff
         Sff_sys_noise
         Sff_minusTLS
+        fRing
         %Looping vars
         kidn_iter
         power_iter
@@ -75,6 +76,8 @@ classdef Cfit < handle
             obj.fguess = [1 100000]; % [Hz] initial guess for the intersection point of the TLS and GR noise. 
 			%-------/End:Combined fitting parameters (Default!)------------
             obj.resnormthreshold = 500;
+
+
             disp('Initialized Cfit object!')
         end % End constructor
         %+++++:Begin fitting and calcuations.-------------------------------
@@ -222,7 +225,11 @@ classdef Cfit < handle
                 end
             end 
         end
-       
+        function genfRing(obj,kidn,Pindex,nT)
+        p = obj.findp(kidn,Pindex);
+        obj.fRing{kidn,Pindex,nT} = ((obj.NOISE(p).Fres(nT)*10^9)/(2*obj.NOISE(p).Ql(nT)));
+        end
+
         function genFknee(obj,kidn,Pindex,nT)
             %genFknee method finds the Fknee based on the fits.
             % This is done such that fits that are bad are rejected. Also
@@ -313,8 +320,13 @@ classdef Cfit < handle
             figh_out = obj.fig(fig_n)
             axh_out = obj.ax(ax_n)
             
-            
-            
+            %+++++|Begin:Line ring time------------------------------------
+			if SW.plotringline
+                xline(obj.ax(ax_n),obj.fRing{kidn,Pindex,nT},'--','HandleVisibility',handleVisible{6});
+            end
+
+            %-------/End:Line ring time------------------------------------
+
             %+++++|Begin:fitting ranges------------------------------------
             if SW.cyanfit
 			xline(obj.freq(obj.TLSfit.mini),'--','Color','c','LineWidth',1,'HandleVisibility','off')
