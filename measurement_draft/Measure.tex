@@ -1,6 +1,5 @@
 \chapter{Measurements}
-This section will discuss three experiments that characterize the CKIDs on the Device Chip. 
-
+On the developed chip multiple measurements have been performed to determine the noise charateristics of the chip under different readout powers and different temperatures. The different temperatures can be seen as a proxy for various loading conditions because interested in the ratio of the various noise contributions on diffent operating points. The results of these experiment will give a good indiction if the noise propeties of the detectors are good enought to be a viable option for further developent.
 \section{Cryostat}
 The chip has been mounted in the cryostat called the ADR because of it's cooling mechanism. Adiabatic Demagnetization refriguratior.It is shown in Fig. \hl{Insert image}
 
@@ -44,8 +43,44 @@ The step of determining the Quality factors is repeated for all readout powers f
 %\subsection{Dataset}
 
 
-\section{Results: Exp.1 - VNA}
+\section{Results: Exp.1 - VNAsweep}
 \hl{TODO:}
+\begin{enumerate}
+	\item Table of resulting F0,Qi,Qc @120mK
+	\item Graphs of $P_{opt}$
+\end{enumerate}
+
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}[t]{lccccc}
+    \toprule
+    Data ID & CKID & $F_{0} [GHz]$ & $Q_{c}$& $Q_{i}$& $Q_{tot}$ \\
+    \midrule
+    1 & C7G3 & 4.9084 & 19845 & 1.0648e+05 & 16728 \\ \hline
+	2 & C9G3 & 5.0762 & 21537 & 86065 & 17226 \\ \hline
+	3 & C8G3 & 5.5424 & 27833 & 2.2685e+05 & 24791 \\ \hline
+	4 & C10G4 & 5.8222 & 24451 & 4.1079e+05 & 23078 \\ \hline
+	5 & C11G5 & 5.9134 & 48491 & 5.5221e+05 & 44576 \\ \hline
+	6 & C12G6 & 6.0052 & 34370 & 3.9022e+05 & 31588 \\ \hline
+    \bottomrule
+    \end{tabular}
+    \caption{Data from running the Power script. The kid with Data ID 3 stands out as not having the approximate 0.1 GHz spacing as is more or less the case with the other CKID. While looking at the chip under the Optical microscope it can be seen that there is a particle present on the C8G3 CKID. This could short out a part of the hybrid line giving this CKID a higher resonace frequency than designed. Overall we can see that the Groups are not exactly on the place that was designed which could be due to slight changes compared to designed values. Why the spacing between the two groups is not the designed 0.2 GHz is unknown. }
+    \label{tab:}
+\end{table}%
+
+
+		
+\begin{figure}[h!!!!!!]
+	\centering
+	\includegraphics[width=.80\linewidth]{figures/ch5_measurement/KID1_0.12K_NOISE_Pdep2SietseCustom3.pdf}
+	\caption{Here you can see how a change of the readout power influences the linearity of the MKID. We can see that if the readout power is increased too far we obtain a step in the resonace circle shown in the top left plot. If a MKID is driven too hard you can see a dip in the resonance circle which indicates that the MKID is overdriven. This can also be seen in the trace of $S_{21}$ parameter over frequency on the top right. If a resonace curve gets skewed this is an indication that the MKID is overdriven as shown in \cite{devisserReadoutpowerHeatingHysteretic2010} }
+	\label{fig:}
+\end{figure}
+
+
+
+
 \section{Discussion on Exp.1 - VNA: F0, Qc, Qi}
 \section{Method: Exp.2 - PSD}
 
@@ -284,57 +319,6 @@ In this process it was nessesary to take the absolute value because otherwise yo
 
 The resulting fits are the following:
 I don't think this is really ok. I guess an optical led pulse would have been better but this is for now.
-
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=\linewidth]{../Export_Figures_noGit/FiTSubKID1T0.113.png}
-	\caption{}
-	\label{fig:}
-\end{figure}
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=\linewidth]{../Export_Figures_noGit/TLS_surpression/FiTSubKID1T0.315.png}
-	\caption{}
-	\label{fig:}
-\end{figure}
-\FloatBarrier
-
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=\linewidth]{../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID1P_94_crossPSD_Tdep.png}
-	\caption{}
-	\label{fig:}
-\end{figure}
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=\linewidth]{../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID2P_90_crossPSD_Tdep.png}
-	\caption{}
-	\label{fig:}
-\end{figure}
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=\linewidth]{../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID3P_94_crossPSD_Tdep.png}
-	\caption{}
-	\label{fig:}
-\end{figure}
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=\linewidth]{../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID4P_87_crossPSD_Tdep.png}
-	\caption{}
-	\label{fig:}
-\end{figure}
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=\linewidth]{../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID5P_92_crossPSD_Tdep.png}
-	\caption{}
-	\label{fig:}
-\end{figure}
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=\linewidth]{../Data_Analysis_scripts_ADR/CrossPSD2D/crossPSD_Popt images/KID6P_87_crossPSD_Tdep.png}
-	\caption{}
-	\label{fig:}
-\end{figure}
 
 \textbf{LOG: 30-07:} Because of subtracting the resonator ring mixing noise and 
 Putting this into the the fitting function of Jochem and also moving the minimum detectable frequency seems to at least partially solve the problems with the fitting. Also made a bunch of usefull graphs in which you can distigish all the parts of the cross-power spectal density.

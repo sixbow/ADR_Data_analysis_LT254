@@ -3,9 +3,11 @@
 %DATE: October 24, 2012 - Aug 20 2019
 %AUTHOR: Reinier Janssen, Jochem Baselmans
 %==========================================================================
+
 close all
 clear all
 global FITF0
+for nT=1:2
 %==========================================================================
 % Inputs
 %==========================================================================
@@ -22,7 +24,7 @@ SW_corr_noise_setup = 0; %Sietse: if 1 corrects setup noise, 0 no correction.
 ChipInfo.IndexPref = 3;     %Index of the power that is used as reference for Popt finding.
 ReadPoptfile = 1;             %default=0. If set to 1 optimum power takemn from Popt file, that is created by this script. Usefull to be abel to rerun the sript for the correct Pot.
 numlowPremoved = 0;         %for noise plots(P) - removes lowest power for less clutter
-SaveStuff = 1;              %0 to not save files (faster) 1 to save
+SaveStuff = 0;              %0 to not save files (faster) 1 to save
 Tsystem = 3;                %estimated system noise, 8K oid
 BWrange = 1;                  %Width aroung Fres of the reference power that is considered to find Popt. Default 1
 FITF0 = 0;                    %Switch used to determine which method is used for determination of F0.
@@ -58,7 +60,6 @@ if ReadPoptfile==1
 else
 Popt_str = '(Found)';
 end
-disp('Hoi')
 clear PoptFile FFTsubdir
 %==========================================================================
 %Search the noisepath for all FFT files and filter out all files that are
@@ -98,6 +99,7 @@ fprintf(['Inside this path a total number of ',num2str(length(RawFFTfiles)),' fi
 % Read in all the data files
 %==========================================================================
 for p=1:length(RawFFTfiles) %LOOP OVER ALL FILES (aka KID-P-combinations)
+
     LocEndRoot = strfind(RawFFTfiles(p).name,'FFT.dat');
     if isempty(LocEndRoot)
         fprintf('ERROR Noise Analysis: Cannot find FFT.dat in the name of the noise file.\n')
@@ -117,12 +119,14 @@ for p=1:length(RawFFTfiles) %LOOP OVER ALL FILES (aka KID-P-combinations)
     FFTfile = [NOISE(p).filename,'FFT.dat'];
     [Data,Temperature,Power,FFTheader] = import_data(FFTfile);%Data = cell array
     % limit T range to 1
-    if length(Temperature) > 1
-        Temperature(2:end)=[];
-    end
-    NOISE(p).Temperature = Temperature;
-    Data(2:end)=[];
-    NOISE(p).FFTnoise = Data;
+    disp('Temp loaded')
+    %if length(Temperature) > 1
+    %    Temperature(2:end)=[];
+    %end
+    
+    NOISE(p).Temperature = Temperature(nT);
+    %S % Data(2:end)=[];
+    NOISE(p).FFTnoise = Data(nT);
     clear Data;
     NOISE(p).ReadPower = -1*Power;
     
@@ -626,43 +630,16 @@ for kidn=1:length(KIDnumbers) % LOOP OVER ALL UNIQUE KIDS,
     hold off
     %==================================================================
     %==================================================================
-    % Figure three(SietseCustom3): Only the stuff I need!
+    % Figure three(SietseCustom3): Only 
     %==================================================================
     %==================================================================
     figure(1000*KIDnumbers(kidn)+3)
     clf
-    set(gcf,'units','centimeters','position',[20,1,20,0.65*20])
-    %==============================================================
-    %Resonance circle as a function of power (incl noise blobs)
-    %==============================================================
-   
-    subplot(2,2,1)
-    
-    hold on
-    for nP=1:length(IndexPsort{kidn})
-        plot(NOISE(IndexPsort{kidn}(nP)).S21_IQplane{1}(:,2) , NOISE(IndexPsort{kidn}(nP)).S21_IQplane{1}(:,3),'-','color',Pcolors(nP,:),'LineWidth',1)
-        PowerLegend{nP+1,1} = num2str(NOISE(IndexPsort{kidn}(nP)).ReadPower,'%.1f');
-        PowerLegend{nP+1,2} = num2str(NOISE(IndexPsort{kidn}(nP)).InternalPower,'%.1f');
-    end
-    for nP=1:length(IndexPsort{kidn}) %Second Loop to get the legend correct.
-        plot(NOISE(IndexPsort{kidn}(nP)).TDIQ{1}(:,2),NOISE(IndexPsort{kidn}(nP)).TDIQ{1}(:,3),'.','color',Pcolors(nP,:),'MarkerSize',6)
-    end
-    %legend(PowerLegend(2:end,1));
-    %PowerLegend_SietseCustom3 = PowerLegend(2:end,1);
-    xlabel('Re');ylabel('Im')
-    title(['KID ',num2str(KIDnumbers(kidn),'%.0f'),' @T_{bath}=',num2str(NOISE(IndexPref).Temperature,'%.3g'),' K'])
-    box on;grid on;
-    hold off
-    
-    
-    
     
     %==============================================================
     %Resonance Dip as a function of power, Incl reference lines around reference power%
     %==============================================================
-    
-    
-    subplot(2,2,2)
+    subplot(1,3,1)
     hold on
     for nP=1:length(IndexPsort{kidn})
         plot(NOISE(IndexPsort{kidn}(nP)).S21_MPplane{1}(:,1),20*log10(NOISE(IndexPsort{kidn}(nP)).S21_MPplane{1}(:,2)),'-','color',Pcolors(nP,:),'LineWidth',1)
@@ -685,7 +662,7 @@ for kidn=1:length(KIDnumbers) % LOOP OVER ALL UNIQUE KIDS,
     %==============================================================
     %Phase Noise (and Amp Noise)
     %==============================================================
-    subplot(2,2,[3,4])
+    subplot(1,3,[2,3])
     semilogx(NOISE(IndexPopt(kidn)).FFTnoise{1}(:,1),NOISE(IndexPopt(kidn)).FFTnoise{1}(:,3),...
         '-','color','k','LineWidth',3)
     hold on
@@ -704,7 +681,7 @@ for kidn=1:length(KIDnumbers) % LOOP OVER ALL UNIQUE KIDS,
     grid on;
     xlabel('F [Hz]');ylabel('S_x [dBc/Hz]')
     legend('S_A','S_{\theta}')
-    xlim([1,0.3e6]);ylim([10*round(min(0.1*minnp))-15,10*round(max(0.1*maxnp))+15]);
+    xlim([10,0.3e6]);ylim([10*round(min(0.1*minnp))-5,10*round(max(0.1*maxnp))+5]);
     hold off
     x0=10;
     y0=10;
@@ -722,9 +699,7 @@ for kidn=1:length(KIDnumbers) % LOOP OVER ALL UNIQUE KIDS,
     Figfile=[Noisepath,'KID',num2str(KIDnumbers(kidn),'%.0f'),'_',...
         num2str(NOISE(IndexPref).Temperature,'%.3g'),'K_NOISE_Pdep2'];
     if SaveStuff == 1
-        MakeGoodFigure(8,6,8,[Figfile 'SietseCustom3'])
-        exportgraphics(gcf,[Figfile 'SietseCustom3' '.pdf' ])
-        disp(['Fig 3 stored in:' Figfile])
+        MakeGoodFigure(8,6,8,Figfile)
     else
         MakeGoodFigure(8,6,8)
     end
@@ -900,3 +875,5 @@ rmpath([pwd,filesep,'..',filesep,'subroutines']);
 if SaveStuff == 1
     save([Noisepath,'Noise_P.mat'])
 end
+
+end %S: end temperature loop

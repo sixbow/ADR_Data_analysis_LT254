@@ -52,7 +52,7 @@ set(gca, 'FontName', 'Arial')
 kidn_iter = 1;
 % Write a fuction that creates Pindex = o.findPopt(kidn)
 P_iter = 7; 
-T_iter = T_iter + 1 ;
+T_iter = 13 ;
 Tcolors = colormapJetJB(14);
 Pcolors = colormapcoolSdB(7);
 %-------
