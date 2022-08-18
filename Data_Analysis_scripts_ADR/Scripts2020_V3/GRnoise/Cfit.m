@@ -32,6 +32,8 @@ classdef Cfit < handle
         % Anonymous functions
         fTLS
         fCB
+        fCBmintau
+        fCBmaxtau
         fline
         fTotal
         fTLS_filled
@@ -43,7 +45,7 @@ classdef Cfit < handle
     end
     
     methods
-        function obj = Cfit(FFTsubsubdir,filename,filenameCPSDfit)
+        function obj = Cfit(FFTsubsubdir,filename,filenameCPSDfit,TLSfitmin,TLSfitmax,CBfitmin,CMfitmax)
             %Cfit Construct an instance of this class
             % First argument gives the path of the data from 2 folders up. 
             % Second argument is the type of data that you want to load.
@@ -59,15 +61,15 @@ classdef Cfit < handle
             obj.power_iter = obj.IndexPsort{obj.kidn_iter,1};
             obj.Tbath_iter = 1:14;
             %-----TLS fitting parameters (Default!)
-            obj.TLSfit.min = 0.8;% [Hz]
-            obj.TLSfit.max= 30;% [Hz]
+            obj.TLSfit.min = TLSfitmin;% [Hz]
+            obj.TLSfit.max= TLSfitmax;% [Hz]
             [~,obj.TLSfit.mini] = min(abs(obj.freq-obj.TLSfit.min)); % This gives the min index
             [~,obj.TLSfit.maxi] = min(abs(obj.freq-obj.TLSfit.max)); % This gives the max index
             obj.TLSfit.C0 = [(10^-15) 1.5];% [CTLS gamma]  linear scale. CTLS at 1 Hz , power with what  the power law decreases. gamma TLS ~0.5
  			%-------/End:TLS fitting parameters (Default!)-----------------
             %+++++|Begin:Combined fitting parameters (Default!)------------
-            obj.CBfit.min = 1000;% [Hz]
-            obj.CBfit.max = 150000;%  [Hz]
+            obj.CBfit.min = CBfitmin;% [Hz]
+            obj.CBfit.max = CMfitmax;%  [Hz]
             [~,obj.CBfit.mini] = min(abs(obj.freq-obj.CBfit.min)); % "
             [~,obj.CBfit.maxi] = min(abs(obj.freq-obj.CBfit.max)); % "
             obj.CBfit.C0 = [(10^-18) 1.591549430918954e-06];% CTLS at 1 Hz , power with what  the power law decreases. TLS ~0.5
@@ -201,6 +203,8 @@ classdef Cfit < handle
         function UpCross(obj,kidn,Pindex,Tindex)% This uses the data from the cross script.
             obj.fTLS = @(C_v,fdata)C_v(1).*power(fdata,-1*C_v(2)); %Model we use to fit C_v is the constants vector that we are trying to find.
             obj.fCB  = @(C_v,fdata) C_v(1)./((1+power((2.*pi.*fdata.*obj.Cross_tau{kidn,Pindex,Tindex}),2)))+ obj.Sff_sys_noise{kidn,Pindex,Tindex};
+            obj.fCBmintau  = @(C_v,fdata) C_v(1)./((1+power((2.*pi.*fdata.*obj.Cross_taumin{kidn,Pindex,Tindex}),2)))+ obj.Sff_sys_noise{kidn,Pindex,Tindex};
+            obj.fCBmaxtau  = @(C_v,fdata) C_v(1)./((1+power((2.*pi.*fdata.*obj.Cross_taumax{kidn,Pindex,Tindex}),2)))+ obj.Sff_sys_noise{kidn,Pindex,Tindex};
             obj.fline = @(C_v,xdata)C_v(1).*xdata+C_v(2);
             obj.fTotal = @(C_v_TLS,C_v_CB,fdata)obj.fTLS(C_v_TLS,fdata)+obj.fCB(C_v_CB,fdata);
         end
@@ -303,6 +307,11 @@ classdef Cfit < handle
 			if SW.plotgr
             plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fCB(obj.CBfit.C{kidn,Pindex,nT},obj.freq(toplot))),':','Color',Colorcell{3},'LineWidth',1.5,'HandleVisibility',handleVisible{3})
             end
+            if SW.plottauminmax
+            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fCBmintau(obj.CBfit.C{kidn,Pindex,nT},obj.freq(toplot))),':','Color',Colorcell{4},'LineWidth',0.8,'HandleVisibility','off')
+            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fCBmaxtau(obj.CBfit.C{kidn,Pindex,nT},obj.freq(toplot))),':','Color',Colorcell{4},'LineWidth',0.8,'HandleVisibility','off')
+            end
+            
             disp('De kleur is:')
             disp(Colorcell{3});
             %-------/End:Plot CB fit---------------------------------------
