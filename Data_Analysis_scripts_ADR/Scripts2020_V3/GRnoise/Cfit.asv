@@ -16,6 +16,7 @@ classdef Cfit < handle
         Sff
         Sff_sys_noise
         Sff_minusTLS
+        fRing
         %Looping vars
         kidn_iter
         power_iter
@@ -224,7 +225,11 @@ classdef Cfit < handle
                 end
             end 
         end
-       
+        function genfRing(obj,kidn,Pindex,nT)
+        p = obj.findp(kidn,Pindex);
+        obj.fRing{kidn,Pindex,nT} = ((obj.NOISE(p).Fres(nT)*10^9)/(2*obj.NOISE(p).Ql(nT)));
+        end
+
         function genFknee(obj,kidn,Pindex,nT)
             %genFknee method finds the Fknee based on the fits.
             % This is done such that fits that are bad are rejected. Also
@@ -317,8 +322,7 @@ classdef Cfit < handle
             
             %+++++|Begin:Line ring time------------------------------------
 			if SW.plotringline
-            xline(obj.ax(ax_n),((obj.NOISE(p).Fres(nT)*10^9)/(2*obj.NOISE(p).Ql(nT))),'HandleVisibility',handleVisible{6})
-%             plot(obj.ax(ax_n),obj.Fknee{kidn,Pindex,nT},lintodb(obj.Sknee{kidn,Pindex,nT}),marker,'Color',Colorcell{5},'LineWidth',2,'HandleVisibility',handleVisible{5})
+                xline(obj.ax(ax_n),obj.fRing{kidn,Pindex,nT},'--','HandleVisibility',handleVisible{6});
             end
 
             %-------/End:Line ring time------------------------------------
@@ -426,7 +430,12 @@ classdef Cfit < handle
             p = obj.IndexPsort{kidn,1}(Pindex);
         end
         
-        
+        function Pindex = findPiopt(obj,kidn)% this tells you what p belongs to what power index.
+            for i = 1:6
+            Pindex(i) = find(o.findp(i,1:7)==o.IndexPopt(i));
+            end
+            
+        end
         
 		%-------/End:Auxillary func----------------------------------------
 

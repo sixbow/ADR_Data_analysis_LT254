@@ -430,7 +430,12 @@ classdef Cfit < handle
             p = obj.IndexPsort{kidn,1}(Pindex);
         end
         
-        
+        function Pindex = findPiopt(obj,kidn)% this tells you what p belongs to what power index.
+            for i = 1:6
+            Pindex(i) = find(obj.findp(i,1:7)==obj.IndexPopt(i));
+            end
+            Pindex = Pindex(kidn);
+        end
         
 		%-------/End:Auxillary func----------------------------------------
 

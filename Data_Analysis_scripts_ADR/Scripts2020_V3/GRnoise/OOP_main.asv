@@ -27,6 +27,7 @@ SW.plottls = 0;
 SW.plotgr = 0;
 SW.plotFknee = 1;
 Single_plot_loop_all = 0;
+
 SW.CrossTau =1 ; %1 Uses JBfitted Crosstau_qp, 0 Fits from frac freq PSD.
 o = Cfit(FFTsubsubdir,'NOISE_2D.mat','CrossPSDFit_2D.mat');
 o.genCross_tau(kidn_iter,P_iter,T_iter)  % generates the nessesary entries for the cross PSD fitted tau. 
@@ -39,6 +40,7 @@ if SW.CrossTau
 else
 [CTLS,gamma]= o.genfitsingle(kidn,Pindex,Tindex);
 end
+o.genfRing(kidn,Pindex,Tindex)
 o.genFknee(kidn,Pindex,Tindex);
 end
 end 
@@ -47,16 +49,11 @@ end
 
 %% Temperature variation single plots
 o = o.init_figax(fignum,axnum,'loglin');
-SW.usePopt= 0; 
+SW.usePopt = 0;% Use the 120mK Popt value. 
 set(gca, 'FontName', 'Arial')
 kidn_iter = 1;
-if SW.usePopt2D
-% TODO: implement this funcion.
-%P_iter = o.findPopt(kidn,Tindex)
-else
-P_iter = 7; 
-end
-
+% Write a fuction that creates Pindex = o.findPopt(kidn)
+P_iter = o.IndexPopt(1); 
 T_iter = T_iter + 1 ;
 Tcolors = colormapJetJB(14);
 Pcolors = colormapcoolSdB(7);
@@ -68,7 +65,8 @@ SW.plotFknee = 1;
 SW.plotTotal = 1;
 SW.cyanfit = 1;
 SW.magentafit = 1;
-handleVisible = [{'on'},{'on'},{'on'},{'on'},{'on'}];
+SW.plotringline = 1;
+handleVisible = [{'on'},{'on'},{'on'},{'on'},{'on'},{'on'}];
 for kidn = kidn_iter
 for Pindex= P_iter
 for Tindex= T_iter
@@ -110,7 +108,7 @@ SW.plotFknee = 1;
 SW.plotTotal = 1;
 SW.cyanfit = 1;
 SW.magentafit = 1;
-handleVisible = [{'on'},{'on'},{'on'},{'on'},{'on'}];
+handleVisible = [{'on'},{'on'},{'on'},{'on'},{'on'},{'off'}];
 for kidn = kidn_iter
 for Pindex= P_iter
 for Tindex= T_iter
@@ -154,7 +152,7 @@ SW.plotFknee = 1;
 SW.plotTotal = 1;
 SW.cyanfit = 1;
 SW.magentafit = 1;
-handleVisible = [{'on'},{'off'},{'off'},{'off'},{'off'}];
+handleVisible = [{'on'},{'off'},{'off'},{'off'},{'off'},{'off'}];
 legendTstr = [];
 for kidn = kidn_iter
 for Pindex= P_iter
@@ -190,9 +188,9 @@ SW.magentafit = 0;
 fignum=2;
 axnum = fignum;
 Tcolors = colormapJetJB(14);
-handleVisible{1} = [{'off'},{'off'},{'off'},{'off'},{'on'}];
-handleVisible{2} = [{'off'},{'off'},{'off'},{'off'},{'off'}];
-handleVisible{3} = [{'off'},{'off'},{'off'},{'off'},{'off'}];
+handleVisible{1} = [{'off'},{'off'},{'off'},{'off'},{'on'},{'off'}];
+handleVisible{2} = [{'off'},{'off'},{'off'},{'off'},{'off'},{'off'}];
+handleVisible{3} = [{'off'},{'off'},{'off'},{'off'},{'off'},{'off'}];
 legendTstr ={};
 legendTstr2 ={};
 legendTstr3 ={};
@@ -314,7 +312,7 @@ SW.magentafit = 1;
 fignum=3;
 axnum = fignum;
 Pcolors = colormapcoolSdB(7);
-handleVisible = [{'on'},{'on'},{'on'},{'on'},{'on'}];
+handleVisible = [{'on'},{'on'},{'on'},{'on'},{'on'},{'off'}];
 o = o.init_figax(fignum,axnum,'loglin');
 for kidn = 1:3 % G3
 for Pindex= P_iter
@@ -354,7 +352,7 @@ SW.plotFknee = 1;
 SW.plotTotal = 1;
 SW.cyanfit = 1;
 SW.magentafit = 1;
-handleVisible = [{'on'},{'off'},{'off'},{'off'},{'off'}];
+handleVisible = [{'on'},{'off'},{'off'},{'off'},{'off'},{'off'}];
 legendTstr = [];
 for kidn = kidn_iter
 for Pindex= P_iter

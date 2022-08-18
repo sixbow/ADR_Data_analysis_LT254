@@ -53,8 +53,8 @@ SW.usePopt = 0;% Use the 120mK Popt value.
 set(gca, 'FontName', 'Arial')
 kidn_iter = 1;
 % Write a fuction that creates Pindex = o.findPopt(kidn)
-P_iter = 7; 
-T_iter = T_iter + 1 ;
+P_iter = o.findPiopt(kidn_iter); 
+T_iter = T_iter+1;
 Tcolors = colormapJetJB(14);
 Pcolors = colormapcoolSdB(7);
 %-------
@@ -79,7 +79,7 @@ title(sprintf('$KID_{N}$: %i | $P_{read}$: %3.0f dBm | $$T_{bath}$$ =%1.3f K | I
 end
 end 
 end
-legend('Data','TLS fit','GR + sys noise','Combined','$F_{knee}$','Interpreter','latex')
+legend('Data','TLS fit','GR + sys noise','Combined','$F_{knee}$','$f_{ring}$','Interpreter','latex')
 
 set(gca,'TickLabelInterpreter', 'latex')
 set(gcf,'units','centimeters','position',[20,1,20,0.65*20])
