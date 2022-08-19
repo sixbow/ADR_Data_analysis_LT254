@@ -13,8 +13,8 @@ ChipInfo.path = ['../..' filesep]; %root path where data is, one higher than the
 %ChipInfo.path = [cd filesep '..']; %root path where data is, one higher than the scripts
 %ChipInfo.path = [ '..' filesep '..' ];%without filesep at end
 
-FFTsubdir = ['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_120mK' filesep 'FFT' filesep 'Power']; % 120mK    %
-%FFTsubdir = ['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D'];     %
+%FFTsubdir = ['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_120mK' filesep 'FFT' filesep 'Power']; % 120mK    %
+FFTsubdir = ['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D'];     %
 %FFTsubdir = ['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D_Popt'];     %
 
 SW_corr_noise_setup = 0; %Sietse: if 1 corrects setup noise, 0 no correction.
@@ -636,7 +636,7 @@ for kidn=1:length(KIDnumbers) % LOOP OVER ALL UNIQUE KIDS,
     %Resonance circle as a function of power (incl noise blobs)
     %==============================================================
    
-    subplot(2,3,1)
+    subplot(2,2,1)
     
     hold on
     for nP=1:length(IndexPsort{kidn})
@@ -661,29 +661,8 @@ for kidn=1:length(KIDnumbers) % LOOP OVER ALL UNIQUE KIDS,
     %Resonance Dip as a function of power, Incl reference lines around reference power%
     %==============================================================
     
- 
-
-    subplot(2,3,2)
-    hold on
-    for nP=1:length(IndexPsort{kidn})
-        plot(NOISE(IndexPsort{kidn}(nP)).S21_MPplane{1}(:,1),NOISE(IndexPsort{kidn}(nP)).S21_MPplane{1}(:,3),'-','color',Pcolors(nP,:),'LineWidth',1)
-    end
-    Flow = NOISE(IndexPopt(kidn)).Fres-BWrange*NOISE(IndexPopt(kidn)).Bandwidth;
-    plot([Flow,Flow],[6.28,-3.14],'r-','LineWidth',2)
-    Fhigh = NOISE(IndexPopt(kidn)).Fres+BWrange*NOISE(IndexPopt(kidn)).Bandwidth;
-    plot([Fhigh,Fhigh],[6.28,-3.14],'r-','LineWidth',2)
-    xlabel('F [GHz]');ylabel('arg(S21)');
-    SietseCustom3LCl = legend(PowerLegend_SietseCustom3,'Location','northeastoutside');
-    SietseCustom3LCl.FontSize = 6;
-    
-    title(['KID ',num2str(KIDnumbers(kidn),'%.0f'),' P_{opt}=',num2str(NOISE(IndexPopt(kidn)).ReadPower),' dBm',Popt_str])
-    axis tight;
-    xlim([NOISE(IndexPopt(kidn)).Fres - 2*BWrange*NOISE(IndexPopt(kidn)).Bandwidth...
-        NOISE(IndexPopt(kidn)).Fres   + 2*BWrange*NOISE(IndexPopt(kidn)).Bandwidth])
-    box on;grid on;
-    hold off
-    
-    subplot(2,3,3)
+    %|S_{21}|
+    subplot(2,2,2)
     hold on
     for nP=1:length(IndexPsort{kidn})
         plot(NOISE(IndexPsort{kidn}(nP)).S21_MPplane{1}(:,1),20*log10(NOISE(IndexPsort{kidn}(nP)).S21_MPplane{1}(:,2)),'-','color',Pcolors(nP,:),'LineWidth',1)
@@ -703,11 +682,30 @@ for kidn=1:length(KIDnumbers) % LOOP OVER ALL UNIQUE KIDS,
     box on;grid on;
     hold off
     
+    subplot(2,2,2)
+    hold on
+    for nP=1:length(IndexPsort{kidn})
+        plot(NOISE(IndexPsort{kidn}(nP)).S21_MPplane{1}(:,1),20*log10(NOISE(IndexPsort{kidn}(nP)).S21_MPplane{1}(:,2)),'-','color',Pcolors(nP,:),'LineWidth',1)
+    end
+    Flow = NOISE(IndexPopt(kidn)).Fres-BWrange*NOISE(IndexPopt(kidn)).Bandwidth;
+    plot([Flow,Flow],[0,-20],'r-','LineWidth',2)
+    Fhigh = NOISE(IndexPopt(kidn)).Fres+BWrange*NOISE(IndexPopt(kidn)).Bandwidth;
+    plot([Fhigh,Fhigh],[0,-20],'r-','LineWidth',2)
+    xlabel('F [GHz]');ylabel('|S21| [dB]');
+    SietseCustom3LCl = legend(PowerLegend_SietseCustom3,'Location','northeastoutside');
+    SietseCustom3LCl.FontSize = 6;
+    
+    title(['KID ',num2str(KIDnumbers(kidn),'%.0f'),' P_{opt}=',num2str(NOISE(IndexPopt(kidn)).ReadPower),' dBm',Popt_str])
+    axis tight;
+    xlim([NOISE(IndexPopt(kidn)).Fres - 2*BWrange*NOISE(IndexPopt(kidn)).Bandwidth...
+        NOISE(IndexPopt(kidn)).Fres   + 2*BWrange*NOISE(IndexPopt(kidn)).Bandwidth])
+    box on;grid on;
+    hold off
     
     %==============================================================
     %Phase Noise (and Amp Noise)
     %==============================================================
-    subplot(2,3,[4,6])
+    subplot(2,2,[3,4])
     semilogx(NOISE(IndexPopt(kidn)).FFTnoise{1}(:,1),NOISE(IndexPopt(kidn)).FFTnoise{1}(:,3),...
         '-','color','k','LineWidth',3)
     hold on

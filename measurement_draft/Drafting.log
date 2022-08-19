@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021/W32TeX) (preloaded format=pdflatex 2021.12.1)  17 AUG 2022 20:24
+This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021/W32TeX) (preloaded format=pdflatex 2021.12.1)  18 AUG 2022 21:33
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -521,23 +521,42 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 48
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 )) (./Measure2.tex
 Chapter 1.
-) [1
+LaTeX Font Info:    Trying to load font information for U+msa on input line 8.
+(c:/texlive/2021/texmf-dist/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 8.
+ (c:/texlive/2021/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+))
+Runaway argument?
+c:/Users/siets/Dropbox/Universiteit/Natuurkunde/MEP/Simulations/Matlab/ADR_Data_analysis_LT254/measurement_draft/Drafting.tex:19: File ended while scanning use of \@ssect.
+<inserted text> 
+                \par 
+l.19 \input{Measure2.tex}
+                         
+I suspect you have forgotten a `}', causing me
+to read past where you wanted me to stop.
+I'll try to recover; but if the error is serious,
+you'd better type `E' or `X' now and fix your file.
+
+[1
 
 
 {c:/texlive/2021/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] (./Drafting.aux) ) 
 Here is how much of TeX's memory you used:
- 17114 strings out of 478353
- 338361 string characters out of 5852101
- 625286 words of memory out of 5000000
- 34923 multiletter control sequences out of 15000+600000
- 404656 words of font info for 31 fonts, out of 8000000 for 9000
+ 17175 strings out of 478353
+ 339218 string characters out of 5852101
+ 626286 words of memory out of 5000000
+ 34964 multiletter control sequences out of 15000+600000
+ 412514 words of font info for 62 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 99i,5n,97p,645b,144s stack positions out of 5000i,500n,10000p,200000b,80000s
-<c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb>
-Output written on Drafting.pdf (1 page, 21462 bytes).
+ 99i,5n,97p,645b,151s stack positions out of 5000i,500n,10000p,200000b,80000s
+<c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb>
+Output written on Drafting.pdf (1 page, 50426 bytes).
 PDF statistics:
- 45 PDF objects out of 1000 (max. 8388607)
- 21 compressed objects within 1 object stream
+ 60 PDF objects out of 1000 (max. 8388607)
+ 30 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  109 words of extra memory for PDF output out of 10000 (max. 10000000)
 

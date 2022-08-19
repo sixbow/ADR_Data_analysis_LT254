@@ -9,10 +9,10 @@ load('../../Data_LT254_Sietse/LT254_Sietse_Chip11/Noise_vs_T/FFT/2D_Popt/NOISE_2
 % Load spectra...
 S21_path = '../../Data_LT254_Sietse/LT254_Sietse_Chip11/S21/2D_Popt/all_Tdep.csv';
 S21_results = table2array(readtable(S21_path , "NumHeaderLines",1));
-dFdNqp =  S21_results(:,11);%Warning! Why is this negative valued!
+dFdNqp =  S21_results(:,11);%Warning! Why is this negative valued!(Sietse: i think this is normal!)
 %<Input>
 Q = S21_results(:,3); % vec for all KIDS
-F0 = S21_results(:,3); % for all kids
+F0 = S21_results(:,6).*10^-9; % for all kids
 eta_pb = 0.4;
 Tc_al = 1.182;
 %tau_qp() = We do this in the code
@@ -21,11 +21,12 @@ nT_iter = 1:14;
 %</Input>
 freq_vec = real(CrossPSDNOISE(1).CrossPSD{1,1}(:,1));
 NEP_Matrix = zeros(length(kidn_iter),length(nT_iter),length(freq_vec));
+NEP_Matrix = zeros(length(kidn_iter),length(nT_iter),length(freq_vec));
 for kidn = kidn_iter % Loop over KIDS
     for nT = nT_iter % Loop over temperatures
     Stheta_current_lin = dbtolin(real(CrossPSDNOISE(kidn).CrossPSD{1,nT}(:,3))./10);%Stheta is always real..
     tau_qp_current = CrossPSDFit(kidn).tau(nT);
-    NEP_Matrix(kidn,nT,:) = CalcNEPphaseSdB(dFdNqp(kidn),Q(kidn),F0(kidn),Stheta_current_lin,eta_pb,tau_qp_current,Tc_al); % 3 dimention is freq.
+    [NEP_Matrix(kidn,nT,:),dthetadPdark(kidn,nT,:),dthetadNqp(kidn,nT,:)] = CalcNEPphaseSdB(dFdNqp(kidn),Q(kidn),F0(kidn),Stheta_current_lin,freq_vec,eta_pb,tau_qp_current,Tc_al); % 3 dimention is freq.
     end
 end
 % Fig 1. 

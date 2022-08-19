@@ -57,15 +57,15 @@ The step of determining the Quality factors is repeated for all readout powers f
     \toprule
     Data ID & CKID & $F_{0} [GHz]$ & $Q_{c}$& $Q_{i}$& $Q_{tot}$ & $f_{-3db,ring}$\\
     \midrule
-    1 & C7G3 & 4.9084 & 19845 & 1.0648e+05 & 16728 & 1.5e+05 \\ \hline
-	2 & C9G3 & 5.0762 & 21537 & 86065 & 17226& 1.47e+05 \\ \hline
-	3 & C8G3 & 5.5424 & 27833 & 2.2685e+05 & 24791& 1.12e+05 \\ \hline
-	4 & C10G4 & 5.8222 & 24451 & 4.1079e+05 & 23078& 1.26e+05 \\ \hline
-	5 & C11G5 & 5.9134 & 48491 & 5.5221e+05 & 44576& 6.63e+04 \\ \hline
-	6 & C12G6 & 6.0052 & 34370 & 3.9022e+05 & 31588& 9.50e+04 \\ \hline
+	1 & C7G3  & 4.9083 & 20300 & 1.43e+05 & 17800 & 1.3787e+05 \\ \hline
+	2 & C9G3  & 5.076 & 22000 & 85260 & 17510 & 1.4495e+05 \\ \hline
+	3 & C8G3  & 5.542 & 32500 & 4.94e+05 & 30500 & 90852 \\ \hline
+	4 & C10G4 & 5.822 & 22300 & 5.8e+05 & 21500 & 1.354e+05 \\ \hline
+	5 & C11G5 & 5.913 & 54200 & 6.1e+05 & 49700 & 59487 \\ \hline
+	6 & C12G6 & 6.0052 & 31100 & 6.59e+05 & 29800 & 1.0076e+05 \\ \hline
     \bottomrule
     \end{tabular}
-    \caption{Data from running the Power script. The kid with Data ID 3 stands out as not having the approximate 0.1 GHz spacing as is more or less the case with the other CKID. While looking at the chip under the Optical microscope it can be seen that there is a particle present on the C8G3 CKID. This could short out a part of the hybrid line giving this CKID a higher resonace frequency than designed. Overall we can see that the Groups are not exactly on the place that was designed which could be due to slight changes compared to designed values. Why the spacing between the two groups is not the designed 0.2 GHz is unknown. In the last column the resulting ring time can be found which rules out that we are seeing the ringtime of the resonator. As temperature is increased the internal quality factor of the resonator decreases and thus the 3db freqency for the ring time roll off increases. }
+    \caption{Data from running the . The kid with Data ID 3 stands out as not having the approximate 0.1 GHz spacing as is more or less the case with the other CKID. While looking at the chip under the Optical microscope it can be seen that there is a particle present on the C8G3 CKID. This could short out a part of the hybrid line giving this CKID a higher resonace frequency than designed. Overall we can see that the Groups are not exactly on the place that was designed which could be due to slight changes compared to designed values. Why the spacing between the two groups is not the designed 0.2 GHz is unknown. In the last column the resulting ring time can be found which rules out that we are seeing the ringtime of the resonator. As temperature is increased the internal quality factor of the resonator decreases and thus the 3db freqency for the ring time roll off increases. }
     \label{tab:}
 \end{table}%
 
@@ -202,12 +202,12 @@ This is shown in the following Fig. \ref{fig:Popt_KID1}\ref{fig:Popt_KID2}\ref{f
     \hline
     KID\# & $ P_{opt} (dBm) $ & $ \sim F_{0}$ (Graph) & Supected KID \\
     \hline
-    1 & -94 & 4.9083 & C7G3\\
-   	2 & -90 & 5.0762 & C9G3 \\
-    3 & -94 & 5.5424 & C8G3 \\
-	4 & -87 & 5.8222 & C10G4 \\
-    5 & -92 & 5.9134 & C11G4 \\
-    6 & -87 & 6.0052 & C12G4 \\
+     C7G3  & -94  &\\
+   	 C9G3  & -90  &\\
+     C8G3  & -94  &\\
+	 C10G4 & -87  & \\
+     C11G4 & -92  & \\
+     C12G4 & -87  & \\
     \hline
     \end{tabular}
     \caption{Table with optimal readout powers. You can judge from the skewness of the $S_{21}$ dip and the Lowpass charateristic that you have overdriven the MKID into non-linear regime. The second is the suspected MKID number based on only the C9G3 MKID had a piece on Hybrid CPW which explains the higher readout freq.}

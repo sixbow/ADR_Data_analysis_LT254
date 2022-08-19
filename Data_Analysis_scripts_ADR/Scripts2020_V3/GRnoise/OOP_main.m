@@ -379,3 +379,54 @@ exportgraphics(gca,[figurepath filename '.pdf' ])
 
 
 
+
+
+
+
+
+
+
+
+%% Illustration..
+o = o.init_figax(fignum,axnum,'loglin');
+SW.usePopt = 0;% Use the 120mK Popt value. 
+set(gca, 'FontName', 'Arial')
+kidn_iter = 2;
+% Write a fuction that creates Pindex = o.findPopt(kidn)
+P_iter = o.findPiopt(kidn_iter)+1; 
+T_iter = 13;
+Tcolors = colormapJetJB(14);
+Pcolors = colormapcoolSdB(7);
+%-------
+SW.plotdata = 0;
+SW.plottls = 1;
+SW.plotgr = 1;
+SW.plotFknee = 1;
+SW.plotTotal = 1;
+SW.cyanfit = 0;
+SW.magentafit = 0;
+SW.plotringline = 0;
+SW.plottauminmax = 0;
+handleVisible = [{'on'},{'on'},{'on'},{'on'},{'on'},{'off'}];
+for kidn = kidn_iter
+for Pindex= P_iter
+for Tindex= T_iter
+    
+Colorcell = genColorcell(T_iter,Tindex,Tcolors,P_iter,Pindex,Pcolors);
+[f1,ax1] = o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'o',Colorcell,handleVisible);
+disp(Pindex)
+
+%title(sprintf('$KID_{ID}$: %s | $P_{read}$: %3.0f dBm | $$T_{bath}$$ =%1.3f K',kidname{kidn},o.getPread(kidn,Pindex,Tindex),o.getT(kidn,Pindex,Tindex)),'Interpreter','latex')
+%legendstr = ['']
+end
+end 
+end
+legend('TLS noise','GR + sys noise','All noise','$F_{knee}$','$F_{knee}$','$f_{ring}$','Interpreter','latex')
+
+set(gca,'TickLabelInterpreter', 'latex')
+set(gcf,'units','centimeters','position',[20,1,20,0.65*20])
+filename = sprintf('IlluKID%iP%3.0fT%1.3f',kidn,o.getPread(kidn,Pindex,Tindex), o.getT(kidn,Pindex,Tindex));
+saveas(gca,[figurepath  filename '.fig' ])
+exportgraphics(gca,[figurepath  filename '.png' ]) 
+exportgraphics(gca,[figurepath filename '.pdf' ])
+
