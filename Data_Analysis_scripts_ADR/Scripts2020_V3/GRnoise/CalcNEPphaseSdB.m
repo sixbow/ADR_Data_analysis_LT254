@@ -1,4 +1,4 @@
-function [NEPdark,dthetadPdark,dthetadNqp] = CalcNEPphaseSdB(dFdNqp,Q,F0,Stheta,f,eta_pb,tau_qp,Tc_al)
+function [NEPdark,dthetadPdark,dthetadNqp] = CalcNEPphaseSdB(dthetaindNqp,Q,F0,Stheta,f,eta_pb,tau_qp,Tc_al)
 %Calculates the dark NEP phase per 1 kid at a time. 1 temperature..
 %multiple frequencies
 % Input
@@ -13,11 +13,14 @@ function [NEPdark,dthetadPdark,dthetadNqp] = CalcNEPphaseSdB(dFdNqp,Q,F0,Stheta,
 % <strong>Warning</strong> the calculation of Nqp(T) is also dependent on tc in the S21
 % script
 
-dthetadNqp = (-4*Q/(F0)).*dFdNqp;
+%dthetadNqp = (-4*Q).*dFdNqp;
+%sprintf('dFdNqp = %1.3e',dFdNqp)
 sprintf('Q = %1.3e',Q)
 sprintf('F0 = %1.3e',F0)
-dthetadPdark = (((eta_pb)*(tau_qp))/(deltaBCS(Tc_al)))*dthetadNqp;
+dthetadPdark = (((eta_pb)*(tau_qp))/(deltaBCS(Tc_al)))*dthetaindNqp;
+sprintf('dthetadNqp = %1.3e',dthetaindNqp)
 sprintf('dthetadPdark = %1.3e',dthetadPdark)
+dthetadNqp = dthetaindNqp;
 NEPdark = (sqrt(Stheta)./dthetadPdark).*sqrt(1+(2.*pi.*tau_qp.*f).^2);
 
 end

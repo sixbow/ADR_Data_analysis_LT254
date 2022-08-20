@@ -9,7 +9,7 @@ load('../../Data_LT254_Sietse/LT254_Sietse_Chip11/Noise_vs_T/FFT/2D_Popt/NOISE_2
 % Load spectra...
 S21_path = '../../Data_LT254_Sietse/LT254_Sietse_Chip11/S21/2D_Popt/all_Tdep.csv';
 S21_results = table2array(readtable(S21_path , "NumHeaderLines",1));
-dFdNqp =  S21_results(:,11);%Warning! Why is this negative valued!(Sietse: i think this is normal!)
+dthetaindNqp =  S21_results(:,11);%Warning! Why is this negative valued!(Sietse: i think this is normal!)
 %<Input>
 Q = S21_results(:,3); % vec for all KIDS
 F0 = S21_results(:,6); % for all kids
@@ -25,9 +25,11 @@ dthetadPdark = zeros(length(kidn_iter),length(nT_iter),length(freq_vec));
 dthetadNqp = zeros(length(kidn_iter),length(nT_iter),length(freq_vec));
 for kidn = kidn_iter % Loop over KIDS
     for nT = nT_iter % Loop over temperatures
-    Stheta_current_lin = dbtolin(real(CrossPSDNOISE(kidn).CrossPSD{1,nT}(:,3))./10);%Stheta is always real..
+    Stheta_current_lin = dbtolin(real(CrossPSDNOISE(kidn).CrossPSD{1,nT}(:,3)));%Stheta is always real..
+    %Stheta_current_lin = dbtolin(real(CrossPSDNOISE(kidn).CrossPSD{1,nT}(:,3))./10);%Stheta is always real..
+    
     tau_qp_current = CrossPSDFit(kidn).tau(nT);
-    [NEP_Matrix(kidn,nT,:),dthetadPdark(kidn,nT,:),dthetadNqp(kidn,nT,:)] = CalcNEPphaseSdB(dFdNqp(kidn),Q(kidn),F0(kidn),Stheta_current_lin,freq_vec,eta_pb,tau_qp_current,Tc_al); % 3 dimention is freq.
+    [NEP_Matrix(kidn,nT,:),dthetadPdark(kidn,nT,:),dthetadNqp(kidn,nT,:)] = CalcNEPphaseSdB(dthetaindNqp(kidn),Q(kidn),F0(kidn),Stheta_current_lin,freq_vec,eta_pb,tau_qp_current,Tc_al); % 3 dimention is freq.
     end
 end
 % Fig 1. 
@@ -40,7 +42,7 @@ for kidn=kidn_iter
     hold(ax(kidn), 'on');
     
     for nT = nT_iter
-        plot(freq_vec,-squeeze(NEP_Matrix(kidn,nT,:)),'Color',plt_color_map(nT,:),'LineWidth',2);
+        plot(freq_vec,squeeze(NEP_Matrix(kidn,nT,:)),'Color',plt_color_map(nT,:),'LineWidth',2);
     end
     hold(ax(kidn), 'off');
     title(append('CKID #',string(kidn)));
@@ -60,7 +62,7 @@ ax2 = axes('XScale','log','YScale','log');
 hold(ax2, 'on');
 
 for nT = nT_iter
-    plot(freq_vec,-squeeze(NEP_Matrix(kidn,nT,:)),'Color',plt_color_map(nT,:),'LineWidth',2);
+    plot(freq_vec,squeeze(NEP_Matrix(kidn,nT,:)),'Color',plt_color_map(nT,:),'LineWidth',2);
 end
 hold(ax2, 'off');
 title(append('CKID #',string(kidn)));

@@ -197,7 +197,9 @@ end
 % Saving data externally
 %==========================================================================
 % Save the data to correct output files in either the S21 or Root Directory
+if SW.savedata
 KIDParameters = savethedata(KID,ChipInfo.path);
+end
 %Returns a summary file with most important parameters
 %Returns the KIDParameters array, which contains the most important
 %information about all N=#(KID,P) combinations at base temperature
