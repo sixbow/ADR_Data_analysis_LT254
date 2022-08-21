@@ -28,6 +28,7 @@ SW.plottls = 0;
 SW.plotgr = 0;
 SW.plotFknee = 1;
 Single_plot_loop_all = 0;
+SW.plotTotalplusTLSshallow = 0;
 
 SW.CrossTau =1 ; %1 Uses JBfitted Crosstau_qp, 0 Fits from frac freq PSD.
 o = Cfit(FFTsubsubdir,'NOISE_2D.mat','CrossPSDFit_2D.mat',0.8,30,500,150000);
@@ -52,10 +53,10 @@ end
 o = o.init_figax(fignum,axnum,'loglin');
 SW.usePopt = 0;% Use the 120mK Popt value. 
 set(gca, 'FontName', 'Arial')
-kidn_iter = 2;
+kidn_iter = 1;
 % Write a fuction that creates Pindex = o.findPopt(kidn)
 P_iter = o.findPiopt(kidn_iter); 
-T_iter = 12;
+T_iter = 3;
 Tcolors = colormapJetJB(14);
 Pcolors = colormapcoolSdB(7);
 %-------
@@ -68,6 +69,7 @@ SW.cyanfit = 1;
 SW.magentafit = 1;
 SW.plotringline = 1;
 SW.plottauminmax = 1;
+SW.plotTotalplusTLSshallow = 1;
 handleVisible = [{'on'},{'on'},{'on'},{'on'},{'on'},{'on'}];
 for kidn = kidn_iter
 for Pindex= P_iter
@@ -81,7 +83,7 @@ title(sprintf('$KID_{ID}$: %s | $P_{read}$: %3.0f dBm | $$T_{bath}$$ =%1.3f K',k
 end
 end 
 end
-legend('Data','TLS fit','GR + sys noise','Combined','$F_{knee}$','$f_{ring}$','Interpreter','latex')
+legend('Data','TLS fit','GR + sys noise','Combined','$f_{knee}$','$f_{ring}$','Interpreter','latex')
 
 set(gca,'TickLabelInterpreter', 'latex')
 set(gcf,'units','centimeters','position',[20,1,20,0.65*20])

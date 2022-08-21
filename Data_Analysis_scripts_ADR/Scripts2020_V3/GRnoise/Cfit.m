@@ -36,6 +36,7 @@ classdef Cfit < handle
         fCBmaxtau
         fline
         fTotal
+        fTLS_shallow
         fTLS_filled
         fCB_filled
         %Plotting vars
@@ -207,6 +208,7 @@ classdef Cfit < handle
             obj.fCBmaxtau  = @(C_v,fdata) C_v(1)./((1+power((2.*pi.*fdata.*obj.Cross_taumax{kidn,Pindex,Tindex}),2)))+ obj.Sff_sys_noise{kidn,Pindex,Tindex};
             obj.fline = @(C_v,xdata)C_v(1).*xdata+C_v(2);
             obj.fTotal = @(C_v_TLS,C_v_CB,fdata)obj.fTLS(C_v_TLS,fdata)+obj.fCB(C_v_CB,fdata);
+            obj.fTLS_shallow = @(fdata) (10^-16).*power(fdata,-0.33);
         end
         function UpA_filled(obj,kidn,Pindex,nT)
             a = obj.TLSfit.C{kidn,Pindex,nT}(1);
@@ -320,7 +322,17 @@ classdef Cfit < handle
             plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fTotal(obj.TLSfit.C{kidn,Pindex,nT},obj.CBfit.C{kidn,Pindex,nT},obj.freq(toplot))),'--','LineWidth',2,'Color',Colorcell{4},'HandleVisibility',handleVisible{4})
             end
             %-------/End:Total line----------------------------------------
+            %+++++|Begin:Total+TSL shallow-------------------------------------
+            if SW.plotTotalplusTLSshallow
+            plot(obj.ax(ax_n),obj.freq(toplot),lintodb((obj.fTotal(obj.TLSfit.C{kidn,Pindex,nT},obj.CBfit.C{kidn,Pindex,nT},obj.freq(toplot))+obj.fTLS_shallow(obj.freq(toplot)))./(1+(obj.freq(toplot)./obj.fRing{kidn,Pindex,nT}).^2)),'--','LineWidth',8,'Color',Colorcell{4},'HandleVisibility',handleVisible{4})
+            end
+            
+            %-------/End:Total+TSL shallow-------------------------------------
 
+            
+            
+            
+            
             %+++++|Begin:Visualize Fknee-----------------------------------
 			if SW.plotFknee
             plot(obj.ax(ax_n),obj.Fknee{kidn,Pindex,nT},lintodb(obj.Sknee{kidn,Pindex,nT}),marker,'Color',Colorcell{5},'LineWidth',2,'HandleVisibility',handleVisible{5})
