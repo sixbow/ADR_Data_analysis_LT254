@@ -316,15 +316,20 @@ end
 end % End #KID
 
 
-%% Part 2: TLS-noise coof.
+%% Part 2: TLS-noise coof. (120mK)
 % In this section we want to get plots of the noise at 1 KHz like in Gau
 % paper.
 
 % Loading the 120mK power data for maximum accuracy!! Gau paper is
 % T=120mK
+kidn_iter = 1;
 ChipInfo_path = ['..' filesep '..' filesep ]; %root path where data is, one higher than the scripts
 FFT_power_subsubdir=['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_120mK' filesep 'FFT' filesep 'Power'];% This is where the
 load([ChipInfo_path FFT_power_subsubdir filesep 'NOISE_P.mat']) % 
+
+FFTsubsubdir=['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D'];% This is where the
+load([ChipInfo_path FFTsubsubdir filesep 'NOISE_2D.mat'])
+
 freq = NOISE(1).FFTnoise{1,1}(:,1);
 clearvars legendPvalues;
 
@@ -350,7 +355,7 @@ SliceFreq = 10;% [Hz] Freq at which we will take a slice of the spectrum and plo
     % KID in Increasing order. 
     %power_iter = IndexPopt(kidn); %[Index] - Popt -Number of P_read values. For now I look at 1 power. 
     power_iter = IndexPsort{kidn,1}; %[Index] - All P_read Number of P_read values. For now I look at 1 power. 
-    
+    Pindex = 1;
     for p = power_iter % This is the power iterator over a specific kid 
     
     %Pcolors = colormapcoolSdB(max(power_iter)); % this has been set to 14 such that you always generate the set of colors such that you always obtain the same color for a high temp.
@@ -409,14 +414,14 @@ SliceFreq = 10;% [Hz] Freq at which we will take a slice of the spectrum and plo
             xlim([0.1,5e5]);grid on;ylim([-220,-140])
             title(append('KID#',string(NOISE(p).KIDnumber)," | T = ",string(NOISE(p).Temperature(nT)),"K"));
             %legendTvalues{nT+1-min(Tbath_iter)} = append(sprintf('%1.3f',NOISE(p).Temperature(nT)),' K');
-            legendPvalues{p} = append(sprintf('%3.0f',NOISE(p).ReadPower),' dBc');
+            legendPvalues{Pindex} = append(sprintf('%3.0f',NOISE(p).ReadPower),' dBc');
             %plot(freq(toplot),10*log10(Model_oneoverf(TLS_coof_lin{p,nT},freq(toplot))),'--','Color',Pcolors(p,:),'LineWidth',1)
             if SW_plotTLS
             plot(freq(toplot),Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot))),'-.','Color','black','LineWidth',1,'HandleVisibility','off')
             end %Plotting TLS lines
             plot(freq(CBf_min_i:CBf_max_i),10.*log10(linDataY_CB(CBf_min_i:CBf_max_i)),'--','Color',Pcolors((p-min(power_iter)+1),:),'LineWidth',0.5,'HandleVisibility','off');%
             %compensated lines!
-            
+            disp(['Readpower is:' string(NOISE(p).ReadPower)])
             
             % GR lines
             if SW_plotGR
@@ -434,7 +439,7 @@ SliceFreq = 10;% [Hz] Freq at which we will take a slice of the spectrum and plo
     xline(freq(CBf_max_i),'--','Color','m','LineWidth',1,'HandleVisibility','off')
     
     
-     
+    Pindex = Pindex+1; 
     end % End power 
     
 
@@ -470,7 +475,7 @@ set(p1,'MarkerFaceColor',Customcolormap(kidn,:));
 
 end
 plot(linspace(-90,-30,2),Model_line([-0.5 -192],linspace(-80,-40,2)),'--','LineWidth',2,'Color','black')
-f4legendstr = [{'\#1 ( C7G3: 2-2-2 ?)'} {'\#2 ( C9G3: 2-2-2 ?)'} {'\#3 ( C8G3: 2-2-2 ?)'} {'\#4 ( C10G4: 4-4-4 ?)'} {'\#5 ( C11G4: 4-4-4 ?)'} {'\#6 ( C12G4: 4-4-4 ?)'} {'$P_{int}^{-\frac{1}{2}}$ (Theory)'}];
+f4legendstr = [{'\#1 ( C7G3: 2-2-2 )'} {'\#2 ( C9G3: 2-2-2 )'} {'\#3 ( C8G3: 2-2-2 )'} {'\#4 ( C10G4: 4-4-4 )'} {'\#5 ( C11G4: 4-4-4 )'} {'\#6 ( C12G4: 4-4-4 )'} {'$P_{int}^{-\frac{1}{2}}$ (Theory)'}];
 f4lgd = legend(f4legendstr, 'interpreter','latex');
 f4lgd.FontSize = 14;
 hold(ax4,'off')
@@ -483,6 +488,189 @@ title('Gau compare - Need to add Gau data!')
 export_path_graph = append('../../../Export_Figures_noGit/LT254_DA_figures/Part_2_TLS/f4Gau','.png');
 exportgraphics(ax4,export_path_graph)
 
+
+
+%% Part 2: TLS-noise coof. (2D)
+% In this section we want to get plots of the noise at 1 KHz like in Gau
+% paper.
+
+% Loading the 120mK power data for maximum accuracy!! Gau paper is
+% T=120mK
+kidn_iter = 1:6;
+ChipInfo_path = ['..' filesep '..' filesep ]; %root path where data is, one higher than the scripts
+FFT_power_subsubdir=['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_120mK' filesep 'FFT' filesep 'Power'];% This is where the
+load([ChipInfo_path FFT_power_subsubdir filesep 'NOISE_P.mat']) % 
+
+FFTsubsubdir=['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D'];% This is where the
+load([ChipInfo_path FFTsubsubdir filesep 'NOISE_2D.mat'])
+
+freq = NOISE(1).FFTnoise{1,1}(:,1);
+clearvars legendPvalues;
+
+SliceFreq = 1000;% [Hz] Freq at which we will take a slice of the spectrum and plot this according to Gau.
+[~,Slice_i] = min(abs(freq-SliceFreq)); % "
+
+kidname = [{'C7(2-2-2)'},{'C9(2-2-2)'},{'C8(2-2-2)'},{'C10(4-4-4)'},{'C11(4-4-4)'},{'C12(4-4-4)'}];
+% Part 2: Sec 2
+ % Swithches for user to play with ----------------------------------------
+   SW_plotGR = 0;
+   SW_plotTLS = 1;
+   SW_f2plotlinTLS = 1;
+   SW_playJobs_done = 0; % Put zero to surpress Job's done sound
+   SW_playGiorgio = 0; %Plays daft punk after your done. Because it is nice!
+ %-------------------------------------------------------------------------
+ nT = 14;% choose index for temperature.
+
+ for kidn = kidn_iter % iterate over CKIDs.
+    f3(kidn) = figure('WindowState','maximized');
+    ax3(kidn) = axes('XScale','log','YScale','linear');
+    hold(ax3(kidn),'on')
+    % IndexPsort is a vector of all the indices of powers for a specific
+    % KID in Increasing order. 
+    %power_iter = IndexPopt(kidn); %[Index] - Popt -Number of P_read values. For now I look at 1 power. 
+    power_iter = IndexPsort{kidn,1}; %[Index] - All P_read Number of P_read values. For now I look at 1 power. 
+    Pindex = 1;
+    for p = power_iter % This is the power iterator over a specific kid 
+    
+    %Pcolors = colormapcoolSdB(max(power_iter)); % this has been set to 14 such that you always generate the set of colors such that you always obtain the same color for a high temp.
+    Pcolors = colormapcoolSdB(max(power_iter)-min(power_iter)+1)   
+            
+            % Fit TLS ~2 - 20Hz
+            
+            linDataY_TLS = NOISE(p).FFTnoise{nT}(:,4);
+            TLS_coof_lin{p,nT} = LLS_TLS_SdB(freq(TLSf_min_i:TLSf_max_i),linDataY_TLS(TLSf_min_i:TLSf_max_i),Model_oneoverf,C_v_TLS_0);
+            
+            %f2 = figure;
+            dBlogDataX = log10(freq(TLSf_min_i:TLSf_max_i));
+            dBlogDataY = 10.*log10(NOISE(p).FFTnoise{nT}(:,4));
+            %plot(dBlogDataX,dBlogDataY(TLSf_min_i:TLSf_max_i))
+            TLS_coof_dBlog{p,nT} = polyfit(dBlogDataX,dBlogDataY(TLSf_min_i:TLSf_max_i),1);
+            C_TLS = power(10,(TLS_coof_dBlog{p,nT}(2)/10));% This is the constant extracted from the linear fit in log space.
+            gamma_TLS = -(TLS_coof_dBlog{p,nT}(1)/10); % "
+            TLS_coof_dBlog_to_lin{p,nT} = [C_TLS gamma_TLS];
+            figure(f3(kidn)) % Brings the plotting figure back into focus.
+            
+            % Fit GR-noise + TLS ~400Hz - 100KHz
+            
+            linDataY_CB = NOISE(p).FFTnoise{nT}(:,4);
+            linDataY_CB = linDataY_CB-Model_oneoverf([C_TLS gamma_TLS],freq); % subtract the TLS line..
+            
+            %Fitting GR noise spectrum 
+            CB_coof_lin{p,nT} = LLS_CB_SdB(freq(CBf_min_i:CBf_max_i),linDataY_CB(CBf_min_i:CBf_max_i),Model_CB,C_v_CB_0,CB_lb,CB_ub);
+            
+            % Finding intersects
+            fTLS_curr = @(x)abs(Model_oneoverf(TLS_coof_dBlog_to_lin{p,nT},x));
+            fGR_curr = @(x)Model_CB(CB_coof_lin{p,nT},x);
+            [f_inter(p,nT),S_inter(p,nT)] = findintersect_SdB(fTLS_curr,fGR_curr,fguess);
+            %plot(f_inter(p,nT),lintodb(S_inter(p,nT)),'o','Color',Pcolors(p,:),'LineWidth',1.5,'HandleVisibility','off');
+            %plot(1000,-170,'o','MarkerFaceColor', 'b','LineWidth',30)
+            % Save these parameters in a struct/class?
+            % contents: C_TLS, gamma, Res_TLS_gamma
+            % C_GR, tau_qp, Residual_GR_Tau
+            % P_read, Q_i, T_bath, Q_c , KID#
+            % Measure for flatnes (Derivative!!)
+            % Or you could say that a 2 db Diffence between GR-noise and measured data.
+            
+            % Fig. 1: Plotting the fractional frequency plot 
+            %toplot = NOISE(p).FFTnoise{1}(:,4) > 0;
+            %plot(NOISE(p).FFTnoise{1}(toplot,1),10*log10(NOISE(p).FFTnoise{1}(toplot,4)),...
+            %         '-','color','k','LineWidth',2)
+            toplot = NOISE(p).FFTnoise{nT}(:,4) > 0; % makes sure you only plot positive data. As you approach low noise you data can become negative due to noise.
+            plot(NOISE(p).FFTnoise{nT}(toplot,1),10*log10(NOISE(p).FFTnoise{nT}(toplot,4)),...
+                    '-','color',Pcolors((p-min(power_iter)+1),:),'LineWidth',1.5)
+            %Slice_i    
+            plot(NOISE(p).FFTnoise{nT}(Slice_i,1),lintodb(NOISE(p).FFTnoise{nT}(Slice_i,4)),...
+                    'o','color',Pcolors((p-min(power_iter)+1),:),'LineWidth',1,'MarkerFaceColor',Pcolors((p-min(power_iter)+1),:),'HandleVisibility','off')
+            P2S2_SF_Eval_dB(kidn,p) = lintodb(NOISE(p).FFTnoise{nT}(Slice_i,4));
+            P2S2_InternalPowerNaive(kidn,p) = NOISE(p).InternalPower(nT);
+            xlabel('F [Hz]');ylabel('S_F/F^2 [dBc/Hz]')
+            %Old: %xlim([0.5,1e5]);grid on;ylim([-220,-140])
+            xlim([0.1,5e5]);grid on;ylim([-210,-130])
+            title(append('KID:',string(kidname{NOISE(p).KIDnumber}),"  | T = ",string(NOISE(p).Temperature(nT)),"K"));
+            %legendTvalues{nT+1-min(Tbath_iter)} = append(sprintf('%1.3f',NOISE(p).Temperature(nT)),' K');
+            legendPvalues{Pindex} = append(sprintf('%3.0f',NOISE(p).ReadPower),' dBc');
+            %plot(freq(toplot),10*log10(Model_oneoverf(TLS_coof_lin{p,nT},freq(toplot))),'--','Color',Pcolors(p,:),'LineWidth',1)
+            if SW_plotTLS
+            plot(freq(toplot),Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot))),'-.','Color','black','LineWidth',1,'HandleVisibility','off')
+            end %Plotting TLS lines
+            plot(freq(CBf_min_i:CBf_max_i),10.*log10(linDataY_CB(CBf_min_i:CBf_max_i)),'--','Color',Pcolors((p-min(power_iter)+1),:),'LineWidth',0.5,'HandleVisibility','off');%
+            %compensated lines!
+            disp(['Readpower is:' string(NOISE(p).ReadPower)])
+            
+            % GR lines
+            if SW_plotGR
+                plot(freq(toplot),10.*log10(Model_CB(CB_coof_lin{p,nT},freq(toplot))),'-.','Color','black','LineWidth',1,'HandleVisibility','off');
+                %plot(freq(toplot),10.*log10(Model_CB(CB_coof_lin_CB{p,nT},freq(toplot))),'-.','Color',Pcolors(p,:),'LineWidth',1,'HandleVisibility','off');
+            end % Plots GR lines if user switch is high.
+            toplotTLSplusGR =lintodb(dbtolin(Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot)))) + Model_CB(CB_coof_lin{p,nT},freq(toplot)));
+            % Final model lines
+            plot(freq(toplot),toplotTLSplusGR,'-.','Color',Pcolors((p-min(power_iter)+1),:),'LineWidth',1.5,'HandleVisibility','off');
+            xline(1/(2*pi*abs(CB_coof_lin{p,nT}(2))),'--','Color',Pcolors((p-min(power_iter)+1),:),'LineWidth',0.25,'HandleVisibility','off')
+    
+    xline(freq(TLSf_min_i),'--','Color','c','LineWidth',1,'HandleVisibility','off')
+    xline(freq(TLSf_max_i),'--','Color','c','LineWidth',1,'HandleVisibility','off')
+    xline(freq(CBf_min_i),'--','Color','m','LineWidth',1,'HandleVisibility','off')
+    xline(freq(CBf_max_i),'--','Color','m','LineWidth',1,'HandleVisibility','off')
+    
+    
+    Pindex = Pindex+1; 
+    end % End power 
+    
+
+    legendPvalues = legendPvalues(~cellfun('isempty',legendPvalues));
+    % this removes the zero entries from the legendTvalues celll.
+    hTl1(kidn) = legend(legendPvalues,'location','eastOutside');
+    hTl1(kidn).ItemTokenSize = [10,10];
+    hold(ax3(kidn),'off')   
+    export_path_graph = append('../../../Export_Figures_noGit/LT254_DA_figures/Part_2_TLS/f3KID',string(kidn),'Pread',sprintf('%2.0f',NOISE(p).ReadPower),'.png');
+    exportgraphics(ax3(kidn),export_path_graph)
+    export_path_graph = append('../../../Export_Figures_noGit/LT254_DA_figures/Part_2_TLS/f3KID',string(kidn),'Pread',sprintf('%2.0f',NOISE(p).ReadPower),'.pdf');
+    exportgraphics(ax3(kidn),export_path_graph)
+    export_path_graph = append('../../../Export_Figures_noGit/LT254_DA_figures/Part_2_TLS/f3KID',string(kidn),'Pread',sprintf('%2.0f',NOISE(p).ReadPower),'.fig');
+    saveas(gca,[export_path_graph])
+end % End #KID
+
+
+%% Part 2. Sec 2 - Plotting the curves like in Gau 2D
+f4 = figure();
+ax4 = axes('XScale','linear','YScale','linear');
+hold(ax4,'on')
+% Info: NOISE(p).InternalPower = 10*log10((2/pi)*10.^(NOISE(p).ReadPower/10).*(NOISE(p).Ql.^2./NOISE(p).Qc));
+% WARNING: This definition might not be correct. And according to Akira
+% this can be a tricky topic to go into!
+
+Customcolormap = [0 0 1  ; 0 0 0.8; 0 0 0.6 ;0 1 0 ;0 0.8 0;0 0.6 0];
+
+CustomMarkers = [{'-o'},{'-x'},{'-*'},{'-o'},{'-x'},{'-*'}];
+
+for kidn=kidn_iter
+p1 = plot(P2S2_InternalPowerNaive(kidn,IndexPsort{kidn,1}),P2S2_SF_Eval_dB(kidn,IndexPsort{kidn,1}),CustomMarkers{kidn},'LineWidth',1,'MarkerSize',8);
+set(p1,'Color',Customcolormap(kidn,:));
+%set(p1,'MarkerFaceColor',Customcolormap(kidn,:));
+% This needs to be sorted in Power
+% I need to add the lines from Gau paper
+
+end
+%plot(linspace(-90,-30,2),Model_line([-0.5 -192],linspace(-80,-40,2)),'--','LineWidth',1,'Color','black')
+f4legendstr = [{'\#1 ( C7G3: 2-2-2 )'} {'\#2 ( C9G3: 2-2-2 )'} {'\#3 ( C8G3: 2-2-2 )'} {'\#4 ( C10G4: 4-4-4 )'} {'\#5 ( C11G4: 4-4-4 )'} {'\#6 ( C12G4: 4-4-4 )'}];
+f4lgd = legend(f4legendstr, 'interpreter','latex');
+f4lgd.FontSize = 10;
+hold(ax4,'off')
+grid on
+xlabel('P_{int}^{*}');ylabel('S_F/F^2 @1KHz [dBc/Hz]')
+
+xlim([-90,-30]);grid on;ylim([-185,-140])
+title('Noise at 1KHz as function of internal power | T_{bath} = Max ~ 315mK')
+
+export_path_graph = '../../../Export_Figures_noGit/LT254_DA_figures/Part_2_TLS/f4Gau2D';
+exportgraphics(ax4,[export_path_graph '.png'])
+exportgraphics(gca,[export_path_graph '.pdf' ])
+saveas(gca,[export_path_graph '.fig' ])
+
+
+
+
+%%
 disp("Jobs done!!")
 if SW_playJobs_done
 [y, Fs] = audioread('Jobs_Done.mp3');
