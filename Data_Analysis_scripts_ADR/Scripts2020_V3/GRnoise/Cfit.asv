@@ -78,7 +78,7 @@ classdef Cfit < handle
             obj.CBfit.ub = [10^-15 (1/(2*pi*obj.CBfit.min))];
             obj.fguess = [1 100000]; % [Hz] initial guess for the intersection point of the TLS and GR noise. 
 			%-------/End:Combined fitting parameters (Default!)------------
-            obj.resnormthreshold = 1000;
+            obj.resnormthreshold = 500;
 
 
             disp('Initialized Cfit object!')
@@ -327,7 +327,7 @@ classdef Cfit < handle
             plot(obj.ax(ax_n),obj.freq(toplot),lintodb((obj.fTotal(obj.TLSfit.C{kidn,Pindex,nT},obj.CBfit.C{kidn,Pindex,nT},obj.freq(toplot))+obj.fTLS_shallow(obj.freq(toplot)))./(1+(obj.freq(toplot)./obj.fRing{kidn,Pindex,nT}).^2)),'--','LineWidth',4,'Color','m','HandleVisibility',handleVisible{4})
             end
             if SW.plotTotalplusTLSshallow
-            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fTLS_shallow(obj.freq(toplot))./(1+(obj.freq(toplot)./obj.fRing{kidn,Pindex,nT}).^2)),'.-','LineWidth',1,'Color','m','HandleVisibility',handleVisible{4})
+            plot(obj.ax(ax_n),obj.freq(toplot),lintodb((obj.fTotal(obj.TLSfit.C{kidn,Pindex,nT},obj.CBfit.C{kidn,Pindex,nT},obj.freq(toplot))+obj.fTLS_shallow(obj.freq(toplot)))./(1+(obj.freq(toplot)./obj.fRing{kidn,Pindex,nT}).^2)),'.-','LineWidth',4,'Color','m','HandleVisibility',handleVisible{4})
             end
             %-------/End:Total+TSL shallow-------------------------------------
 

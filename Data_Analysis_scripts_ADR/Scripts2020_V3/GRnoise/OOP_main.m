@@ -53,10 +53,10 @@ end
 o = o.init_figax(fignum,axnum,'loglin');
 SW.usePopt = 0;% Use the 120mK Popt value. 
 set(gca, 'FontName', 'Arial')
-kidn_iter = 1;
+kidn_iter = 2;
 % Write a fuction that creates Pindex = o.findPopt(kidn)
 P_iter = o.findPiopt(kidn_iter); 
-T_iter = 3;
+T_iter = 12;
 Tcolors = colormapJetJB(14);
 Pcolors = colormapcoolSdB(7);
 %-------
@@ -65,12 +65,12 @@ SW.plottls = 1;
 SW.plotgr = 1;
 SW.plotFknee = 1;
 SW.plotTotal = 1;
-SW.cyanfit = 1;
-SW.magentafit = 1;
-SW.plotringline = 1;
-SW.plottauminmax = 1;
+SW.cyanfit = 0;
+SW.magentafit = 0;
+SW.plotringline = 0;
+SW.plottauminmax = 0;
 SW.plotTotalplusTLSshallow = 1;
-handleVisible = [{'on'},{'on'},{'on'},{'on'},{'on'},{'on'}];
+handleVisible = [{'on'},{'off'},{'off'},{'on'},{'off'},{'off'}];
 for kidn = kidn_iter
 for Pindex= P_iter
 for Tindex= T_iter
@@ -83,7 +83,8 @@ title(sprintf('$KID_{ID}$: %s | $P_{read}$: %3.0f dBm | $$T_{bath}$$ =%1.3f K',k
 end
 end 
 end
-legend('Data','TLS fit','GR + sys noise','Combined','$f_{knee}$','$f_{ring}$','Interpreter','latex')
+%legend('Data','TLS fit','GR + sys noise','Combined','$f_{knee}$','$f_{ring}$','Interpreter','latex')
+legend('Data','$TLS_{1}$ + GR + Sys','$TLS_{1}$ + $TLS_{2}$ + GR + Sys','$TLS_{2,ring}$','Interpreter','latex')
 
 set(gca,'TickLabelInterpreter', 'latex')
 set(gcf,'units','centimeters','position',[20,1,20,0.65*20])
@@ -191,6 +192,7 @@ SW.plotTotal = 0;
 SW.cyanfit = 0;
 SW.magentafit = 0;
 SW.plottauminmax = 0;
+SW.plotTotalplusTLSshallow = 0;
 %-------
 fignum=2;
 axnum = fignum;
