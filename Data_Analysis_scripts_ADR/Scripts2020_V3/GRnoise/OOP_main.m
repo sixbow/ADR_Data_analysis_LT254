@@ -56,7 +56,7 @@ set(gca, 'FontName', 'Arial')
 kidn_iter = 2;
 % Write a fuction that creates Pindex = o.findPopt(kidn)
 P_iter = o.findPiopt(kidn_iter); 
-T_iter = 12;
+T_iter = T_iter + 1;
 Tcolors = colormapJetJB(14);
 Pcolors = colormapcoolSdB(7);
 %-------
@@ -206,7 +206,9 @@ legendTstr3 ={};
 o = o.init_figax(fignum,axnum,'loglin');
 for kidn = 1:3 % G3
 for Pindex= P_iter
-for Tindex= T_iter  
+for Tindex= T_iter
+if isnan(o.Fknee{kidn,Pindex,Tindex})
+else  
 Colorcell = genColorcell(T_iter,Tindex,Tcolors,P_iter,Pindex,Pcolors);
 [f2,ax2] = o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'x',Colorcell,handleVisible{kidn});
 if kidn==1
@@ -215,10 +217,13 @@ end
 end
 end
 end
+end
 
 for kidn = 4:6 %G4
 for Pindex= P_iter
 for Tindex= T_iter
+if isnan(o.Fknee{kidn,Pindex,Tindex})
+else 
 Colorcell = genColorcell(T_iter,Tindex,Tcolors,P_iter,Pindex,Pcolors);
 [f2,ax2] = o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'o',Colorcell,handleVisible{kidn-3});
 if kidn==4
@@ -227,8 +232,9 @@ end
 end
 end
 end
-legendTstr = [legendTstr2 legendTstr3];
-legend(legendTstr,'location','eastOutside','FontSize',7);
+end
+%legendTstr = [legendTstr2 legendTstr3];
+%legend(legendTstr,'location','eastOutside','FontSize',7);
 xlim([10,1e4]);grid on;ylim([-190,-160])
 title(sprintf('G3 vs G4 | $P_{read}$: $P_{opt}$'),'Interpreter','latex')
 filename = 'G3G4compareT';

@@ -78,7 +78,7 @@ classdef Cfit < handle
             obj.CBfit.ub = [10^-15 (1/(2*pi*obj.CBfit.min))];
             obj.fguess = [1 100000]; % [Hz] initial guess for the intersection point of the TLS and GR noise. 
 			%-------/End:Combined fitting parameters (Default!)------------
-            obj.resnormthreshold = 1000;
+            obj.resnormthreshold = 2000;
 
 
             disp('Initialized Cfit object!')
