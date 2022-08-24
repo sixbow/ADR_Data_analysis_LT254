@@ -31,7 +31,6 @@ freq_vec = real(CrossPSDNOISE(1).CrossPSD{1,1}(:,1));
 NEP_Matrix = zeros(length(kidn_iter),length(nT_iter),length(freq_vec));
 dthetadPdark = zeros(length(kidn_iter),length(nT_iter),length(freq_vec));
 dthetadNqp = zeros(length(kidn_iter),length(nT_iter),length(freq_vec));
-NEP_GR_Theory_Matrix = zeros(length(kidn_iter),length(nT_iter));
 for kidn = kidn_iter2_2_2 % Loop over KIDS
     for nT = nT_iter % Loop over temperatures
     Stheta_current_lin = dbtolin(real(CrossPSDNOISE(kidn).CrossPSD{1,nT}(:,3)));%Stheta is always real..
@@ -42,7 +41,7 @@ for kidn = kidn_iter2_2_2 % Loop over KIDS
     alpha_k(kidn) = dthetaindNqp2_2_2(kidn).*AlVol(kidn)./(Gauconst*Q(kidn));
     %GR limited NEP
     % Possible to add NEP gr
-    [~,~,~,NEP_GR_Theory_Matrix(kidn,nT)] = getNqp_Tbath(Tc_al,eta_pb,AlVol(kidn),NOISE(kidn).Temperature(nT));
+    [~,~,~,NEP_GR_Theory_Matrix(kidn,nT)] = getNqp_Tbath(Tc,eta_pb,V,Tbath);
     end
 end
 
@@ -54,7 +53,6 @@ for kidn = kidn_iter4_4_4 % Loop over KIDS
     tau_qp_current = CrossPSDFit(kidn).tau(nT);
     [NEP_Matrix(kidn,nT,:),dthetadPdark(kidn,nT,:),dthetadNqp(kidn,nT,:)] = CalcNEPphaseSdB(dthetaindNqp4_4_4(kidn),Q(kidn),F0(kidn),Stheta_current_lin,freq_vec,eta_pb,tau_qp_current,Tc_al); % 3 dimention is freq.
     alpha_k(kidn) = dthetaindNqp4_4_4(kidn).*AlVol(kidn)./(Gauconst*Q(kidn));
-    [~,~,~,NEP_GR_Theory_Matrix(kidn,nT)] = getNqp_Tbath(Tc_al,eta_pb,AlVol(kidn),NOISE(kidn).Temperature(nT));
     end
 end
 % Fig 1. 
@@ -68,9 +66,6 @@ for kidn=kidn_iter
     
     for nT = nT_iter
         plot(freq_vec,squeeze(NEP_Matrix(kidn,nT,:)),'Color',plt_color_map(nT,:),'LineWidth',2);
-        if nT>8
-        yline(NEP_GR_Theory_Matrix(kidn,nT),'--','Color',plt_color_map(nT,:),'LineWidth',2,'HandleVisibility','off')
-        end
     end
     hold(ax(kidn), 'off');
     title(append('CKID #',string(kidn)));
@@ -91,9 +86,6 @@ hold(ax2, 'on');
 
 for nT = nT_iter
     plot(freq_vec,squeeze(NEP_Matrix(kidn,nT,:)),'Color',plt_color_map(nT,:),'LineWidth',2);
-    if nT>8
-    yline(NEP_GR_Theory_Matrix(kidn,nT),'--','Color',plt_color_map(nT,:),'LineWidth',2,'HandleVisibility','off')
-    end
 end
 hold(ax2, 'off');
 title(append('CKID #',string(kidn)));
