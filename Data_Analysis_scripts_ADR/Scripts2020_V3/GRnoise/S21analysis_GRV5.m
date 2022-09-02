@@ -36,11 +36,11 @@ ChipInfo.ResonatorInfoFile = ...
                                                   	%text: KID_ID F[GHz] Q L_Alu[um]%
    
    
-ChipInfo.FilmTc = 1.182;                                    %Transition temperature measured for the film [K].
+ChipInfo.FilmTc = 1.1815;                                    %Transition temperature measured for the film [K].
 ChipInfo.material = 'AlBCS';                                %Material of which the resonator active area is made.
 ChipInfo.Thickness = 0.033 ;                                 %Thickness of the resonator active area [um].
 SW.savedata = 1% decides if you want to save your stuff
-Linewidthinmicron = 4; %  
+Linewidthinmicron = 2; %  
 
 %Linewidthinmicron = [2 2 2 4 4 4];% This still needs some fixing. 
 % does not propagate all the way.
