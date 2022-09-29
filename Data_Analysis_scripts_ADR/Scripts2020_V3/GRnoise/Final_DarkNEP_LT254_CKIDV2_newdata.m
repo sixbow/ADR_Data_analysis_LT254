@@ -25,8 +25,8 @@ AlVol = [66 66 66 132 132 132];% Detector volume in um^3
 kidn_iter = 1:6;
 kidn_iter2_2_2 = 1:3;
 kidn_iter4_4_4 = 4:6;
-
-nT_iter = 1:14;
+nT_iter_DataAnalysis = 1:14;
+nT_iter = 10:14;
 %</Input>
 freq_vec = real(CrossPSDNOISE(1).CrossPSD{1,1}(:,1));
 NEP_Matrix = zeros(length(kidn_iter),length(nT_iter),length(freq_vec));
@@ -36,7 +36,7 @@ dthetadPdark = zeros(length(kidn_iter),length(nT_iter),length(freq_vec));
 dthetadNqp = zeros(length(kidn_iter),length(nT_iter),length(freq_vec));
 NEP_GR_Theory_Matrix = zeros(length(kidn_iter),length(nT_iter));
 for kidn = kidn_iter2_2_2 % Loop over KIDS
-    for nT = nT_iter % Loop over temperatures
+    for nT = nT_iter_DataAnalysis % Loop over temperatures
     Stheta_current_lin = dbtolin(real(CrossPSDNOISE(kidn).CrossPSD{1,nT}(:,3)));%Stheta is always real..
     %Stheta_current_lin = dbtolin(real(CrossPSDNOISE(kidn).CrossPSD{1,nT}(:,3))./10);%Stheta is always real..
     
@@ -57,7 +57,7 @@ for kidn = kidn_iter2_2_2 % Loop over KIDS
 end
 
 for kidn = kidn_iter4_4_4 % Loop over KIDS
-    for nT = nT_iter % Loop over temperatures
+    for nT = nT_iter_DataAnalysis % Loop over temperatures
     Stheta_current_lin = dbtolin(real(CrossPSDNOISE(kidn).CrossPSD{1,nT}(:,3)));%Stheta is always real..
     %Stheta_current_lin = dbtolin(real(CrossPSDNOISE(kidn).CrossPSD{1,nT}(:,3))./10);%Stheta is always real..
     
@@ -65,6 +65,8 @@ for kidn = kidn_iter4_4_4 % Loop over KIDS
     [NEP_Matrix(kidn,nT,:),dthetadPdark(kidn,nT,:),dthetadNqp(kidn,nT,:)] = CalcNEPphaseSdB(dthetaindNqp4_4_4(kidn),Q(kidn),F0(kidn),Stheta_current_lin,freq_vec,eta_pb,tau_qp_current,Tc_al); % 3 dimention is freq.
     [NEP_Matrix_max(kidn,nT,:),~,~] = CalcNEPphaseSdB(dthetaindNqp4_4_4(kidn),Q(kidn),F0(kidn),Stheta_current_lin,freq_vec,eta_pb,tau_qp_current_max,Tc_al);
     [NEP_Matrix_min(kidn,nT,:),~,~] = CalcNEPphaseSdB(dthetaindNqp4_4_4(kidn),Q(kidn),F0(kidn),Stheta_current_lin,freq_vec,eta_pb,tau_qp_current_min,Tc_al);
+    
+    %Colormapping(nT,:) = plt_color_map(nT,:);
     
     alpha_k(kidn) = dthetaindNqp4_4_4(kidn).*AlVol(kidn)./(Gauconst*Q(kidn));
     alpha_k_high(kidn) = 1.62*alpha_k(kidn);
@@ -74,7 +76,7 @@ for kidn = kidn_iter4_4_4 % Loop over KIDS
 end
 % Fig 1. 
 f1 = figure('units','normalized','outerposition',[0 0 1 1]);
-plt_color_map = colormapJetJB(length(nT_iter)); %Source Jochem code.
+plt_color_map = colormapJetJB(length(nT_iter_DataAnalysis)); %Source Jochem code.
 for kidn=kidn_iter
     
    
@@ -82,6 +84,7 @@ for kidn=kidn_iter
     hold(ax(kidn), 'on');
     
     for nT = nT_iter
+       
         plot(freq_vec,squeeze(NEP_Matrix(kidn,nT,:)),'Color',plt_color_map(nT,:),'LineWidth',2);
         %plot(freq_vec,squeeze(NEP_Matrix_max(kidn,nT,:)),':','Color',plt_color_map(nT,:),'LineWidth',1);
         %plot(freq_vec,squeeze(NEP_Matrix_min(kidn,nT,:)),':','Color',plt_color_map(nT,:),'LineWidth',1);
@@ -93,7 +96,7 @@ for kidn=kidn_iter
     title(append('CKID #',string(kidn)));
     ylabel('$NEP_{dark}$ ($W/\sqrt{Hz}$)','Interpreter','latex');
     xlabel('f [Hz]','Interpreter','latex');
-    for nT=nT_iter 
+    for nT=nT_iter_DataAnalysis 
         legendTvalues{nT} = sprintf('%1.3f',NOISE(kidn).Temperature(nT));
     end
     hTl(kidn) = legend(legendTvalues,'location','eastOutside');
@@ -118,7 +121,7 @@ hold(ax2, 'off');
 title(append('CKID #',string(kidn)));
 ylabel('$NEP_{dark}$ ($W/\sqrt{Hz}$)','Interpreter','latex');
 xlabel('f [Hz]','Interpreter','latex');
-for nT=nT_iter 
+for nT=nT_iter_DataAnalysis 
     legendTvalues{nT} = sprintf('%1.3f',NOISE(kidn).Temperature(nT));
 end
 hTl2(kidn) = legend(legendTvalues,'location','eastOutside');
