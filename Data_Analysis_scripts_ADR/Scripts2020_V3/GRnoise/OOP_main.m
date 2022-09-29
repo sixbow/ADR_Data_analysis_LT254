@@ -56,7 +56,7 @@ set(gca, 'FontName', 'Arial')
 kidn_iter = 1;
 % Write a fuction that creates Pindex = o.findPopt(kidn)
 P_iter = o.findPiopt(kidn_iter); 
-T_iter = 10;
+T_iter = 14;
 Tcolors = colormapJetJB(14);
 Pcolors = colormapcoolSdB(7);
 %-------
@@ -78,7 +78,7 @@ for Tindex= T_iter
 Colorcell = genColorcell(T_iter,Tindex,Tcolors,P_iter,Pindex,Pcolors);
 [f1,ax1] = o.plotsingle(fignum,axnum,kidn,Pindex,Tindex,SW,'o',Colorcell,handleVisible);
 disp(Pindex)
-title(sprintf('$KID_{ID}$: %s | $P_{read}$: %3.0f dBm | $$T_{bath}$$ =%1.3f K',kidname{kidn},o.getPread(kidn,Pindex,Tindex),o.getT(kidn,Pindex,Tindex)),'Interpreter','latex')
+title(sprintf('$KID_{ID}$: %s | $P_{read}$: %3.0f dBm | $$T_{bath}$$ =%1.3f K',kidname{kidn},o.getPread(kidn,Pindex,Tindex),o.getT(kidn,Pindex,Tindex)),'Interpreter','latex','FontSize',30)
 %legendstr = ['']
 end
 end 
@@ -88,6 +88,11 @@ legend('Data','TLS-fit','GR-fit','Interpreter','latex')
 
 set(gca,'TickLabelInterpreter', 'latex')
 set(gcf,'units','centimeters','position',[20,1,20,0.65*20])
+set(gca,'LineWidth',1)
+set(gca,'GridAlpha',0.4)
+set(gca,'FontSize',28)
+
+
 filename = sprintf('KID%iP%3.0fT%1.3f',kidn,o.getPread(kidn,Pindex,Tindex), o.getT(kidn,Pindex,Tindex));
 saveas(gca,[figurepath  filename '.fig' ])
 exportgraphics(gca,[figurepath  filename '.png' ]) 

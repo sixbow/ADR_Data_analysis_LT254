@@ -291,23 +291,23 @@ classdef Cfit < handle
             toplot = obj.Sff{kidn,Pindex,nT} > 0;
             figure(obj.fig(fig_n))
             if SW.plotdata
-            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.Sff{kidn,Pindex,nT}(toplot)),'-o','MarkerFaceColor',Colorcell{1},'MarkerSize',2,'Color',Colorcell{1},'HandleVisibility',handleVisible{1});
+            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.Sff{kidn,Pindex,nT}(toplot)),'-o','MarkerFaceColor',Colorcell{1},'LineWidth',3,'MarkerSize',3,'Color',Colorcell{1},'HandleVisibility',handleVisible{1});
             end
             %plot()
-            xlabel('f[Hz]','Interpreter','latex');ylabel('$S_{F}/F^{2} [dBc/Hz]$','Interpreter','latex')
+            xlabel('f[Hz]','Interpreter','latex','FontSize',30);ylabel('$S_{F}/F^{2} [dBc/Hz]$','Interpreter','latex','FontSize',30)
             %Old: %xlim([0.5,1e5]);grid on;ylim([-220,-140])
-            xlim([0.1,5e5]);grid on;ylim([-220,-140])
+            xlim([0.1,5e5]);grid on;ylim([-200,-140])
             %title(append('KID#',string(obj.NOISE(p).KIDnumber)," |Power ",string(obj.NOISE(p).ReadPower),"dBm")); 
             %+++++|Begin:Add TLS line--------------------------------------
             if SW.plottls
             %disp(string(size(obj.TLSfit.C)))
             %disp(string(obj.TLSfit.C{kidn,Pindex,nT}(1)))
-            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fTLS(obj.TLSfit.C{kidn,Pindex,nT},obj.freq(toplot))),'-.','Color','black','HandleVisibility',handleVisible{2});
+            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fTLS(obj.TLSfit.C{kidn,Pindex,nT},obj.freq(toplot))),'-.','Color','red','LineWidth',3,'HandleVisibility',handleVisible{2});
             end
             %-------/End:Add TLS line--------------------------------------
             %+++++|Begin:Plot CB fit---------------------------------------
 			if SW.plotgr
-            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fCB(obj.CBfit.C{kidn,Pindex,nT},obj.freq(toplot))),':','Color',Colorcell{3},'LineWidth',1.5,'HandleVisibility',handleVisible{3})
+            plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fCB(obj.CBfit.C{kidn,Pindex,nT},obj.freq(toplot))),':','Color',Colorcell{3},'Color','green','LineWidth',3,'HandleVisibility',handleVisible{3})
             end
             if SW.plottauminmax
             plot(obj.ax(ax_n),obj.freq(toplot),lintodb(obj.fCBmintau(obj.CBfit.C{kidn,Pindex,nT},obj.freq(toplot))),':','Color',Colorcell{4},'LineWidth',0.8,'HandleVisibility','off')
@@ -337,7 +337,7 @@ classdef Cfit < handle
             
             %+++++|Begin:Visualize Fknee-----------------------------------
 			if SW.plotFknee
-            plot(obj.ax(ax_n),obj.Fknee{kidn,Pindex,nT},lintodb(obj.Sknee{kidn,Pindex,nT}),marker,'Color',Colorcell{5},'LineWidth',2,'HandleVisibility',handleVisible{5})
+            plot(obj.ax(ax_n),obj.Fknee{kidn,Pindex,nT},lintodb(obj.Sknee{kidn,Pindex,nT}),marker,'Color',Colorcell{5},'MarkerSize',8,'LineWidth',2,'HandleVisibility',handleVisible{5})
             end
             %-------/End:Visualize Fknee-----------------------------------
             figh_out = obj.fig(fig_n)
@@ -359,6 +359,9 @@ classdef Cfit < handle
             xline(obj.freq(obj.CBfit.mini),'--','Color','m','LineWidth',1,'HandleVisibility','off')
             xline(obj.freq(obj.CBfit.maxi),'--','Color','m','LineWidth',1,'HandleVisibility','off')
             end
+       
+            
+            
             %-------/End:fitting ranges------------------------------------ 
         end
         
