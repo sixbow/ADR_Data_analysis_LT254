@@ -19,7 +19,7 @@ F0 = S21_results2_2_2(:,6); % for all kids
 eta_pb = 0.4;
 Tc_al = 1.182;
 %Gauconst = 1.62E-6;%8E-7; % const before Q*alpha_k/V    V is in um^3 % Beuninggg..
-Gauconst = 8E-7;%8E-7; %
+Gauconst = 8.2E-7;%8E-7; %
 AlVol = [66 66 66 132 132 132];% Detector volume in um^3 
 %tau_qp() = We do this in the code
 kidn_iter = 1:6;
@@ -149,9 +149,9 @@ hold off
 
 
 
-exportgraphics(f1,'../../../Export_Figures_noGit/Final_DarkNEP_images/f1NEP_dark.png')
-exportgraphics(f1,'../../../Export_Figures_noGit/Final_DarkNEP_images/f1NEP_dark.pdf')
-exportgraphics(f2,'../../../Export_Figures_noGit/Final_DarkNEP_images/f2NEP_dark.png')
-exportgraphics(f2,'../../../Export_Figures_noGit/Final_DarkNEP_images/f2NEP_dark.pdf')
-exportgraphics(f3,'../../../Export_Figures_noGit/Final_DarkNEP_images/f3NEP_dark.png')
-exportgraphics(f3,'../../../Export_Figures_noGit/Final_DarkNEP_images/f3NEP_dark.pdf')
+%exportgraphics(f1,'../../../Export_Figures_noGit/Final_DarkNEP_images/f1NEP_dark.png')
+%exportgraphics(f1,'../../../Export_Figures_noGit/Final_DarkNEP_images/f1NEP_dark.pdf')
+%exportgraphics(f2,'../../../Export_Figures_noGit/Final_DarkNEP_images/f2NEP_dark.png')
+%exportgraphics(f2,'../../../Export_Figures_noGit/Final_DarkNEP_images/f2NEP_dark.pdf')
+%exportgraphics(f3,'../../../Export_Figures_noGit/Final_DarkNEP_images/f3NEP_dark.png')
+%exportgraphics(f3,'../../../Export_Figures_noGit/Final_DarkNEP_images/f3NEP_dark.pdf')

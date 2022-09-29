@@ -316,7 +316,7 @@ end
 end % End #KID
 
 
-%% Part 2: TLS-noise coof. (120mK)
+%% Part 2: TLS-noise coof. (120mK) Old!!
 % In this section we want to get plots of the noise at 1 KHz like in Gau
 % paper.
 
@@ -408,13 +408,13 @@ SliceFreq = 10;% [Hz] Freq at which we will take a slice of the spectrum and plo
             plot(NOISE(p).FFTnoise{nT}(Slice_i,1),lintodb(NOISE(p).FFTnoise{nT}(Slice_i,4)),...
                     'o','color',Pcolors((p-min(power_iter)+1),:),'LineWidth',1,'MarkerFaceColor',Pcolors((p-min(power_iter)+1),:),'HandleVisibility','off')
             P2S2_SF_Eval_dB(kidn,p) = lintodb(NOISE(p).FFTnoise{nT}(Slice_i,4));
-            P2S2_InternalPowerNaive(kidn,p) = NOISE(p).InternalPower;
+            P2S2_InternalPowerNaive(kidn,p) = NOISE(p).InternalPower(kidn);
             xlabel('F [Hz]');ylabel('S_F/F^2 [dBc/Hz]')
             %Old: %xlim([0.5,1e5]);grid on;ylim([-220,-140])
             xlim([0.1,5e5]);grid on;ylim([-220,-140])
             title(append('KID#',string(NOISE(p).KIDnumber)," | T = ",string(NOISE(p).Temperature(nT)),"K"));
             %legendTvalues{nT+1-min(Tbath_iter)} = append(sprintf('%1.3f',NOISE(p).Temperature(nT)),' K');
-            legendPvalues{Pindex} = append(sprintf('%3.0f',NOISE(p).ReadPower),' dBc');
+            legendPvalues{Pindex} = append(sprintf('%3.0f',NOISE(p).ReadPower),' dBm');
             %plot(freq(toplot),10*log10(Model_oneoverf(TLS_coof_lin{p,nT},freq(toplot))),'--','Color',Pcolors(p,:),'LineWidth',1)
             if SW_plotTLS
             plot(freq(toplot),Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot))),'-.','Color','black','LineWidth',1,'HandleVisibility','off')
@@ -454,7 +454,7 @@ SliceFreq = 10;% [Hz] Freq at which we will take a slice of the spectrum and plo
 end % End #KID
 
 
-%% Part 2. Sec 2 - Plotting the curves like in Gau
+%% Part 2. Sec 2 - Plotting the curves like in Gau Old
 f4 = figure('WindowState','maximized');
 ax4 = axes('XScale','linear','YScale','linear');
 hold(ax4,'on')
@@ -504,10 +504,10 @@ load([ChipInfo_path FFT_power_subsubdir filesep 'NOISE_P.mat']) %
 FFTsubsubdir=['Data_LT254_Sietse' filesep 'LT254_Sietse_Chip11' filesep 'Noise_vs_T' filesep 'FFT' filesep '2D'];% This is where the
 load([ChipInfo_path FFTsubsubdir filesep 'NOISE_2D.mat'])
 
-freq = NOISE(1).FFTnoise{1,1}(:,1);
+freq = NOISE(1).FFTnoise{1,1}(:,1);%
 clearvars legendPvalues;
 
-SliceFreq = 1000;% [Hz] Freq at which we will take a slice of the spectrum and plot this according to Gau.
+SliceFreq = 10;% [Hz] Freq at which we will take a slice of the spectrum and plot this according to Gau.
 [~,Slice_i] = min(abs(freq-SliceFreq)); % "
 
 kidname = [{'C7(2-2-2)'},{'C9(2-2-2)'},{'C8(2-2-2)'},{'C10(4-4-4)'},{'C11(4-4-4)'},{'C12(4-4-4)'}];
@@ -519,7 +519,7 @@ kidname = [{'C7(2-2-2)'},{'C9(2-2-2)'},{'C8(2-2-2)'},{'C10(4-4-4)'},{'C11(4-4-4)
    SW_playJobs_done = 0; % Put zero to surpress Job's done sound
    SW_playGiorgio = 0; %Plays daft punk after your done. Because it is nice!
  %-------------------------------------------------------------------------
- nT = 14;% choose index for temperature.
+ nT = 2;% choose index for temperature.
 
  for kidn = kidn_iter % iterate over CKIDs.
     f3(kidn) = figure('WindowState','maximized');
@@ -588,7 +588,7 @@ kidname = [{'C7(2-2-2)'},{'C9(2-2-2)'},{'C8(2-2-2)'},{'C10(4-4-4)'},{'C11(4-4-4)
             xlim([0.1,5e5]);grid on;ylim([-210,-130])
             title(append('KID:',string(kidname{NOISE(p).KIDnumber}),"  | T = ",string(NOISE(p).Temperature(nT)),"K"));
             %legendTvalues{nT+1-min(Tbath_iter)} = append(sprintf('%1.3f',NOISE(p).Temperature(nT)),' K');
-            legendPvalues{Pindex} = append(sprintf('%3.0f',NOISE(p).ReadPower),' dBc');
+            legendPvalues{Pindex} = append(sprintf('%3.0f',NOISE(p).ReadPower),' dBm');
             %plot(freq(toplot),10*log10(Model_oneoverf(TLS_coof_lin{p,nT},freq(toplot))),'--','Color',Pcolors(p,:),'LineWidth',1)
             if SW_plotTLS
             plot(freq(toplot),Model_line(TLS_coof_dBlog{p,nT},log10(freq(toplot))),'-.','Color','black','LineWidth',1,'HandleVisibility','off')
@@ -657,12 +657,12 @@ f4lgd = legend(f4legendstr, 'interpreter','latex');
 f4lgd.FontSize = 10;
 hold(ax4,'off')
 grid on
-xlabel('P_{int}^{*}');ylabel('S_F/F^2 @1KHz [dBc/Hz]')
+xlabel('P_{int}^{*}');ylabel('S_F/F^2 [dBc/Hz]')
 
-xlim([-90,-30]);grid on;ylim([-185,-140])
-title('Noise at 1KHz as function of internal power | T_{bath} = Max ~ 315mK')
+xlim([-90,-30]);grid on;ylim([-170,-130])
+title(sprintf('Noise at %3.0f Hz as function of internal power | T_{bath} = ~ 120mK',SliceFreq))
 
-export_path_graph = '../../../Export_Figures_noGit/LT254_DA_figures/Part_2_TLS/f4Gau2D';
+export_path_graph = sprintf('../../../Export_Figures_noGit/LT254_DA_figures/Part_2_TLS/f4Gau2D%3.0f',SliceFreq);
 exportgraphics(ax4,[export_path_graph '.png'])
 exportgraphics(gca,[export_path_graph '.pdf' ])
 saveas(gca,[export_path_graph '.fig' ])
