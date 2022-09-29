@@ -105,7 +105,7 @@ for kidn=kidn_iter
     grid on
 end
 f2 = figure('units','normalized','outerposition',[0 0 1 1]);
-kidn = 1;
+kidn = 2;
 ax2 = axes('XScale','log','YScale','log');
 hold(ax2, 'on');
 
@@ -120,14 +120,14 @@ for nT = nT_iter
 end
 hold(ax2, 'off');
 title(append('CKID #',string(kidn)));
-ylabel('$NEP_{dark}$ ($W/\sqrt{Hz}$)','Interpreter','latex','FontSize',30);
-xlabel('f [Hz]','Interpreter','latex','FontSize',30);
+ylabel('$NEP_{dark}$ ($W/\sqrt{Hz}$)','Interpreter','latex');
+xlabel('f [Hz]','Interpreter','latex');
 for nT=nT_iter 
     disp(nT)
     legendTvaluesf2{nT} = sprintf('%1.3f',NOISE(kidn).Temperature(nT));
 end
 hTl2(kidn) = legend(legendTvaluesf2{min(nT_iter):max(nT_iter)},'location','eastOutside');
-title('Dark NEP  (2-2-2)','Interpreter','latex','FontSize',30)
+title('Dark NEP as function of $T_{bath} | G3C8 $','Interpreter','latex','')
 title(hTl2(kidn),'T_{bath} [K]')
 hTl2(kidn).ItemTokenSize = [3,10];
 grid on
