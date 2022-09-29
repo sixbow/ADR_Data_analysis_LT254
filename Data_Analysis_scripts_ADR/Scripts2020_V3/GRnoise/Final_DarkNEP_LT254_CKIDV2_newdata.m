@@ -111,11 +111,11 @@ hold(ax2, 'on');
 
 for nT = nT_iter
     disp(nT)
-    plot(freq_vec,squeeze(NEP_Matrix(kidn,nT,:)),'Color',plt_color_map(nT,:),'LineWidth',2);
+    plot(freq_vec,squeeze(NEP_Matrix(kidn,nT,:)),'Color',plt_color_map(nT,:),'LineWidth',3);
     %plot(freq_vec,squeeze(NEP_Matrix_max(kidn,nT,:)),':','Color',plt_color_map(nT,:),'LineWidth',1);
     %plot(freq_vec,squeeze(NEP_Matrix_min(kidn,nT,:)),':','Color',plt_color_map(nT,:),'LineWidth',1);
     if nT>8
-    yline(NEP_GR_Theory_Matrix(kidn,nT),'--','Color',plt_color_map(nT,:),'LineWidth',2,'HandleVisibility','off')
+    yline(NEP_GR_Theory_Matrix(kidn,nT),'--','Color',plt_color_map(nT,:),'LineWidth',3,'HandleVisibility','off')
     end
 end
 hold(ax2, 'off');
@@ -127,9 +127,13 @@ for nT=nT_iter
     legendTvaluesf2{nT} = sprintf('%1.3f',NOISE(kidn).Temperature(nT));
 end
 hTl2(kidn) = legend(legendTvaluesf2{min(nT_iter):max(nT_iter)},'location','eastOutside');
-title('Dark NEP  (2-2-2)','Interpreter','latex','FontSize',30)
+title('Dark NEP - (2-2-2)$\mu$m CPW','Interpreter','latex','FontSize',30)
 title(hTl2(kidn),'T_{bath} [K]')
-hTl2(kidn).ItemTokenSize = [3,10];
+hTl2(kidn).ItemTokenSize = [10,20];
+ax2.FontSize = 28;
+ax2.LineWidth = 1;
+ax2.GridAlpha = 0.4;
+%ax2.GridLineWidth= 8; 
 grid on
 
 f3 = figure
@@ -157,6 +161,8 @@ hold off
 %exportgraphics(f1,'../../../Export_Figures_noGit/Final_DarkNEP_images/f1NEP_dark.png')
 %exportgraphics(f1,'../../../Export_Figures_noGit/Final_DarkNEP_images/f1NEP_dark.pdf')
 %exportgraphics(f2,'../../../Export_Figures_noGit/Final_DarkNEP_images/f2NEP_dark.png')
+exportgraphics(f2,'../../../Export_Figures_noGit/Final_DarkNEP_images/f2NEP_dark_presi.pdf')
+exportgraphics(f2,'../../../Export_Figures_noGit/Final_DarkNEP_images/f2NEP_dark_presi.png')
 %exportgraphics(f2,'../../../Export_Figures_noGit/Final_DarkNEP_images/f2NEP_dark.pdf')
 %exportgraphics(f3,'../../../Export_Figures_noGit/Final_DarkNEP_images/f3NEP_dark.png')
 %exportgraphics(f3,'../../../Export_Figures_noGit/Final_DarkNEP_images/f3NEP_dark.pdf')

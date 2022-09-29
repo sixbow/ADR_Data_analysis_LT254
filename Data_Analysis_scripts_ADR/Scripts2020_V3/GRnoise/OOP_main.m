@@ -51,12 +51,12 @@ end
 
 %% Temperature variation single plots
 o = o.init_figax(fignum,axnum,'loglin');
-SW.usePopt = 0;% Use the 120mK Popt value. 
+SW.usePopt = 1;% Use the 120mK Popt value. 
 set(gca, 'FontName', 'Arial')
-kidn_iter = 2;
+kidn_iter = 1;
 % Write a fuction that creates Pindex = o.findPopt(kidn)
 P_iter = o.findPiopt(kidn_iter); 
-T_iter = T_iter + 1;
+T_iter = 10;
 Tcolors = colormapJetJB(14);
 Pcolors = colormapcoolSdB(7);
 %-------
@@ -64,13 +64,13 @@ SW.plotdata = 1;
 SW.plottls = 1;
 SW.plotgr = 1;
 SW.plotFknee = 1;
-SW.plotTotal = 1;
+SW.plotTotal = 0;
 SW.cyanfit = 0;
 SW.magentafit = 0;
 SW.plotringline = 0;
 SW.plottauminmax = 0;
-SW.plotTotalplusTLSshallow = 1;
-handleVisible = [{'on'},{'off'},{'off'},{'on'},{'off'},{'off'}];
+SW.plotTotalplusTLSshallow = 0;
+handleVisible = [{'on'},{'on'},{'on'},{'on'},{'off'},{'off'}];
 for kidn = kidn_iter
 for Pindex= P_iter
 for Tindex= T_iter
@@ -84,7 +84,7 @@ end
 end 
 end
 %legend('Data','TLS fit','GR + sys noise','Combined','$f_{knee}$','$f_{ring}$','Interpreter','latex')
-legend('Data','$TLS_{1}$ + GR + Sys','$TLS_{1}$ + $TLS_{2}$ + GR + Sys','$TLS_{2,ring}$','Interpreter','latex')
+legend('Data','TLS-fit','GR-fit','Interpreter','latex')
 
 set(gca,'TickLabelInterpreter', 'latex')
 set(gcf,'units','centimeters','position',[20,1,20,0.65*20])
